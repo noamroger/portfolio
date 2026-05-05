@@ -68,7 +68,8 @@ import Footer from '../components/Footer.astro';
 					</div>
 
 					<div class="contact-form-wrapper">
-						<form class="contact-form" name="contact" netlify>
+						<form class="contact-form" id="contact-form" name="contact">
+
 							<div class="form-group">
 								<label for="name">Name</label>
 								<input type="text" id="name" name="name" required placeholder="Your name" />
@@ -271,3 +272,43 @@ import Footer from '../components/Footer.astro';
 		}
 	}
 </style>
+
+<script>
+	const form = document.getElementById('contact-form');
+	const submitBtn = form.querySelector('button[type="submit"]');
+
+	form.addEventListener('submit', async (e) => {
+		e.preventDefault();
+
+		const formData = new FormData(form);
+		formData.append("access_key", "b4772b5a-9cdc-44c9-b261-4a669f7c1199");
+
+		const originalText = submitBtn.textContent;
+
+		submitBtn.textContent = "Sending...";
+		submitBtn.disabled = true;
+
+		try {
+			const response = await fetch("https://api.web3forms.com/submit", {
+				method: "POST",
+				body: formData
+			});
+
+			const data = await response.json();
+
+			if (response.ok) {
+				alert("Success! Your message has been sent.");
+				form.reset();
+			} else {
+				alert("Error: " + data.message);
+			}
+
+		} catch (error) {
+			console.error("Form submission error:", error);
+			alert("Something went wrong. Please try again.");
+		} finally {
+			submitBtn.textContent = originalText;
+			submitBtn.disabled = false;
+		}
+	});
+</script>
