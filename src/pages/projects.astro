@@ -1,0 +1,329 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+const projects = [
+	{
+		title: "Californyan",
+		description: "An AI-powered hotel receptionist created for the 24 Hours of Code 2025 (organized by the Le Mans Chamber of Commerce and Industry). A great introduction to agents in the age of AI.",
+		tech: ["Node.js", "AI", "LangChain", "API"],
+		link: "#",
+		github: "https://github.com/noam120606/llm-hotel-24h",
+		image: "/assets/projects/californyan.webp"
+	},
+	{
+		title: "Webserver base",
+		description: "The foundation of the 2024 24h of Code project (organized by Lycée Réaumur in Laval). It served as a base for my various projects over the course of about a year.",
+		tech: ["Node.js", "Express", "JavaScript"],
+		link: "#",
+		github: "https://github.com/noam120606/base-nodejs-webserver",
+		image: "/assets/projects/webserver.webp"
+	},
+	{
+		title: "Romaybot",
+		description: "A fictional card collection system (Pokémon parody). Created as part of a paid commission that includes a Twitch bot, Discord, and a website featuring these cards.",
+		tech: ["Node.js", "Discord.js", "Twitch", "MySQL"],
+		link: "#",
+		github: "https://github.com/noam120606/romaybot",
+		image: "/assets/projects/romaybot.webp"
+	},
+	{
+		title: "Codenames",
+		description: "A multiplayer adaptation of the board game Codenames in C programming language, created as part of a university project. With a group of four.",
+		tech: ["C", "Socket", "Network Programming", "Multiplayer"],
+		link: "https://github.com/noam120606/codenames-c/blob/main/rapport/presentation-video.mp4",
+		github: "https://github.com/noam120606/codenames-c",
+		image: "/assets/projects/codenames.webp"
+	},
+	{
+		title: "Enhanced Web Server Base",
+		description: "An advanced base with a separate frontend and backend, both developed in TypeScript. A solid foundation with my skills from 2026 still in development for my future projects.",
+		tech: ["TypeScript", "React", "Node.js", "Express"],
+		link: "#",
+		github: "https://github.com/noam120606/webserver-ts",
+		image: "/assets/projects/webserver.webp"
+	},
+	{
+		title: "Gaulia Musique",
+		description: "A Discord bot that allows playing music in Discord voice channels. It has been added to over 800 servers, but is no longer maintained today.",
+		tech: ["Node.js", "Discord.js", "FFmpeg", "Music"],
+		link: "#",
+		github: "https://github.com/noam120606/GauliaMusique",
+		image: "/assets/projects/gaulia.webp"
+	}
+];
+---
+
+<Layout title="Projects">
+	<Navbar />
+	<main class="projects">
+		<section class="projects-hero">
+			<div class="container">
+				<h1 class="page-title">My Projects</h1>
+				<p class="page-subtitle">A selection of my work and contributions</p>
+			</div>
+		</section>
+
+		<section class="projects-content">
+			<div class="container">
+				<div class="projects-grid">
+					{projects.map((project) => (
+						<article class="project-card">
+							<div class="project-image">
+								<img src={project.image} alt={project.title} loading="lazy" />
+							</div>
+							<div class="project-content">
+								<div class="project-header">
+									<h2 class="project-title">{project.title}</h2>
+								</div>
+								<p class="project-description">{project.description}</p>
+								<div class="project-tech">
+									{project.tech.map((tech) => (
+										<span class="tech-tag">{tech}</span>
+									))}
+								</div>
+								<div class="project-links">
+									<a href={project.github} class="project-link" target="_blank" rel="noopener noreferrer">
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+											<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+										</svg>
+										Code
+									</a>
+									{project.link && project.link !== "#" && (
+										<a href={project.link} class="project-link" target="_blank" rel="noopener noreferrer">
+											<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+												<polyline points="15 3 21 3 21 9"></polyline>
+												<line x1="10" y1="14" x2="21" y2="3"></line>
+											</svg>
+											Demo
+										</a>
+									)}
+								</div>
+							</div>
+						</article>
+					))}
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.projects {
+		flex: 1;
+	}
+
+	.projects-hero {
+		padding: 4rem 0;
+		background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+		text-align: center;
+	}
+
+	.page-title {
+		font-size: 3rem;
+		font-weight: 800;
+		margin-bottom: 1rem;
+		opacity: 0;
+		animation: fadeInUp 0.8s ease forwards;
+	}
+
+	.page-subtitle {
+		font-size: 1.25rem;
+		color: var(--text-secondary);
+		max-width: 600px;
+		margin: 0 auto;
+		opacity: 0;
+		animation: fadeInUp 0.8s ease 0.2s forwards;
+	}
+
+	.projects-content {
+		padding: 4rem 0;
+	}
+
+	.projects-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+		gap: 2rem;
+	}
+
+	.project-card {
+		background: var(--bg-secondary);
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		overflow: hidden;
+		transition: all 0.3s ease;
+		display: flex;
+		flex-direction: column;
+		opacity: 0;
+		transform: translateY(30px);
+	}
+
+	.project-card:nth-child(1) { animation: fadeInUp 0.8s ease 0.3s forwards; }
+	.project-card:nth-child(2) { animation: fadeInUp 0.8s ease 0.4s forwards; }
+	.project-card:nth-child(3) { animation: fadeInUp 0.8s ease 0.5s forwards; }
+	.project-card:nth-child(4) { animation: fadeInUp 0.8s ease 0.6s forwards; }
+	.project-card:nth-child(5) { animation: fadeInUp 0.8s ease 0.7s forwards; }
+	.project-card:nth-child(6) { animation: fadeInUp 0.8s ease 0.8s forwards; }
+
+	@keyframes fadeInUp {
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.project-card:hover {
+		transform: translateY(-4px);
+		border-color: var(--accent-blue);
+		box-shadow: 0 8px 30px rgba(59, 130, 246, 0.2);
+	}
+
+	.project-image {
+		width: 100%;
+		height: 200px;
+		overflow: hidden;
+		position: relative;
+	}
+
+	.project-image::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+		transition: left 0.5s ease;
+	}
+
+	.project-card:hover .project-image::after {
+		left: 100%;
+	}
+
+	.project-image img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.3s ease;
+	}
+
+	.project-card:hover .project-image img {
+		transform: scale(1.05);
+	}
+
+	.project-content {
+		padding: 1.5rem;
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+	}
+
+	.project-header {
+		margin-bottom: 0.75rem;
+	}
+
+	.project-title {
+		font-size: 1.25rem;
+		font-weight: 600;
+	}
+
+	.project-description {
+		color: var(--text-secondary);
+		line-height: 1.6;
+		margin-bottom: 1rem;
+		flex: 1;
+		font-size: 0.95rem;
+	}
+
+	.project-tech {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.tech-tag {
+		background: var(--bg-tertiary);
+		color: var(--accent-blue);
+		padding: 0.375rem 0.75rem;
+		border-radius: 16px;
+		font-size: 0.75rem;
+		font-weight: 500;
+		border: 1px solid var(--border-color);
+		transition: all 0.3s ease;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.tech-tag::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+		transition: left 0.5s ease;
+	}
+
+	.tech-tag:hover::before {
+		left: 100%;
+	}
+
+	.tech-tag:hover {
+		border-color: var(--accent-blue);
+		background: linear-gradient(135deg, var(--bg-tertiary), rgba(59, 130, 246, 0.1));
+	}
+
+	.project-links {
+		display: flex;
+		gap: 1rem;
+	}
+
+	.project-link {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		color: var(--text-secondary);
+		font-size: 0.875rem;
+		font-weight: 500;
+		transition: all 0.3s ease;
+		position: relative;
+	}
+
+	.project-link::after {
+		content: '';
+		position: absolute;
+		bottom: -2px;
+		left: 0;
+		width: 0;
+		height: 2px;
+		background: var(--accent-blue);
+		transition: width 0.3s ease;
+	}
+
+	.project-link:hover::after {
+		width: 100%;
+	}
+
+	.project-link:hover {
+		color: var(--accent-blue);
+	}
+
+	@media (max-width: 768px) {
+		.page-title {
+			font-size: 2rem;
+		}
+
+		.projects-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.projects-content {
+			padding: 2rem 0;
+		}
+	}
+</style>

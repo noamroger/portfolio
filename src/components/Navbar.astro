@@ -1,0 +1,112 @@
+---
+const currentPage = Astro.url.pathname;
+---
+
+<nav class="navbar">
+	<div class="container navbar-content">
+		<a href="/" class="logo">
+			<span class="logo-text">NR</span>
+		</a>
+		<ul class="nav-links">
+			<li>
+				<a href="/" class={currentPage === '/' ? 'active' : ''}>Home</a>
+			</li>
+			<li>
+				<a href="/about" class={currentPage === '/about' ? 'active' : ''}>About</a>
+			</li>
+			<li>
+				<a href="/projects" class={currentPage === '/projects' ? 'active' : ''}>Projects</a>
+			</li>
+			<li>
+				<a href="/contact" class={currentPage === '/contact' ? 'active' : ''}>Contact</a>
+			</li>
+		</ul>
+	</div>
+</nav>
+
+<style>
+	.navbar {
+		background-color: var(--bg-secondary);
+		border-bottom: 1px solid var(--border-color);
+		position: sticky;
+		top: 0;
+		z-index: 100;
+	}
+
+	.navbar-content {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem 0;
+	}
+
+	.logo {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: var(--text-primary);
+		position: relative;
+	}
+
+	.logo::after {
+		content: '';
+		position: absolute;
+		bottom: -4px;
+		left: 0;
+		width: 100%;
+		height: 2px;
+		background: linear-gradient(90deg, var(--accent-blue), var(--accent-blue-light));
+		transform: scaleX(0);
+		transition: transform 0.3s ease;
+	}
+
+	.logo:hover::after {
+		transform: scaleX(1);
+	}
+
+	.logo-text {
+		background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-light));
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	.nav-links {
+		display: flex;
+		list-style: none;
+		gap: 2rem;
+	}
+
+	.nav-links a {
+		color: var(--text-secondary);
+		font-weight: 500;
+		position: relative;
+	}
+
+	.nav-links a:hover,
+	.nav-links a.active {
+		color: var(--accent-blue);
+	}
+
+	.nav-links a::after {
+		content: '';
+		position: absolute;
+		bottom: -4px;
+		left: 0;
+		width: 0;
+		height: 2px;
+		background: linear-gradient(90deg, var(--accent-blue), var(--accent-blue-light));
+		transition: width 0.3s ease;
+	}
+
+	.nav-links a:hover::after,
+	.nav-links a.active::after {
+		width: 100%;
+	}
+
+	@media (max-width: 768px) {
+		.nav-links {
+			gap: 1rem;
+			font-size: 0.9rem;
+		}
+	}
+</style>

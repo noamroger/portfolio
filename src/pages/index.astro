@@ -1,0 +1,491 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import Lightning from '../components/icons/Lightning.astro';
+import Lock from '../components/icons/Lock.astro';
+import Grid from '../components/icons/Grid.astro';
+import Wrench from '../components/icons/Wrench.astro';
+---
+
+<Layout title="Home">
+	<Navbar />
+	<main class="home">
+		<section class="hero">
+			<div class="hero-bg"></div>
+			<div class="hero-grid"></div>
+			<div class="container hero-content">
+				<div class="hero-text">
+					<h1 class="hero-title">
+						Hi, I'm <span class="highlight">Noam Roger</span>
+					</h1>
+					<p class="hero-subtitle">
+						<span id="typing-text"></span><span class="typing-cursor"></span>
+					</p>
+					<p class="hero-description">
+						Specialized in designing robust and performant architectures.
+						I transform complex ideas into elegant solutions.
+					</p>
+					<div class="hero-actions">
+						<a href="/projects" class="btn btn-primary">View My Projects</a>
+						<a href="/contact" class="btn btn-secondary">Get In Touch</a>
+					</div>
+				</div>
+				<div class="hero-visual">
+					<div class="code-block">
+						<pre><code><span class="keyword">class</span> <span class="class">Developer</span> {'{'}
+  <span class="keyword">constructor</span>() {'{'}
+    <span class="property">this</span>.name = <span class="string">"Noam Roger"</span>;
+    <span class="property">this</span>.role = <span class="string">"Backend Dev"</span>;
+    <span class="property">this</span>.passion = <span class="string">"Clean Code"</span>;
+  {'}'}
+
+  <span class="function">build</span>() {'{'}
+    <span class="keyword">return</span> <span class="string">"Awesome stuff"</span>;
+  {'}'}
+{'}'}</code></pre>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="skills">
+			<div class="container">
+				<h2 class="section-title">Skills</h2>
+				<div class="skills-grid">
+					<div class="skill-card">
+						<Lightning class="skill-icon" width="64" height="64" />
+						<h3>Performance</h3>
+						<p>Query optimization, caching, and scalability</p>
+					</div>
+					<div class="skill-card">
+						<Lock class="skill-icon" width="64" height="64" />
+						<h3>Security</h3>
+						<p>Authentication, authorization, and data protection</p>
+					</div>
+					<div class="skill-card">
+						<Grid class="skill-icon" width="64" height="64" />
+						<h3>Architecture</h3>
+						<p>Design patterns, microservices, and distributed systems</p>
+					</div>
+					<div class="skill-card">
+						<Wrench class="skill-icon" width="64" height="64" />
+						<h3>Testing</h3>
+						<p>Unit tests, integration, and TDD</p>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.home {
+		flex: 1;
+	}
+
+	.hero {
+		min-height: calc(100vh - 80px);
+		display: flex;
+		align-items: center;
+		padding: 4rem 0;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.hero-bg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: radial-gradient(ellipse at top right, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+					radial-gradient(ellipse at bottom left, rgba(96, 165, 250, 0.1) 0%, transparent 50%);
+		z-index: -2;
+	}
+
+	.hero-grid {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-image:
+			linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+		background-size: 50px 50px;
+		z-index: -1;
+		mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+	}
+
+	.hero-content {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 4rem;
+		align-items: center;
+		position: relative;
+		z-index: 1;
+	}
+
+	.hero-text {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.hero-title {
+		font-size: 3.5rem;
+		font-weight: 800;
+		line-height: 1.1;
+		opacity: 0;
+		animation: fadeInUp 0.8s ease forwards;
+	}
+
+	.highlight {
+		background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-light));
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	.hero-subtitle {
+		font-size: 1.5rem;
+		color: var(--accent-blue);
+		font-weight: 600;
+		opacity: 0;
+		animation: fadeInUp 0.8s ease 0.2s forwards;
+	}
+
+	.typing-cursor {
+		display: inline-block;
+		width: 3px;
+		height: 1.2em;
+		background: var(--accent-blue);
+		margin-left: 4px;
+		animation: blink 1s infinite;
+		vertical-align: text-bottom;
+	}
+
+	@keyframes blink {
+		0%, 50% { opacity: 1; }
+		51%, 100% { opacity: 0; }
+	}
+
+	.hero-description {
+		font-size: 1.1rem;
+		color: var(--text-secondary);
+		max-width: 500px;
+		opacity: 0;
+		animation: fadeInUp 0.8s ease 0.4s forwards;
+	}
+
+	.hero-actions {
+		display: flex;
+		gap: 1rem;
+		opacity: 0;
+		animation: fadeInUp 0.8s ease 0.6s forwards;
+	}
+
+	.btn {
+		padding: 0.875rem 2rem;
+		border-radius: 8px;
+		font-weight: 600;
+		transition: all 0.2s ease;
+		display: inline-block;
+	}
+
+	.btn-primary {
+		background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark));
+		color: white;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.btn-primary::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+		transition: left 0.5s ease;
+	}
+
+	.btn-primary:hover::before {
+		left: 100%;
+	}
+
+	.btn-primary:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+	}
+
+	.btn-secondary {
+		background: var(--bg-tertiary);
+		color: var(--text-primary);
+		border: 1px solid var(--border-color);
+		position: relative;
+		overflow: hidden;
+	}
+
+	.btn-secondary::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+		transition: left 0.5s ease;
+	}
+
+	.btn-secondary:hover::before {
+		left: 100%;
+	}
+
+	.btn-secondary:hover {
+		background: var(--border-color);
+		transform: translateY(-2px);
+	}
+
+		.hero-visual {
+			animation: float 6s ease-in-out infinite;
+		}
+
+		@keyframes float {
+			0%, 100% {
+				transform: translateY(0);
+			}
+			50% {
+				transform: translateY(-20px);
+			}
+		}
+
+	.code-block {
+		background: var(--bg-secondary);
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		padding: 2rem;
+		font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+		font-size: 0.9rem;
+		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+		opacity: 0;
+		animation: fadeInUp 0.8s ease 0.8s forwards, pulse 3s ease-in-out infinite 2s;
+	}
+
+	@keyframes pulse {
+		0%, 100% {
+			box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+		}
+		50% {
+			box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+		}
+	}
+
+	.code-block code {
+		color: var(--text-primary);
+	}
+
+	.keyword {
+		color: #c792ea;
+	}
+
+	.class {
+		color: #ffcb6b;
+	}
+
+	.property {
+		color: #82aaff;
+	}
+
+	.string {
+		color: #c3e88d;
+	}
+
+	.function {
+		color: #82aaff;
+	}
+
+	.skills {
+		padding: 6rem 0;
+		background: var(--bg-secondary);
+		position: relative;
+	}
+
+	.skills::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 1px;
+		background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+		opacity: 0.3;
+	}
+
+	.section-title {
+		font-size: 2.5rem;
+		font-weight: 700;
+		text-align: center;
+		margin-bottom: 3rem;
+		opacity: 0;
+		transform: translateY(30px);
+		animation: fadeInUp 0.8s ease forwards;
+	}
+
+	.skills-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: 2rem;
+	}
+
+	.skill-card {
+		background: var(--bg-tertiary);
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		padding: 2rem;
+		text-align: center;
+		transition: all 0.3s ease;
+		position: relative;
+		overflow: hidden;
+		opacity: 0;
+		transform: translateY(30px);
+	}
+
+	.skill-card::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+		transition: left 0.5s ease;
+	}
+
+	.skill-card:hover::before {
+		left: 100%;
+	}
+
+	.skill-card:hover {
+		transform: translateY(-4px);
+		border-color: var(--accent-blue);
+		background: linear-gradient(135deg, var(--bg-tertiary), rgba(59, 130, 246, 0.1));
+		box-shadow: 0 8px 30px rgba(59, 130, 246, 0.2);
+	}
+
+	.skill-card:nth-child(1) { animation: fadeInUp 0.8s ease 0.2s forwards; }
+	.skill-card:nth-child(2) { animation: fadeInUp 0.8s ease 0.4s forwards; }
+	.skill-card:nth-child(3) { animation: fadeInUp 0.8s ease 0.6s forwards; }
+	.skill-card:nth-child(4) { animation: fadeInUp 0.8s ease 0.8s forwards; }
+
+	@keyframes fadeInUp {
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.skill-icon {
+		width: 64px;
+		height: 64px;
+		color: var(--accent-blue);
+		transition: all 0.3s ease;
+		margin: 12px auto;
+	}
+
+	.skill-card:hover .skill-icon {
+		color: var(--accent-blue-light);
+		transform: scale(1.1) rotate(5deg);
+	}
+
+	.skill-card h3 {
+		font-size: 1.25rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.skill-card p {
+		color: var(--text-secondary);
+		font-size: 0.95rem;
+	}
+
+	@media (max-width: 1024px) {
+		.hero-content {
+			grid-template-columns: 1fr;
+			text-align: center;
+		}
+
+		.hero-text {
+			align-items: center;
+		}
+
+		.hero-description {
+			max-width: 100%;
+		}
+
+		.hero-actions {
+			justify-content: center;
+		}
+
+		.code-block {
+			max-width: 500px;
+			margin: 0 auto;
+		}
+	}
+
+	@media (max-width: 768px) {
+		.hero-title {
+			font-size: 2.5rem;
+		}
+
+		.hero-subtitle {
+			font-size: 1.25rem;
+		}
+
+		.section-title {
+			font-size: 2rem;
+		}
+
+		.skills {
+			padding: 4rem 0;
+		}
+	}
+</style>
+
+<script>
+	const typingText = document.getElementById('typing-text');
+	const texts = ['Backend Developer', 'API Architect', 'System Designer', 'Problem Solver'];
+	let textIndex = 0;
+	let charIndex = 0;
+	let isDeleting = false;
+	let typingSpeed = 100;
+
+	function type() {
+		const currentText = texts[textIndex];
+
+		if (isDeleting) {
+			typingText.textContent = currentText.substring(0, charIndex - 1);
+			charIndex--;
+			typingSpeed = 50;
+		} else {
+			typingText.textContent = currentText.substring(0, charIndex + 1);
+			charIndex++;
+			typingSpeed = 100;
+		}
+
+		if (!isDeleting && charIndex === currentText.length) {
+			isDeleting = true;
+			typingSpeed = 2000;
+		} else if (isDeleting && charIndex === 0) {
+			isDeleting = false;
+			textIndex = (textIndex + 1) % texts.length;
+			typingSpeed = 500;
+		}
+
+		setTimeout(type, typingSpeed);
+	}
+
+	setTimeout(type, 1000);
+</script>

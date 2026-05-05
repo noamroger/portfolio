@@ -1,0 +1,273 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Contact">
+	<Navbar />
+	<main class="contact">
+		<section class="contact-hero">
+			<div class="container">
+				<h1 class="page-title">Contact</h1>
+				<p class="page-subtitle">Feel free to reach out to discuss your projects</p>
+			</div>
+		</section>
+
+		<section class="contact-content">
+			<div class="container">
+				<div class="contact-grid">
+					<div class="contact-info">
+						<h2>Let's Talk About Your Project</h2>
+						<p>
+							I'm always interested in new opportunities and collaborations.
+							Feel free to contact me if you have a project in mind or just want
+							to chat about backend development.
+						</p>
+
+						<div class="contact-methods">
+							<div class="contact-method">
+								<div class="contact-icon">
+									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+										<polyline points="22,6 12,13 2,6"></polyline>
+									</svg>
+								</div>
+								<div>
+									<h3>Email</h3>
+									<a href="mailto:contact@noamroger.fr">contact@noamroger.fr</a>
+								</div>
+							</div>
+
+							<div class="contact-method">
+								<div class="contact-icon">
+									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+									</svg>
+								</div>
+								<div>
+									<h3>GitHub</h3>
+									<a href="https://github.com/noam120606" target="_blank" rel="noopener noreferrer">github.com/noam120606</a>
+								</div>
+							</div>
+
+							<div class="contact-method">
+								<div class="contact-icon">
+									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+										<rect x="2" y="9" width="4" height="12"></rect>
+										<circle cx="4" cy="4" r="2"></circle>
+									</svg>
+								</div>
+								<div>
+									<h3>LinkedIn</h3>
+									<a href="https://linkedin.com/in/noamroger" target="_blank" rel="noopener noreferrer">linkedin.com/in/noamroger</a>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="contact-form-wrapper">
+						<form class="contact-form" action="https://formspree.io/f/your-form-id" method="POST">
+							<div class="form-group">
+								<label for="name">Name</label>
+								<input type="text" id="name" name="name" required placeholder="Your name" />
+							</div>
+
+							<div class="form-group">
+								<label for="email">Email</label>
+								<input type="email" id="email" name="email" required placeholder="your@email.com" />
+							</div>
+
+							<div class="form-group">
+								<label for="subject">Subject</label>
+								<input type="text" id="subject" name="subject" required placeholder="Subject of your message" />
+							</div>
+
+							<div class="form-group">
+								<label for="message">Message</label>
+								<textarea id="message" name="message" rows="5" required placeholder="Your message..."></textarea>
+							</div>
+
+							<button type="submit" class="btn btn-primary">Send Message</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.contact {
+		flex: 1;
+	}
+
+	.contact-hero {
+		padding: 4rem 0;
+		background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+		text-align: center;
+	}
+
+	.page-title {
+		font-size: 3rem;
+		font-weight: 800;
+		margin-bottom: 1rem;
+	}
+
+	.page-subtitle {
+		font-size: 1.25rem;
+		color: var(--text-secondary);
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	.contact-content {
+		padding: 4rem 0;
+	}
+
+	.contact-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 4rem;
+	}
+
+	.contact-info h2 {
+		font-size: 1.75rem;
+		margin-bottom: 1rem;
+	}
+
+	.contact-info > p {
+		color: var(--text-secondary);
+		line-height: 1.8;
+		margin-bottom: 2rem;
+	}
+
+	.contact-methods {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.contact-method {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
+	.contact-icon {
+		width: 48px;
+		height: 48px;
+		background: var(--bg-tertiary);
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--accent-blue);
+		flex-shrink: 0;
+	}
+
+	.contact-method h3 {
+		font-size: 1rem;
+		margin-bottom: 0.25rem;
+	}
+
+	.contact-method a {
+		color: var(--text-secondary);
+		font-size: 0.9rem;
+	}
+
+	.contact-method a:hover {
+		color: var(--accent-blue);
+	}
+
+	.contact-form-wrapper {
+		background: var(--bg-secondary);
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		padding: 2rem;
+	}
+
+	.contact-form {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.form-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.form-group label {
+		font-size: 0.9rem;
+		font-weight: 500;
+		color: var(--text-secondary);
+	}
+
+	.form-group input,
+	.form-group textarea {
+		background: var(--bg-tertiary);
+		border: 1px solid var(--border-color);
+		border-radius: 8px;
+		padding: 0.875rem 1rem;
+		color: var(--text-primary);
+		font-size: 1rem;
+		transition: border-color 0.2s ease;
+	}
+
+	.form-group input:focus,
+	.form-group textarea:focus {
+		outline: none;
+		border-color: var(--accent-blue);
+	}
+
+	.form-group input::placeholder,
+	.form-group textarea::placeholder {
+		color: var(--text-muted);
+	}
+
+	.btn {
+		padding: 0.875rem 2rem;
+		border-radius: 8px;
+		font-weight: 600;
+		transition: all 0.2s ease;
+		display: inline-block;
+		border: none;
+		cursor: pointer;
+		font-size: 1rem;
+	}
+
+	.btn-primary {
+		background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark));
+		color: white;
+	}
+
+	.btn-primary:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+	}
+
+	@media (max-width: 1024px) {
+		.contact-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 768px) {
+		.page-title {
+			font-size: 2rem;
+		}
+
+		.contact-content {
+			padding: 2rem 0;
+		}
+
+		.contact-form-wrapper {
+			padding: 1.5rem;
+		}
+	}
+</style>
