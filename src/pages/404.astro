@@ -1,0 +1,101 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="404 - Page Not Found">
+	<Navbar />
+	<main class="error-page">
+		<section class="error-hero">
+			<div class="container">
+				<div class="error-content">
+					<h1 class="error-code">404</h1>
+					<h2 class="error-title">Oops! You're lost in space.</h2>
+					<p class="error-message">
+						The page you are looking for doesn't exist or has been moved.
+						Let's get you back to safety.
+					</p>
+					<div class="error-actions">
+						<a href="/" class="btn btn-primary">Back to Home</a>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.error-page {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 4rem 0;
+	}
+
+	.error-hero {
+		text-align: center;
+	}
+
+	.error-content {
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	.error-code {
+		font-size: 8rem;
+		font-weight: 800;
+		line-height: 1;
+		margin-bottom: 1rem;
+		background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-light));
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3));
+	}
+
+	.error-title {
+		font-size: 2.5rem;
+		margin-bottom: 1.5rem;
+		color: var(--text-primary);
+	}
+
+	.error-message {
+		font-size: 1.1rem;
+		color: var(--text-secondary);
+		margin-bottom: 2.5rem;
+	}
+
+	.btn {
+		display: inline-block;
+		padding: 0.8rem 2rem;
+		border-radius: 8px;
+		font-weight: 600;
+		transition: all 0.3s ease;
+		text-decoration: none;
+	}
+
+	.btn-primary {
+		background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark));
+		color: white;
+		box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+	}
+
+	.btn-primary:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+		color: white;
+	}
+
+	@media (max-width: 768px) {
+		.error-code {
+			font-size: 5rem;
+		}
+
+		.error-title {
+			font-size: 1.8rem;
+		}
+	}
+</style>
