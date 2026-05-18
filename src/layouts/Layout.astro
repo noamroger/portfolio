@@ -1,4 +1,6 @@
 ---
+import { ClientRouter } from 'astro:transitions';
+
 interface Props {
 	title: string;
 }
@@ -15,9 +17,10 @@ const { title } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content="Portfolio de Noam Roger - Développeur Backend" />
 		<title>{title} | Noam Roger</title>
+		<ClientRouter />
 	</head>
 	<body>
-		<div class="particles-container">
+		<div class="particles-container" transition:persist>
 			<div class="particle"></div>
 			<div class="particle"></div>
 			<div class="particle"></div>
@@ -39,7 +42,7 @@ const { title } = Astro.props;
 			<div class="particle"></div>
 			<div class="particle"></div>
 		</div>
-		<div class="custom-cursor"></div>
+		<div class="custom-cursor" transition:persist></div>
 		<slot />
 	</body>
 </html>
@@ -196,19 +199,28 @@ const { title } = Astro.props;
 </style>
 
 <script>
-	const cursor = document.querySelector('.custom-cursor');
+	const initCursor = () => {
+		const cursor = document.querySelector('.custom-cursor') as HTMLElement;
 
-	if (cursor) {
-		document.addEventListener('mousemove', (e) => {
-			cursor.style.left = e.clientX - 10 + 'px';
-			cursor.style.top = e.clientY - 10 + 'px';
-		});
+		if (cursor) {
+			document.addEventListener('mousemove', (e) => {
+				cursor.style.left = e.clientX - 10 + 'px';
+				cursor.style.top = e.clientY - 10 + 'px';
+			});
 
-		const hoverElements = document.querySelectorAll('a, button, .skill-card, .project-card, .tech-item');
-		hoverElements.forEach(el => {
-			el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-			el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-		});
-	}
+			const attachHover = () => {
+				const hoverElements = document.querySelectorAll('a, button, .skill-card, .project-card, .tech-item');
+				hoverElements.forEach(el => {
+					el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+					el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+				});
+			};
+
+			attachHover();
+		}
+	};
+
+	// Initialize on first load and after each navigation
+	document.addEventListener('astro:page-load', initCursor);
 </script>
 </html>
