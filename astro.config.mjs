@@ -5,4 +5,5 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
 	site: 'https://www.noamroger.fr',
 	base: '/',
+	prefetch: true,
 });

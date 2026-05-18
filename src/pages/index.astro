@@ -455,37 +455,44 @@ import Wrench from '../components/icons/Wrench.astro';
 </style>
 
 <script>
-	const typingText = document.getElementById('typing-text');
-	const texts = ['Backend Developer', 'API Architect', 'System Designer', 'Problem Solver'];
-	let textIndex = 0;
-	let charIndex = 0;
-	let isDeleting = false;
-	let typingSpeed = 100;
+	const initTyping = () => {
+		const typingText = document.getElementById('typing-text');
+		if (!typingText) return;
 
-	function type() {
-		const currentText = texts[textIndex];
+		const texts = ['Backend Developer', 'API Architect', 'System Designer', 'Problem Solver'];
+		let textIndex = 0;
+		let charIndex = 0;
+		let isDeleting = false;
+		let typingSpeed = 100;
+		let timeoutId: number;
 
-		if (isDeleting) {
-			typingText.textContent = currentText.substring(0, charIndex - 1);
-			charIndex--;
-			typingSpeed = 50;
-		} else {
-			typingText.textContent = currentText.substring(0, charIndex + 1);
-			charIndex++;
-			typingSpeed = 100;
+		function type() {
+			const currentText = texts[textIndex];
+
+			if (isDeleting) {
+				typingText.textContent = currentText.substring(0, charIndex - 1);
+				charIndex--;
+				typingSpeed = 50;
+			} else {
+				typingText.textContent = currentText.substring(0, charIndex + 1);
+				charIndex++;
+				typingSpeed = 100;
+			}
+
+			if (!isDeleting && charIndex === currentText.length) {
+				isDeleting = true;
+				typingSpeed = 2000;
+			} else if (isDeleting && charIndex === 0) {
+				isDeleting = false;
+				textIndex = (textIndex + 1) % texts.length;
+				typingSpeed = 500;
+			}
+
+			timeoutId = setTimeout(type, typingSpeed) as unknown as number;
 		}
 
-		if (!isDeleting && charIndex === currentText.length) {
-			isDeleting = true;
-			typingSpeed = 2000;
-		} else if (isDeleting && charIndex === 0) {
-			isDeleting = false;
-			textIndex = (textIndex + 1) % texts.length;
-			typingSpeed = 500;
-		}
+		timeoutId = setTimeout(type, 1000) as unknown as number;
+	};
 
-		setTimeout(type, typingSpeed);
-	}
-
-	setTimeout(type, 1000);
+	document.addEventListener('astro:page-load', initTyping);
 </script>
