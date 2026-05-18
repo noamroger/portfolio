@@ -1,5 +1,6 @@
 ---
-const currentPage = Astro.url.pathname;
+const pathname = Astro.url.pathname.replace(/\/$/, "");
+const currentPage = pathname === "" ? "/" : pathname;
 ---
 
 <nav class="navbar">
