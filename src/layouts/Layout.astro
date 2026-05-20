@@ -42,7 +42,6 @@ const { title } = Astro.props;
 			<div class="particle"></div>
 			<div class="particle"></div>
 		</div>
-		<div class="custom-cursor" transition:persist></div>
 		<slot />
 	</body>
 </html>
@@ -163,64 +162,5 @@ const { title } = Astro.props;
 			opacity: 0.4;
 		}
 	}
-
-	.custom-cursor {
-		position: fixed;
-		width: 20px;
-		height: 20px;
-		border: 2px solid var(--accent-blue);
-		border-radius: 50%;
-		pointer-events: none;
-		z-index: 9999;
-		transition: transform 0.15s ease, background 0.15s ease;
-		mix-blend-mode: difference;
-	}
-
-	.custom-cursor.hover {
-		transform: scale(2);
-		background: rgba(59, 130, 246, 0.2);
-	}
-
-	@media (min-width: 769px) {
-		* {
-			cursor: none !important;
-		}
-
-		.custom-cursor {
-			display: block;
-		}
-	}
-
-	@media (max-width: 768px) {
-		.custom-cursor {
-			display: none;
-		}
-	}
 </style>
-
-<script>
-	const initCursor = () => {
-		const cursor = document.querySelector('.custom-cursor') as HTMLElement;
-
-		if (cursor) {
-			document.addEventListener('mousemove', (e) => {
-				cursor.style.left = e.clientX - 10 + 'px';
-				cursor.style.top = e.clientY - 10 + 'px';
-			});
-
-			const attachHover = () => {
-				const hoverElements = document.querySelectorAll('a, button, .skill-card, .project-card, .tech-item');
-				hoverElements.forEach(el => {
-					el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-					el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-				});
-			};
-
-			attachHover();
-		}
-	};
-
-	// Initialize on first load and after each navigation
-	document.addEventListener('astro:page-load', initCursor);
-</script>
 </html>
