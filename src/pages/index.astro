@@ -6,29 +6,31 @@ import Lightning from '../components/icons/Lightning.astro';
 import Lock from '../components/icons/Lock.astro';
 import Grid from '../components/icons/Grid.astro';
 import Wrench from '../components/icons/Wrench.astro';
+import { t } from '../i18n';
+
+const icons = [Lightning, Lock, Grid, Wrench];
 ---
 
-<Layout title="Home">
+<Layout title={t.home.pageTitle} description={t.home.metaDescription}>
 	<Navbar />
-	<main class="home">
+	<main id="main" class="home">
 		<section class="hero">
 			<div class="hero-bg"></div>
 			<div class="hero-grid"></div>
 			<div class="container hero-content">
 				<div class="hero-text">
 					<h1 class="hero-title">
-						Hi, I'm <span class="highlight">Noam Roger</span>
+						{t.home.greeting} <span class="highlight">Noam Roger</span>
 					</h1>
 					<p class="hero-subtitle">
-						<span id="typing-text"></span><span class="typing-cursor"></span>
+						<span id="typing-text" data-texts={JSON.stringify(t.home.typingTexts)}></span><span class="typing-cursor"></span>
 					</p>
 					<p class="hero-description">
-						Specialized in designing robust and performant architectures.
-						I transform complex ideas into elegant solutions.
+						{t.home.description}
 					</p>
 					<div class="hero-actions">
-						<a href="/projects" class="btn btn-primary">View My Projects</a>
-						<a href="/contact" class="btn btn-secondary">Get In Touch</a>
+						<a href="/projects" class="btn btn-primary">{t.home.ctaProjects}</a>
+						<a href="/contact" class="btn btn-secondary">{t.home.ctaContact}</a>
 					</div>
 				</div>
 				<div class="hero-visual">
@@ -36,12 +38,12 @@ import Wrench from '../components/icons/Wrench.astro';
 						<pre><code><span class="keyword">class</span> <span class="class">Developer</span> {'{'}
   <span class="keyword">constructor</span>() {'{'}
     <span class="property">this</span>.name = <span class="string">"Noam Roger"</span>;
-    <span class="property">this</span>.role = <span class="string">"Backend Dev"</span>;
-    <span class="property">this</span>.passion = <span class="string">"Clean Code"</span>;
+    <span class="property">this</span>.role = <span class="string">"{t.home.code.role}"</span>;
+    <span class="property">this</span>.passion = <span class="string">"{t.home.code.passion}"</span>;
   {'}'}
 
   <span class="function">build</span>() {'{'}
-    <span class="keyword">return</span> <span class="string">"Awesome stuff"</span>;
+    <span class="keyword">return</span> <span class="string">"{t.home.code.returns}"</span>;
   {'}'}
 {'}'}</code></pre>
 					</div>
@@ -51,28 +53,18 @@ import Wrench from '../components/icons/Wrench.astro';
 
 		<section class="skills">
 			<div class="container">
-				<h2 class="section-title">Skills</h2>
+				<h2 class="section-title">{t.home.skillsTitle}</h2>
 				<div class="skills-grid">
-					<div class="skill-card">
-						<Lightning class="skill-icon" width="64" height="64" />
-						<h3>Performance</h3>
-						<p>Query optimization, caching, and scalability</p>
-					</div>
-					<div class="skill-card">
-						<Lock class="skill-icon" width="64" height="64" />
-						<h3>Security</h3>
-						<p>Authentication, authorization, and data protection</p>
-					</div>
-					<div class="skill-card">
-						<Grid class="skill-icon" width="64" height="64" />
-						<h3>Architecture</h3>
-						<p>Design patterns, microservices, and distributed systems</p>
-					</div>
-					<div class="skill-card">
-						<Wrench class="skill-icon" width="64" height="64" />
-						<h3>Testing</h3>
-						<p>Unit tests, integration, and TDD</p>
-					</div>
+					{t.home.skills.map((skill, i) => {
+						const Icon = icons[i];
+						return (
+							<div class="skill-card">
+								<Icon class="skill-icon" width="64" height="64" />
+								<h3>{skill.title}</h3>
+								<p>{skill.description}</p>
+							</div>
+						);
+					})}
 				</div>
 			</div>
 		</section>
@@ -459,7 +451,8 @@ import Wrench from '../components/icons/Wrench.astro';
 		const typingText = document.getElementById('typing-text');
 		if (!typingText) return;
 
-		const texts = ['Backend Developer', 'API Architect', 'System Designer', 'Problem Solver'];
+		const texts: string[] = JSON.parse(typingText.dataset.texts ?? '[]');
+		if (texts.length === 0) return;
 		let textIndex = 0;
 		let charIndex = 0;
 		let isDeleting = false;

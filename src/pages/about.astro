@@ -2,15 +2,21 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import { t } from '../i18n';
+
+const techStack = [
+	'Node.js', 'TypeScript', 'C', 'Java', 'PHP', 'Python', 'PostgreSQL',
+	'MariaDB', 'MySQL', 'Docker', 'React', 'Astro', 'Cloudflare', 'Git', 'Proxmox',
+];
 ---
 
-<Layout title="About">
+<Layout title={t.about.pageTitle} description={t.about.metaDescription}>
 	<Navbar />
-	<main class="about">
+	<main id="main" class="about">
 		<section class="about-hero">
 			<div class="container">
-				<h1 class="page-title">About Me</h1>
-				<p class="page-subtitle">Backend developer passionate about clean code and solid architectures</p>
+				<h1 class="page-title">{t.about.heading}</h1>
+				<p class="page-subtitle">{t.about.subtitle}</p>
 			</div>
 		</section>
 
@@ -18,82 +24,43 @@ import Footer from '../components/Footer.astro';
 			<div class="container">
 				<div class="about-grid">
 					<div class="about-text">
-						<h2>My Journey</h2>
-						<p>
-							Backend developer with several years of experience, I specialize in creating
-							robust APIs and scalable systems. My passion for clean code and best practices
-							drives me to constantly improve my skills.
-						</p>
-						<p>
-							I enjoy tackling complex technical challenges and transforming problems into
-							elegant solutions. My approach combines technical rigor with the creativity
-							needed to innovate.
-						</p>
+						<h2>{t.about.journeyTitle}</h2>
+						{t.about.journey.map((paragraph) => <p>{paragraph}</p>)}
 
-						<h2>My Philosophy</h2>
+						<h2>{t.about.philosophyTitle}</h2>
 						<ul class="philosophy-list">
-							<li>
-								<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-									<polyline points="20 6 9 17 4 12"></polyline>
-								</svg>
-								<span>Code should be readable and maintainable</span>
-							</li>
-							<li>
-								<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-									<polyline points="20 6 9 17 4 12"></polyline>
-								</svg>
-								<span>Simplicity over complexity</span>
-							</li>
-							<li>
-								<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-									<polyline points="20 6 9 17 4 12"></polyline>
-								</svg>
-								<span>Tests are essential for quality</span>
-							</li>
-							<li>
-								<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-									<polyline points="20 6 9 17 4 12"></polyline>
-								</svg>
-								<span>Continuous learning is indispensable</span>
-							</li>
+							{t.about.philosophy.map((item) => (
+								<li>
+									<svg aria-hidden="true" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<polyline points="20 6 9 17 4 12"></polyline>
+									</svg>
+									<span>{item}</span>
+								</li>
+							))}
 						</ul>
 					</div>
 
 					<div class="about-sidebar">
 						<div class="info-card">
-							<h3>Information</h3>
+							<h3>{t.about.infoTitle}</h3>
 							<div class="info-item">
-								<span class="label">Name</span>
+								<span class="label">{t.about.infoName}</span>
 								<span class="value">Noam Roger</span>
 							</div>
 							<div class="info-item">
-								<span class="label">Location</span>
-								<span class="value">Le Mans (France)</span>
+								<span class="label">{t.about.infoLocation}</span>
+								<span class="value">{t.about.infoLocationValue}</span>
 							</div>
 							<div class="info-item">
-								<span class="label">Availability</span>
-								<span class="value">Open to opportunities</span>
+								<span class="label">{t.about.infoAvailability}</span>
+								<span class="value">{t.about.infoAvailabilityValue}</span>
 							</div>
 						</div>
 
 						<div class="tech-card">
-							<h3>Tech Stack</h3>
+							<h3>{t.about.techTitle}</h3>
 							<div class="tech-list">
-								<span class="tech-tag">Node.js</span>
-								<span class="tech-tag">TypeScript</span>
-								<span class="tech-tag">C</span>
-								<span class="tech-tag">Java</span>
-								<span class="tech-tag">PHP</span>
-								<span class="tech-tag">Python</span>
-								<span class="tech-tag">PostgreSQL</span>
-								<span class="tech-tag">MariaDB</span>
-								<span class="tech-tag">MySQL</span>
-								<span class="tech-tag">Docker</span>
-								<span class="tech-tag">React</span>
-								<span class="tech-tag">Astro</span>
-								<span class="tech-tag">Cloudflare</span>
-								<span class="tech-tag">Git</span>
-								<span class="tech-tag">Proxmox</span>
+								{techStack.map((tech) => <span class="tech-tag">{tech}</span>)}
 							</div>
 						</div>
 					</div>

@@ -1,25 +1,86 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import { contactEmail, locale, locales, origins, t } from '../i18n';
 
 interface Props {
 	title: string;
+	description?: string;
+	noindex?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, description = t.meta.description, noindex = false } = Astro.props;
+
+const path = Astro.url.pathname;
+const origin = origins[locale];
+const canonical = origin + path;
+const fullTitle = `${title} | Noam Roger`;
+const ogImage = `${origin}/og-image.png`;
+
+const person = {
+	'@context': 'https://schema.org',
+	'@type': 'Person',
+	name: 'Noam Roger',
+	jobTitle: t.meta.jobTitle,
+	url: `${origin}/`,
+	image: ogImage,
+	email: `mailto:${contactEmail}`,
+	address: {
+		'@type': 'PostalAddress',
+		addressLocality: 'Le Mans',
+		addressCountry: 'FR',
+	},
+	sameAs: ['https://github.com/noamroger', 'https://linkedin.com/in/noamroger'],
+};
 ---
 
 <!doctype html>
-<html lang="fr">
+<html lang={t.htmlLang}>
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" type="image/ico" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
-		<meta name="description" content="Portfolio de Noam Roger - Développeur Backend" />
-		<title>{title} | Noam Roger</title>
+
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<meta name="theme-color" content="#0a0e17" />
+		<meta name="color-scheme" content="dark" />
+
+		<title>{fullTitle}</title>
+		<meta name="description" content={description} />
+		<meta name="author" content="Noam Roger" />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Noam Roger" />
+		<meta property="og:locale" content={t.meta.ogLocale} />
+		<meta property="og:title" content={fullTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={ogImage} />
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content={fullTitle} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImage} />
+
+		{noindex ? (
+			<meta name="robots" content="noindex, follow" />
+		) : (
+			<Fragment>
+				<link rel="canonical" href={canonical} />
+				{locales.map((code) => (
+					<link rel="alternate" hreflang={code} href={origins[code] + path} />
+				))}
+				<link rel="alternate" hreflang="x-default" href={origins.en + path} />
+			</Fragment>
+		)}
+
+		{path === '/' && (
+			<script type="application/ld+json" set:html={JSON.stringify(person)} />
+		)}
+
 		<ClientRouter />
 	</head>
 	<body>
+		<a href="#main" class="skip-link">{t.a11y.skipToContent}</a>
 		<div class="particles-container" transition:persist>
 			<div class="particle"></div>
 			<div class="particle"></div>
@@ -90,6 +151,29 @@ const { title } = Astro.props;
 		color: var(--accent-blue-light);
 	}
 
+	:focus-visible {
+		outline: 2px solid var(--accent-blue-light);
+		outline-offset: 3px;
+		border-radius: 2px;
+	}
+
+	.skip-link {
+		position: absolute;
+		left: 1rem;
+		top: -100%;
+		z-index: 200;
+		padding: 0.75rem 1.25rem;
+		border-radius: 0 0 8px 8px;
+		background: var(--bg-tertiary);
+		border: 1px solid var(--accent-blue);
+		color: var(--text-primary);
+		font-weight: 600;
+	}
+
+	.skip-link:focus {
+		top: 0;
+	}
+
 	.container {
 		max-width: 1200px;
 		margin: 0 auto;
@@ -143,6 +227,25 @@ const { title } = Astro.props;
 	.particle:nth-child(18) { left: 5%; top: 95%; animation-delay: 4.8s; animation-duration: 22s; }
 	.particle:nth-child(19) { left: 95%; top: 5%; animation-delay: 2.2s; animation-duration: 18s; }
 	.particle:nth-child(20) { left: 50%; top: 50%; animation-delay: 1.8s; animation-duration: 24s; }
+
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+			scroll-behavior: auto !important;
+		}
+
+		.particles-container {
+			display: none;
+		}
+	}
 
 	@keyframes float {
 		0%, 100% {

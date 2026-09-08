@@ -2,15 +2,16 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import { contactEmail, t } from '../i18n';
 ---
 
-<Layout title="Contact">
+<Layout title={t.contact.pageTitle} description={t.contact.metaDescription}>
 	<Navbar />
-	<main class="contact">
+	<main id="main" class="contact">
 		<section class="contact-hero">
 			<div class="container">
-				<h1 class="page-title">Contact</h1>
-				<p class="page-subtitle">Feel free to reach out to discuss your projects</p>
+				<h1 class="page-title">{t.contact.heading}</h1>
+				<p class="page-subtitle">{t.contact.subtitle}</p>
 			</div>
 		</section>
 
@@ -18,49 +19,45 @@ import Footer from '../components/Footer.astro';
 			<div class="container">
 				<div class="contact-grid">
 					<div class="contact-info">
-						<h2>Let's Talk About Your Project</h2>
-						<p>
-							I'm always interested in new opportunities and collaborations.
-							Feel free to contact me if you have a project in mind or just want
-							to chat about backend development.
-						</p>
+						<h2>{t.contact.infoTitle}</h2>
+						<p>{t.contact.infoText}</p>
 
 						<div class="contact-methods">
 							<div class="contact-method">
 								<div class="contact-icon">
-									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 										<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
 										<polyline points="22,6 12,13 2,6"></polyline>
 									</svg>
 								</div>
 								<div>
-									<h3>Email</h3>
-									<a href="mailto:contact@noamroger.fr">contact@noamroger.fr</a>
+									<h3>{t.contact.emailLabel}</h3>
+									<a href={`mailto:${contactEmail}`}>{contactEmail}</a>
 								</div>
 							</div>
 
 							<div class="contact-method">
 								<div class="contact-icon">
-									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 										<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
 									</svg>
 								</div>
 								<div>
-									<h3>GitHub</h3>
+									<h3>{t.contact.githubLabel}</h3>
 									<a href="https://github.com/noamroger" target="_blank" rel="noopener noreferrer">github.com/noamroger</a>
 								</div>
 							</div>
 
 							<div class="contact-method">
 								<div class="contact-icon">
-									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 										<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
 										<rect x="2" y="9" width="4" height="12"></rect>
 										<circle cx="4" cy="4" r="2"></circle>
 									</svg>
 								</div>
 								<div>
-									<h3>LinkedIn</h3>
+									<h3>{t.contact.linkedinLabel}</h3>
 									<a href="https://linkedin.com/in/noamroger" target="_blank" rel="noopener noreferrer">linkedin.com/in/noamroger</a>
 								</div>
 							</div>
@@ -68,29 +65,37 @@ import Footer from '../components/Footer.astro';
 					</div>
 
 					<div class="contact-form-wrapper">
-						<form class="contact-form" id="contact-form" name="contact">
+						<form
+							class="contact-form"
+							id="contact-form"
+							name="contact"
+							data-sending={t.contact.form.sending}
+							data-success={t.contact.form.success}
+							data-error={t.contact.form.error}
+							data-failure={t.contact.form.failure}
+						>
 
 							<div class="form-group">
-								<label for="name">Name</label>
-								<input type="text" id="name" name="name" required placeholder="Your name" />
+								<label for="name">{t.contact.form.name}</label>
+								<input type="text" id="name" name="name" required placeholder={t.contact.form.namePlaceholder} />
 							</div>
 
 							<div class="form-group">
-								<label for="email">Email</label>
-								<input type="email" id="email" name="email" required placeholder="your@email.com" />
+								<label for="email">{t.contact.form.email}</label>
+								<input type="email" id="email" name="email" required placeholder={t.contact.form.emailPlaceholder} />
 							</div>
 
 							<div class="form-group">
-								<label for="subject">Subject</label>
-								<input type="text" id="subject" name="subject" required placeholder="Subject of your message" />
+								<label for="subject">{t.contact.form.subject}</label>
+								<input type="text" id="subject" name="subject" required placeholder={t.contact.form.subjectPlaceholder} />
 							</div>
 
 							<div class="form-group">
-								<label for="message">Message</label>
-								<textarea id="message" name="message" rows="5" required placeholder="Your message..."></textarea>
+								<label for="message">{t.contact.form.message}</label>
+								<textarea id="message" name="message" rows="5" required placeholder={t.contact.form.messagePlaceholder}></textarea>
 							</div>
 
-							<button type="submit" class="btn btn-primary">Send Message</button>
+							<button type="submit" class="btn btn-primary">{t.contact.form.submit}</button>
 						</form>
 					</div>
 				</div>
@@ -288,7 +293,7 @@ import Footer from '../components/Footer.astro';
 
 			const originalText = submitBtn.textContent;
 
-			submitBtn.textContent = "Sending...";
+			submitBtn.textContent = form.dataset.sending ?? '';
 			submitBtn.disabled = true;
 
 			try {
@@ -303,15 +308,15 @@ import Footer from '../components/Footer.astro';
 				const data = await response.json();
 
 				if (response.ok) {
-					alert("Success! Your message has been sent.");
+					alert(form.dataset.success);
 					form.reset();
 				} else {
-					alert("Error: " + data.message);
+					alert(form.dataset.error + data.message);
 				}
 
 			} catch (error) {
 				console.error("Form submission error:", error);
-				alert("Something went wrong. Please try again.");
+				alert(form.dataset.failure);
 			} finally {
 				submitBtn.textContent = originalText;
 				submitBtn.disabled = false;

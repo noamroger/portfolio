@@ -2,76 +2,83 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import { Image } from 'astro:assets';
+import { t } from '../i18n';
+
+import californyan from '../assets/projects/californyan.webp';
+import codenames from '../assets/projects/codenames.webp';
+import gaulia from '../assets/projects/gaulia.webp';
+import romaybot from '../assets/projects/romaybot.webp';
+import webserver from '../assets/projects/webserver.webp';
+
+// Cards are 1 column below ~820px, 2 columns above, capped at ~552px each.
+const cardSizes = '(min-width: 1200px) 552px, (min-width: 820px) 50vw, 100vw';
+const cardWidths = [380, 560, 760, 1024];
 
 const projects = [
 	{
-		title: "Californyan",
-		description: "An AI-powered hotel receptionist created for the 24 Hours of Code 2025 (organized by the Le Mans Chamber of Commerce and Industry). A great introduction to agents in the age of AI.",
-		tech: ["Node.js", "AI", "LangChain", "API"],
+		...t.projects.items.californyan,
 		link: "#",
 		github: "https://github.com/noamroger/llm-hotel-24h",
-		image: "/assets/projects/californyan.webp"
+		image: californyan
 	},
 	{
-		title: "Webserver base",
-		description: "The foundation of the 2024 24h of Code project (organized by Lycée Réaumur in Laval). It served as a base for my various projects over the course of about a year.",
-		tech: ["Node.js", "Express", "JavaScript"],
+		...t.projects.items.webserver,
 		link: "#",
 		github: "https://github.com/noamroger/base-nodejs-webserver",
-		image: "/assets/projects/webserver.webp"
+		image: webserver
 	},
 	{
-		title: "Romaybot",
-		description: "A fictional card collection system (Pokémon parody). Created as part of a paid commission that includes a Twitch bot, Discord, and a website featuring these cards.",
-		tech: ["Node.js", "Discord.js", "Twitch", "MySQL"],
+		...t.projects.items.romaybot,
 		link: "#",
 		github: "https://github.com/noamroger/romaybot",
-		image: "/assets/projects/romaybot.webp"
+		image: romaybot
 	},
 	{
-		title: "Codenames",
-		description: "A multiplayer adaptation of the board game Codenames in C programming language, created as part of a university project. With a group of four.",
-		tech: ["C", "Socket", "Network Programming", "Multiplayer"],
+		...t.projects.items.codenames,
 		link: "https://github.com/noamroger/codenames-c/blob/main/rapport/presentation-video.mp4",
 		github: "https://github.com/noamroger/codenames-c",
-		image: "/assets/projects/codenames.webp"
+		image: codenames
 	},
 	{
-		title: "Enhanced Web Server Base",
-		description: "An advanced base with a separate frontend and backend, both developed in TypeScript. A solid foundation with my skills from 2026 still in development for my future projects.",
-		tech: ["TypeScript", "React", "Node.js", "Express"],
+		...t.projects.items.webserverTs,
 		link: "#",
 		github: "https://github.com/noamroger/webserver-ts",
-		image: "/assets/projects/webserver.webp"
+		image: webserver
 	},
 	{
-		title: "Gaulia Musique",
-		description: "A Discord bot that allows playing music in Discord voice channels. It has been added to over 800 servers, but is no longer maintained today.",
-		tech: ["Node.js", "Discord.js", "FFmpeg", "Music"],
+		...t.projects.items.gaulia,
 		link: "#",
 		github: "https://github.com/noamroger/GauliaMusique",
-		image: "/assets/projects/gaulia.webp"
+		image: gaulia
 	}
 ];
 ---
 
-<Layout title="Projects">
+<Layout title={t.projects.pageTitle} description={t.projects.metaDescription}>
 	<Navbar />
-	<main class="projects">
+	<main id="main" class="projects">
 		<section class="projects-hero">
 			<div class="container">
-				<h1 class="page-title">My Projects</h1>
-				<p class="page-subtitle">A selection of my work and contributions</p>
+				<h1 class="page-title">{t.projects.heading}</h1>
+				<p class="page-subtitle">{t.projects.subtitle}</p>
 			</div>
 		</section>
 
 		<section class="projects-content">
 			<div class="container">
 				<div class="projects-grid">
-					{projects.map((project) => (
+					{projects.map((project, i) => (
 						<article class="project-card">
 							<div class="project-image">
-								<img src={project.image} alt={project.title} loading="lazy" />
+								<Image
+									src={project.image}
+									alt={project.title}
+									widths={cardWidths}
+									sizes={cardSizes}
+									loading={i < 2 ? 'eager' : 'lazy'}
+									decoding={i < 2 ? 'sync' : 'async'}
+								/>
 							</div>
 							<div class="project-content">
 								<div class="project-header">
@@ -85,19 +92,19 @@ const projects = [
 								</div>
 								<div class="project-links">
 									<a href={project.github} class="project-link" target="_blank" rel="noopener noreferrer">
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+										<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
 											<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
 										</svg>
-										Code
+										{t.projects.codeLink}
 									</a>
 									{project.link && project.link !== "#" && (
 										<a href={project.link} class="project-link" target="_blank" rel="noopener noreferrer">
-											<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+											<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 												<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
 												<polyline points="15 3 21 3 21 9"></polyline>
 												<line x1="10" y1="14" x2="21" y2="3"></line>
 											</svg>
-											Demo
+											{t.projects.demoLink}
 										</a>
 									)}
 								</div>

@@ -1,4 +1,6 @@
 ---
+import { t } from '../i18n';
+
 const pathname = Astro.url.pathname.replace(/\/$/, "");
 const currentPage = pathname === "" ? "/" : pathname;
 ---
@@ -10,16 +12,16 @@ const currentPage = pathname === "" ? "/" : pathname;
 		</a>
 		<ul class="nav-links">
 			<li>
-				<a href="/" class={currentPage === '/' ? 'active' : ''}>Home</a>
+				<a href="/" class={currentPage === '/' ? 'active' : ''}>{t.nav.home}</a>
 			</li>
 			<li>
-				<a href="/about" class={currentPage === '/about' ? 'active' : ''}>About</a>
+				<a href="/about" class={currentPage === '/about' ? 'active' : ''}>{t.nav.about}</a>
 			</li>
 			<li>
-				<a href="/projects" class={currentPage === '/projects' ? 'active' : ''}>Projects</a>
+				<a href="/projects" class={currentPage === '/projects' ? 'active' : ''}>{t.nav.projects}</a>
 			</li>
 			<li>
-				<a href="/contact" class={currentPage === '/contact' ? 'active' : ''}>Contact</a>
+				<a href="/contact" class={currentPage === '/contact' ? 'active' : ''}>{t.nav.contact}</a>
 			</li>
 		</ul>
 	</div>
