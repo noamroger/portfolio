@@ -9,6 +9,7 @@ const en = {
 		skipToContent: 'Skip to content',
 	},
 	nav: {
+		switchLanguage: 'View this page in French',
 		home: 'Home',
 		about: 'About',
 		projects: 'Projects',

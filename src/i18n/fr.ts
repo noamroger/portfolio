@@ -11,6 +11,7 @@ const fr: Translations = {
 		skipToContent: 'Aller au contenu',
 	},
 	nav: {
+		switchLanguage: 'Voir cette page en anglais',
 		home: 'Accueil',
 		about: 'À propos',
 		projects: 'Projets',
