@@ -20,7 +20,21 @@ const origins = {
 export default defineConfig({
 	site: origins[locale],
 	base: '/',
-	prefetch: true,
+	// `prefetch: true` alone only arms links that opt in with
+	// data-astro-prefetch, so nothing was actually being prefetched. With four
+	// pages, fetching every internal link at idle right after load costs a few
+	// kB and makes each navigation hit the network zero times.
+	prefetch: {
+		prefetchAll: true,
+		defaultStrategy: 'load',
+	},
+	build: {
+		// Otherwise each navigation is two serial round trips: fetch the HTML,
+		// discover its stylesheet, fetch that too. Inlining puts the CSS inside
+		// the (already prefetched) document, so a click hits the network zero
+		// times. Costs ~3 kB gzipped per page.
+		inlineStylesheets: 'always',
+	},
 	integrations: [
 		sitemap({
 			filter: (page) => !page.includes('/404'),

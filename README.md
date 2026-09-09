@@ -51,8 +51,16 @@ en attribut `data-*` sur l'élément et le relire depuis le script — voir
   ce qui désactiverait l'optimisation.
 - **Icônes** : `favicon.ico` (16/32/48 px, frames PNG), `apple-touch-icon.png`
   et `og-image.png` sont dérivés du même monogramme.
+- **Navigation** : les quatre pages sont préchargées au chargement
+  (`prefetch.prefetchAll`, stratégie `load`) et le CSS est intégré au HTML
+  (`build.inlineStylesheets: 'always'`). Un clic ne déclenche donc aucune
+  requête réseau. Sans ça, chaque navigation coûtait deux allers-retours en
+  série — le HTML, puis la feuille de style découverte dedans — soit ~560 ms
+  mesurés en production.
 - **En-têtes HTTP** : `netlify.toml` met `/_astro/*` en cache immuable (les
-  noms de fichiers sont hashés) et pose `Content-Security-Policy`,
+  noms de fichiers sont hashés), donne aux pages une courte fenêtre de
+  fraîcheur pour que le préchargement ne soit pas annulé par une
+  revalidation, et pose `Content-Security-Policy`,
   `X-Content-Type-Options`, `Referrer-Policy` et `Permissions-Policy`.
   Le `connect-src` de la CSP autorise `https://forms.noam.ovh` pour le
   formulaire de contact : à mettre à jour si l'endpoint change.
