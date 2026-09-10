@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
 import { locale, origins, t } from '../i18n';
+import { projects as projectLinks, type ProjectKey } from '../data/projects';
 
 import californyan from '../assets/projects/californyan.webp';
 import codenames from '../assets/projects/codenames.webp';
@@ -15,44 +16,20 @@ import webserver from '../assets/projects/webserver.webp';
 const cardSizes = '(min-width: 1200px) 552px, (min-width: 820px) 50vw, 100vw';
 const cardWidths = [380, 560, 760, 1024];
 
-const projects = [
-	{
-		...t.projects.items.californyan,
-		link: "#",
-		github: "https://github.com/noamroger/llm-hotel-24h",
-		image: californyan
-	},
-	{
-		...t.projects.items.webserver,
-		link: "#",
-		github: "https://github.com/noamroger/base-nodejs-webserver",
-		image: webserver
-	},
-	{
-		...t.projects.items.romaybot,
-		link: "#",
-		github: "https://github.com/noamroger/romaybot",
-		image: romaybot
-	},
-	{
-		...t.projects.items.codenames,
-		link: "https://github.com/noamroger/codenames-c/blob/main/rapport/presentation-video.mp4",
-		github: "https://github.com/noamroger/codenames-c",
-		image: codenames
-	},
-	{
-		...t.projects.items.webserverTs,
-		link: "#",
-		github: "https://github.com/noamroger/webserver-ts",
-		image: webserver
-	},
-	{
-		...t.projects.items.gaulia,
-		link: "#",
-		github: "https://github.com/noamroger/GauliaMusique",
-		image: gaulia
-	}
-];
+const images: Record<ProjectKey, ImageMetadata> = {
+	californyan,
+	webserver,
+	romaybot,
+	codenames,
+	webserverTs: webserver,
+	gaulia,
+};
+
+const projects = projectLinks.map((project) => ({
+	...t.projects.items[project.key],
+	...project,
+	image: images[project.key],
+}));
 const origin = origins[locale];
 
 // Each card is a real public repository, so it maps onto SoftwareSourceCode.
@@ -119,8 +96,8 @@ const projectList = [
 										</svg>
 										{t.projects.codeLink}
 									</a>
-									{project.link && project.link !== "#" && (
-										<a href={project.link} class="project-link" target="_blank" rel="noopener noreferrer">
+									{project.demo && (
+										<a href={project.demo} class="project-link" target="_blank" rel="noopener noreferrer">
 											<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 												<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
 												<polyline points="15 3 21 3 21 9"></polyline>
