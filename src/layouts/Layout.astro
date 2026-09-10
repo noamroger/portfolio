@@ -327,6 +327,17 @@ const graph = {
 	.particle:nth-child(19) { left: 95%; top: 5%; animation-delay: 2.2s; animation-duration: 18s; }
 	.particle:nth-child(20) { left: 50%; top: 50%; animation-delay: 1.8s; animation-duration: 24s; }
 
+	@media (max-width: 768px) {
+		.particle:nth-child(2n) {
+			display: none;
+		}
+
+		.particle {
+			width: 3px;
+			height: 3px;
+		}
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		html {
 			scroll-behavior: auto;
