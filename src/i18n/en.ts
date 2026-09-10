@@ -43,7 +43,7 @@ const en = {
 		featuredStackTitle: 'What I build with',
 		featuredStackIntro:
 			'The languages, databases and tools I reach for day to day, on the server side as well as around it.',
-		skillsTitle: 'Backend Development Skills',
+		skillsTitle: 'Skills',
 		skills: [
 			{ title: 'Performance', description: 'Query optimization, caching, and scalability' },
 			{ title: 'Security', description: 'Authentication, authorization, and data protection' },
@@ -55,9 +55,9 @@ const en = {
 		metaTitle: 'About Noam Roger | Backend Developer in Le Mans, France',
 		metaDescription:
 			'Get to know Noam Roger: backend developer - his journey, his engineering philosophy and the technologies he works with.',
-		heading: 'About Noam Roger, Backend Developer',
+		heading: 'About Me',
 		subtitle: 'Backend developer passionate about clean code and solid architectures',
-		journeyTitle: 'My Path as a Backend Developer',
+		journeyTitle: 'My Journey',
 		journey: [
 			'Backend developer with several years of experience, I specialize in creating robust APIs and scalable systems. My passion for clean code and best practices drives me to constantly improve my skills.',
 			'I enjoy tackling complex technical challenges and transforming problems into elegant solutions. My approach combines technical rigor with the creativity needed to innovate.',
@@ -75,13 +75,13 @@ const en = {
 		infoLocationValue: 'Le Mans (France)',
 		infoAvailability: 'Availability',
 		infoAvailabilityValue: 'Open to opportunities',
-		techTitle: 'Tech Stack & Tools',
+		techTitle: 'Tech Stack',
 	},
 	projects: {
 		metaTitle: 'Projects | APIs, Discord Bots & Backend Systems - Noam Roger',
 		metaDescription:
 			"A selection of Noam Roger's backend projects: AI agents, Discord bots, web server foundations and multiplayer C programming.",
-		heading: 'My Backend Development Projects',
+		heading: 'My Projects',
 		subtitle: 'A selection of my work and contributions',
 		codeLink: 'Code',
 		demoLink: 'Demo',
@@ -134,7 +134,7 @@ const en = {
 		metaTitle: "Contact Noam Roger | Let's Talk About Your Backend Project",
 		metaDescription:
 			'Get in touch with Noam Roger to discuss a backend project, a collaboration or an opportunity.',
-		heading: 'Contact Noam Roger',
+		heading: 'Contact',
 		subtitle: 'Feel free to reach out to discuss your projects',
 		infoTitle: "Let's Talk About Your Project",
 		infoText:

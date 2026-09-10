@@ -45,7 +45,7 @@ const fr: Translations = {
 		featuredStackTitle: 'Ce avec quoi je construis',
 		featuredStackIntro:
 			"Les langages, bases de données et outils que j'utilise au quotidien, côté serveur comme autour.",
-		skillsTitle: 'Compétences en développement backend',
+		skillsTitle: 'Compétences',
 		skills: [
 			{ title: 'Performance', description: "Optimisation des requêtes, mise en cache et passage à l'échelle" },
 			{ title: 'Sécurité', description: 'Authentification, autorisation et protection des données' },
@@ -57,9 +57,9 @@ const fr: Translations = {
 		metaTitle: 'À propos de Noam Roger | Développeur backend au Mans',
 		metaDescription:
 			"Découvrez Noam Roger, développeur backend : son parcours, sa philosophie d'ingénierie et les technologies qu'il utilise.",
-		heading: 'À propos de Noam Roger, développeur backend',
+		heading: 'À propos de moi',
 		subtitle: 'Développeur backend passionné par le code propre et les architectures solides',
-		journeyTitle: 'Mon parcours de développeur backend',
+		journeyTitle: 'Mon parcours',
 		journey: [
 			"Développeur backend avec plusieurs années d'expérience, je suis spécialisé dans la création d'API robustes et de systèmes capables de monter en charge. Ma passion pour le code propre et les bonnes pratiques me pousse à progresser en permanence.",
 			"J'aime m'attaquer aux défis techniques complexes et transformer les problèmes en solutions élégantes. Mon approche allie rigueur technique et créativité pour innover.",
@@ -77,13 +77,13 @@ const fr: Translations = {
 		infoLocationValue: 'Le Mans (France)',
 		infoAvailability: 'Disponibilité',
 		infoAvailabilityValue: 'Ouvert aux opportunités',
-		techTitle: 'Technologies et outils',
+		techTitle: 'Technologies',
 	},
 	projects: {
 		metaTitle: 'Projets | API, bots Discord et systèmes backend - Noam Roger',
 		metaDescription:
 			'Une sélection des projets backend de Noam Roger : agents IA, bots Discord, bases de serveur web et programmation multijoueur en C.',
-		heading: 'Mes projets de développement backend',
+		heading: 'Mes projets',
 		subtitle: 'Une sélection de mes travaux et contributions',
 		codeLink: 'Code',
 		demoLink: 'Démo',
@@ -136,7 +136,7 @@ const fr: Translations = {
 		metaTitle: 'Contacter Noam Roger | Parlons de votre projet backend',
 		metaDescription:
 			"Contactez Noam Roger pour discuter d'un projet backend, d'une collaboration ou d'une opportunité.",
-		heading: 'Contacter Noam Roger',
+		heading: 'Contact',
 		subtitle: "N'hésitez pas à me contacter pour discuter de vos projets",
 		infoTitle: 'Parlons de votre projet',
 		infoText:
