@@ -118,6 +118,7 @@ const featured = projects.slice(0, 3).map((project) => ({
 
 	.hero {
 		min-height: calc(100vh - 80px);
+		min-height: calc(100svh - 80px);
 		display: flex;
 		align-items: center;
 		padding: 4rem 0;
@@ -538,12 +539,36 @@ const featured = projects.slice(0, 3).map((project) => ({
 	}
 
 	@media (max-width: 768px) {
+		.hero {
+			/* The mobile navbar is two rows, not the 80px of the desktop one. */
+			min-height: calc(100vh - 100px);
+			min-height: calc(100svh - 100px);
+			padding: 2.5rem 0 3.5rem;
+		}
+
 		.hero-title {
-			font-size: 2.5rem;
+			font-size: 2.25rem;
 		}
 
 		.hero-subtitle {
-			font-size: 1.25rem;
+			font-size: 1.15rem;
+		}
+
+		/* Side by side, both labels wrapped onto two lines. */
+		.hero-actions {
+			flex-direction: column;
+			align-self: stretch;
+			gap: 0.75rem;
+		}
+
+		.btn {
+			text-align: center;
+			padding: 0.9rem 1.5rem;
+		}
+
+		.code-block {
+			padding: 1.25rem;
+			font-size: 0.8rem;
 		}
 
 		.section-title {
