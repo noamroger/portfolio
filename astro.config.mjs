@@ -38,6 +38,19 @@ export default defineConfig({
 	integrations: [
 		sitemap({
 			filter: (page) => !page.includes('/404'),
+			// The two languages live on separate domains, so the built-in i18n
+			// option (which expects locale-prefixed paths) does not apply. Declare
+			// the alternates by hand instead, mirroring the <link rel="alternate">
+			// tags in the page head.
+			serialize(item) {
+				const { pathname } = new URL(item.url);
+				item.links = [
+					{ lang: 'en', url: origins.en + pathname },
+					{ lang: 'fr', url: origins.fr + pathname },
+					{ lang: 'x-default', url: origins.en + pathname },
+				];
+				return item;
+			},
 		}),
 	],
 });
