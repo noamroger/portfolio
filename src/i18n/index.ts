@@ -31,3 +31,15 @@ export const origins: Record<Locale, string> = {
 
 /** Contact address stays on the .fr domain regardless of the site language. */
 export const contactEmail = 'contact@noamroger.fr';
+
+/** Social profiles, used for schema.org sameAs and in the footer. */
+export const socialProfiles = [
+	'https://github.com/noamroger',
+	'https://linkedin.com/in/noamroger',
+];
+
+/** Shown on the About page and reused as schema.org knowsAbout. */
+export const techStack = [
+	'Node.js', 'TypeScript', 'C', 'Java', 'PHP', 'Python', 'PostgreSQL',
+	'MariaDB', 'MySQL', 'Docker', 'React', 'Astro', 'Cloudflare', 'Git', 'Proxmox',
+];

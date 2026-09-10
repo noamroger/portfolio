@@ -1,14 +1,24 @@
 ---
 import { ClientRouter } from 'astro:transitions';
-import { contactEmail, locale, locales, origins, t } from '../i18n';
+import { contactEmail, locale, locales, origins, socialProfiles, t, techStack } from '../i18n';
 
 interface Props {
 	title: string;
 	description?: string;
 	noindex?: boolean;
+	/** schema.org type of this page, e.g. AboutPage or ContactPage. */
+	pageType?: string;
+	/** Extra schema.org nodes appended to the page graph. */
+	schema?: Record<string, unknown>[];
 }
 
-const { title, description = t.meta.description, noindex = false } = Astro.props;
+const {
+	title,
+	description = t.meta.description,
+	noindex = false,
+	pageType = 'WebPage',
+	schema = [],
+} = Astro.props;
 
 const path = Astro.url.pathname;
 const origin = origins[locale];
@@ -16,20 +26,91 @@ const canonical = origin + path;
 const fullTitle = title;
 const ogImage = `${origin}/og-image.png`;
 
-const person = {
+// One @graph per page rather than scattered snippets: the nodes reference each
+// other by @id, so a crawler reading any page gets the whole picture.
+const personId = `${origin}/#person`;
+const businessId = `${origin}/#business`;
+const siteId = `${origin}/#website`;
+
+const address = {
+	'@type': 'PostalAddress',
+	addressLocality: 'Le Mans',
+	addressCountry: 'FR',
+};
+
+// Breadcrumbs: the site is flat, so it is always Home > current page.
+const crumbLabels: Record<string, string> = {
+	'/about': t.nav.about,
+	'/projects': t.nav.projects,
+	'/contact': t.nav.contact,
+};
+const crumbKey = path !== '/' && path.endsWith('/') ? path.slice(0, -1) : path;
+const crumbLabel = crumbLabels[crumbKey];
+
+const breadcrumb = crumbLabel
+	? {
+			'@type': 'BreadcrumbList',
+			'@id': `${canonical}#breadcrumb`,
+			itemListElement: [
+				{ '@type': 'ListItem', position: 1, name: t.nav.home, item: `${origin}/` },
+				{ '@type': 'ListItem', position: 2, name: crumbLabel, item: canonical },
+			],
+		}
+	: null;
+
+const graph = {
 	'@context': 'https://schema.org',
-	'@type': 'Person',
-	name: 'Noam Roger',
-	jobTitle: t.meta.jobTitle,
-	url: `${origin}/`,
-	image: ogImage,
-	email: `mailto:${contactEmail}`,
-	address: {
-		'@type': 'PostalAddress',
-		addressLocality: 'Le Mans',
-		addressCountry: 'FR',
-	},
-	sameAs: ['https://github.com/noamroger', 'https://linkedin.com/in/noamroger'],
+	'@graph': [
+		{
+			'@type': 'Person',
+			'@id': personId,
+			name: 'Noam Roger',
+			jobTitle: t.meta.jobTitle,
+			description: t.meta.description,
+			url: `${origin}/`,
+			image: ogImage,
+			email: `mailto:${contactEmail}`,
+			address,
+			knowsAbout: techStack,
+			sameAs: socialProfiles,
+		},
+		{
+			'@type': 'ProfessionalService',
+			'@id': businessId,
+			name: 'Noam Roger',
+			description: t.meta.description,
+			url: `${origin}/`,
+			image: ogImage,
+			email: `mailto:${contactEmail}`,
+			address,
+			areaServed: { '@type': 'Country', name: 'France' },
+			founder: { '@id': personId },
+			knowsLanguage: ['fr', 'en'],
+			sameAs: socialProfiles,
+		},
+		{
+			'@type': 'WebSite',
+			'@id': siteId,
+			name: 'Noam Roger',
+			url: `${origin}/`,
+			inLanguage: t.htmlLang,
+			publisher: { '@id': personId },
+		},
+		{
+			'@type': pageType,
+			'@id': canonical,
+			url: canonical,
+			name: title,
+			description,
+			inLanguage: t.htmlLang,
+			isPartOf: { '@id': siteId },
+			about: { '@id': personId },
+			primaryImageOfPage: ogImage,
+			...(breadcrumb ? { breadcrumb: { '@id': breadcrumb['@id'] } } : {}),
+		},
+		...(breadcrumb ? [breadcrumb] : []),
+		...schema,
+	],
 };
 ---
 
@@ -73,8 +154,8 @@ const person = {
 			</Fragment>
 		)}
 
-		{path === '/' && (
-			<script type="application/ld+json" set:html={JSON.stringify(person)} />
+		{!noindex && (
+			<script type="application/ld+json" set:html={JSON.stringify(graph)} />
 		)}
 
 		<ClientRouter />

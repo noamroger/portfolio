@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
-import { t } from '../i18n';
+import { locale, origins, t } from '../i18n';
 
 import californyan from '../assets/projects/californyan.webp';
 import codenames from '../assets/projects/codenames.webp';
@@ -53,9 +53,31 @@ const projects = [
 		image: gaulia
 	}
 ];
+const origin = origins[locale];
+
+// Each card is a real public repository, so it maps onto SoftwareSourceCode.
+const projectList = [
+	{
+		'@type': 'ItemList',
+		'@id': `${origin}/projects/#list`,
+		numberOfItems: projects.length,
+		itemListElement: projects.map((project, i) => ({
+			'@type': 'ListItem',
+			position: i + 1,
+			item: {
+				'@type': 'SoftwareSourceCode',
+				name: project.title,
+				description: project.description,
+				programmingLanguage: project.tech,
+				codeRepository: project.github,
+				author: { '@id': `${origin}/#person` },
+			},
+		})),
+	},
+];
 ---
 
-<Layout title={t.projects.metaTitle} description={t.projects.metaDescription}>
+<Layout title={t.projects.metaTitle} description={t.projects.metaDescription} pageType="CollectionPage" schema={projectList}>
 	<Navbar />
 	<main id="main" class="projects">
 		<section class="projects-hero">
