@@ -13,7 +13,7 @@ const { title, description = t.meta.description, noindex = false } = Astro.props
 const path = Astro.url.pathname;
 const origin = origins[locale];
 const canonical = origin + path;
-const fullTitle = `${title} | Noam Roger`;
+const fullTitle = title;
 const ogImage = `${origin}/og-image.png`;
 
 const person = {

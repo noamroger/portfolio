@@ -21,7 +21,7 @@ const fr: Translations = {
 		rights: 'Tous droits réservés.',
 	},
 	home: {
-		pageTitle: 'Accueil',
+		metaTitle: 'Noam Roger | Développeur backend - API et systèmes fiables',
 		metaDescription:
 			'Noam Roger, développeur backend basé au Mans. API robustes, systèmes capables de monter en charge et architectures propres.',
 		greeting: 'Bonjour, je suis',
@@ -44,7 +44,7 @@ const fr: Translations = {
 		],
 	},
 	about: {
-		pageTitle: 'À propos',
+		metaTitle: 'À propos de Noam Roger | Développeur backend au Mans',
 		metaDescription:
 			"Découvrez Noam Roger, développeur backend : son parcours, sa philosophie d'ingénierie et les technologies qu'il utilise.",
 		heading: 'À propos de moi',
@@ -70,7 +70,7 @@ const fr: Translations = {
 		techTitle: 'Technologies',
 	},
 	projects: {
-		pageTitle: 'Projets',
+		metaTitle: 'Projets | API, bots Discord et systèmes backend - Noam Roger',
 		metaDescription:
 			'Une sélection des projets backend de Noam Roger : agents IA, bots Discord, bases de serveur web et programmation multijoueur en C.',
 		heading: 'Mes projets',
@@ -117,7 +117,7 @@ const fr: Translations = {
 		},
 	},
 	contact: {
-		pageTitle: 'Contact',
+		metaTitle: 'Contacter Noam Roger | Parlons de votre projet backend',
 		metaDescription:
 			"Contactez Noam Roger pour discuter d'un projet backend, d'une collaboration ou d'une opportunité.",
 		heading: 'Contact',
@@ -145,7 +145,7 @@ const fr: Translations = {
 		},
 	},
 	notFound: {
-		pageTitle: '404 - Page introuvable',
+		metaTitle: 'Page introuvable (404) | Noam Roger',
 		title: "Oups ! Vous êtes perdu dans l'espace.",
 		message:
 			"La page que vous cherchez n'existe pas ou a été déplacée. Retournons en terrain connu.",

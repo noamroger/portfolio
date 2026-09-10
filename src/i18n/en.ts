@@ -19,7 +19,7 @@ const en = {
 		rights: 'All rights reserved.',
 	},
 	home: {
-		pageTitle: 'Home',
+		metaTitle: 'Noam Roger | Backend Developer - APIs & Scalable Systems',
 		metaDescription:
 			'Noam Roger, backend developer based in Le Mans, France. Robust APIs, scalable systems and clean architectures.',
 		greeting: "Hi, I'm",
@@ -42,7 +42,7 @@ const en = {
 		],
 	},
 	about: {
-		pageTitle: 'About',
+		metaTitle: 'About Noam Roger | Backend Developer in Le Mans, France',
 		metaDescription:
 			'Get to know Noam Roger: backend developer - his journey, his engineering philosophy and the technologies he works with.',
 		heading: 'About Me',
@@ -68,7 +68,7 @@ const en = {
 		techTitle: 'Tech Stack',
 	},
 	projects: {
-		pageTitle: 'Projects',
+		metaTitle: 'Projects | APIs, Discord Bots & Backend Systems - Noam Roger',
 		metaDescription:
 			"A selection of Noam Roger's backend projects: AI agents, Discord bots, web server foundations and multiplayer C programming.",
 		heading: 'My Projects',
@@ -115,7 +115,7 @@ const en = {
 		},
 	},
 	contact: {
-		pageTitle: 'Contact',
+		metaTitle: "Contact Noam Roger | Let's Talk About Your Backend Project",
 		metaDescription:
 			'Get in touch with Noam Roger to discuss a backend project, a collaboration or an opportunity.',
 		heading: 'Contact',
@@ -143,7 +143,7 @@ const en = {
 		},
 	},
 	notFound: {
-		pageTitle: '404 - Page Not Found',
+		metaTitle: 'Page Not Found (404) | Noam Roger',
 		title: "Oops! You're lost in space.",
 		message: "The page you are looking for doesn't exist or has been moved. Let's get you back to safety.",
 		back: 'Back to Home',
