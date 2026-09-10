@@ -36,6 +36,13 @@ const fr: Translations = {
 			passion: 'Code propre',
 			returns: 'Des trucs cool',
 		},
+		featuredTitle: 'Projets à la une',
+		featuredIntro:
+			"Quelques réalisations, de l'agent IA au jeu multijoueur écrit en C. Chacune est open source et le code est sur GitHub.",
+		featuredCta: 'Voir tous les projets',
+		featuredStackTitle: 'Ce avec quoi je construis',
+		featuredStackIntro:
+			"Les langages, bases de données et outils que j'utilise au quotidien, côté serveur comme autour.",
 		skillsTitle: 'Compétences en développement backend',
 		skills: [
 			{ title: 'Performance', description: "Optimisation des requêtes, mise en cache et passage à l'échelle" },

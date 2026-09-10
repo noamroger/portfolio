@@ -34,6 +34,13 @@ const en = {
 			passion: 'Clean Code',
 			returns: 'Awesome stuff',
 		},
+		featuredTitle: 'Featured Projects',
+		featuredIntro:
+			'A few things I have built, from an AI agent to a multiplayer game written in C. Each one is open source and the code is on GitHub.',
+		featuredCta: 'See all projects',
+		featuredStackTitle: 'What I build with',
+		featuredStackIntro:
+			'The languages, databases and tools I reach for day to day, on the server side as well as around it.',
 		skillsTitle: 'Backend Development Skills',
 		skills: [
 			{ title: 'Performance', description: 'Query optimization, caching, and scalability' },

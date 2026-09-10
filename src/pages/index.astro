@@ -6,9 +6,17 @@ import Lightning from '../components/icons/Lightning.astro';
 import Lock from '../components/icons/Lock.astro';
 import Grid from '../components/icons/Grid.astro';
 import Wrench from '../components/icons/Wrench.astro';
-import { t } from '../i18n';
+import { t, techStack } from '../i18n';
+import { projects } from '../data/projects';
 
 const icons = [Lightning, Lock, Grid, Wrench];
+
+// The three cards at the top of the Projects page, so the home page carries
+// real copy and links through to the full list.
+const featured = projects.slice(0, 3).map((project) => ({
+	...t.projects.items[project.key],
+	github: project.github,
+}));
 ---
 
 <Layout title={t.home.metaTitle} description={t.home.metaDescription}>
@@ -47,6 +55,37 @@ const icons = [Lightning, Lock, Grid, Wrench];
   {'}'}
 {'}'}</code></pre>
 					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="featured">
+			<div class="container">
+				<h2 class="section-title">{t.home.featuredTitle}</h2>
+				<p class="section-intro">{t.home.featuredIntro}</p>
+				<div class="featured-grid">
+					{featured.map((project) => (
+						<article class="featured-card">
+							<h3>{project.title}</h3>
+							<p>{project.description}</p>
+							<div class="featured-tech">
+								{project.tech.map((tech) => <span class="tech-tag">{tech}</span>)}
+							</div>
+						</article>
+					))}
+				</div>
+				<div class="featured-actions">
+					<a href="/projects" class="btn btn-secondary">{t.home.featuredCta}</a>
+				</div>
+			</div>
+		</section>
+
+		<section class="stack">
+			<div class="container">
+				<h2 class="section-title">{t.home.featuredStackTitle}</h2>
+				<p class="section-intro">{t.home.featuredStackIntro}</p>
+				<div class="stack-list">
+					{techStack.map((tech) => <span class="tech-tag">{tech}</span>)}
 				</div>
 			</div>
 		</section>
@@ -300,6 +339,77 @@ const icons = [Lightning, Lock, Grid, Wrench];
 		color: #82aaff;
 	}
 
+	.section-intro {
+		max-width: 640px;
+		margin: -2rem auto 3rem;
+		text-align: center;
+		color: var(--text-secondary);
+	}
+
+	.featured {
+		padding: 6rem 0;
+	}
+
+	.featured-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: 2rem;
+	}
+
+	.featured-card {
+		background: var(--bg-secondary);
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		padding: 1.75rem;
+		transition: transform 0.3s ease, border-color 0.3s ease;
+	}
+
+	.featured-card:hover {
+		transform: translateY(-4px);
+		border-color: var(--accent-blue);
+	}
+
+	.featured-card h3 {
+		font-size: 1.15rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.featured-card p {
+		color: var(--text-secondary);
+		font-size: 0.95rem;
+		margin-bottom: 1.25rem;
+	}
+
+	.featured-tech,
+	.stack-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.stack-list {
+		justify-content: center;
+	}
+
+	.tech-tag {
+		background: var(--bg-tertiary);
+		border: 1px solid var(--border-color);
+		border-radius: 999px;
+		padding: 0.25rem 0.75rem;
+		font-size: 0.8rem;
+		color: var(--text-secondary);
+	}
+
+	.featured-actions {
+		display: flex;
+		justify-content: center;
+		margin-top: 3rem;
+	}
+
+	.stack {
+		padding: 0 0 6rem;
+	}
+
 	.skills {
 		padding: 6rem 0;
 		background: var(--bg-secondary);
@@ -440,8 +550,13 @@ const icons = [Lightning, Lock, Grid, Wrench];
 			font-size: 2rem;
 		}
 
-		.skills {
+		.skills,
+		.featured {
 			padding: 4rem 0;
+		}
+
+		.stack {
+			padding: 0 0 4rem;
 		}
 	}
 </style>
