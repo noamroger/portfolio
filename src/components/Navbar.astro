@@ -12,7 +12,7 @@ const otherHref = origins[otherLocale] + (currentPage === '/404' ? '/' : Astro.u
 
 <nav class="navbar">
 	<div class="container navbar-content">
-		<a href="/" class="logo">
+		<a href="/" class="logo" aria-label={t.nav.logoLabel}>
 			<span class="logo-text">NR</span>
 		</a>
 		<div class="navbar-right">

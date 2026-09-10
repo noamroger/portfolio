@@ -11,6 +11,7 @@ const fr: Translations = {
 		skipToContent: 'Aller au contenu',
 	},
 	nav: {
+		logoLabel: "Noam Roger - retour à l'accueil",
 		switchLanguage: 'Voir cette page en anglais',
 		home: 'Accueil',
 		about: 'À propos',
@@ -35,7 +36,7 @@ const fr: Translations = {
 			passion: 'Code propre',
 			returns: 'Des trucs cool',
 		},
-		skillsTitle: 'Compétences',
+		skillsTitle: 'Compétences en développement backend',
 		skills: [
 			{ title: 'Performance', description: "Optimisation des requêtes, mise en cache et passage à l'échelle" },
 			{ title: 'Sécurité', description: 'Authentification, autorisation et protection des données' },
@@ -47,9 +48,9 @@ const fr: Translations = {
 		metaTitle: 'À propos de Noam Roger | Développeur backend au Mans',
 		metaDescription:
 			"Découvrez Noam Roger, développeur backend : son parcours, sa philosophie d'ingénierie et les technologies qu'il utilise.",
-		heading: 'À propos de moi',
+		heading: 'À propos de Noam Roger, développeur backend',
 		subtitle: 'Développeur backend passionné par le code propre et les architectures solides',
-		journeyTitle: 'Mon parcours',
+		journeyTitle: 'Mon parcours de développeur backend',
 		journey: [
 			"Développeur backend avec plusieurs années d'expérience, je suis spécialisé dans la création d'API robustes et de systèmes capables de monter en charge. Ma passion pour le code propre et les bonnes pratiques me pousse à progresser en permanence.",
 			"J'aime m'attaquer aux défis techniques complexes et transformer les problèmes en solutions élégantes. Mon approche allie rigueur technique et créativité pour innover.",
@@ -67,48 +68,54 @@ const fr: Translations = {
 		infoLocationValue: 'Le Mans (France)',
 		infoAvailability: 'Disponibilité',
 		infoAvailabilityValue: 'Ouvert aux opportunités',
-		techTitle: 'Technologies',
+		techTitle: 'Technologies et outils',
 	},
 	projects: {
 		metaTitle: 'Projets | API, bots Discord et systèmes backend - Noam Roger',
 		metaDescription:
 			'Une sélection des projets backend de Noam Roger : agents IA, bots Discord, bases de serveur web et programmation multijoueur en C.',
-		heading: 'Mes projets',
+		heading: 'Mes projets de développement backend',
 		subtitle: 'Une sélection de mes travaux et contributions',
 		codeLink: 'Code',
 		demoLink: 'Démo',
 		items: {
 			californyan: {
+				imageAlt: "Interface de Californyan : un réceptionniste d'hôtel propulsé par l'IA répondant à un client",
 				title: 'Californyan',
 				description:
 					"Un réceptionniste d'hôtel propulsé par l'IA, réalisé pour les 24 Heures du Code 2025 (organisées par la CCI du Mans). Une belle introduction aux agents à l'ère de l'IA.",
 				tech: ['Node.js', 'IA', 'LangChain', 'API'],
 			},
 			webserver: {
+				imageAlt: "Base de serveur web Node.js et Express, code source du projet de départ",
 				title: 'Base de serveur web',
 				description:
 					"La fondation du projet des 24h du Code 2024 (organisées par le lycée Réaumur à Laval). Elle m'a servi de base pour mes différents projets pendant près d'un an.",
 				tech: ['Node.js', 'Express', 'JavaScript'],
 			},
 			romaybot: {
+				imageAlt: "Romaybot : fiche de carte à collectionner du bot Twitch et Discord",
 				title: 'Romaybot',
 				description:
 					"Un système de collection de cartes fictives (parodie de Pokémon). Réalisé dans le cadre d'une commande rémunérée comprenant un bot Twitch, un bot Discord et un site web présentant ces cartes.",
 				tech: ['Node.js', 'Discord.js', 'Twitch', 'MySQL'],
 			},
 			codenames: {
+				imageAlt: "Codenames multijoueur écrit en C, plateau de jeu vu par un joueur",
 				title: 'Codenames',
 				description:
 					"Une adaptation multijoueur du jeu de société Codenames en langage C, réalisée dans le cadre d'un projet universitaire, à quatre.",
 				tech: ['C', 'Socket', 'Réseau', 'Multijoueur'],
 			},
 			webserverTs: {
+				imageAlt: "Base de serveur web TypeScript avec frontend et backend séparés",
 				title: 'Base de serveur web avancée',
 				description:
 					"Une base avancée avec un frontend et un backend séparés, tous deux développés en TypeScript. Une fondation solide reflétant mes compétences de 2026, encore en développement pour mes futurs projets.",
 				tech: ['TypeScript', 'React', 'Node.js', 'Express'],
 			},
 			gaulia: {
+				imageAlt: "Gaulia Musique, un bot Discord jouant de la musique dans un salon vocal",
 				title: 'Gaulia Musique',
 				description:
 					"Un bot Discord permettant d'écouter de la musique dans les salons vocaux. Il a été ajouté à plus de 800 serveurs, mais n'est plus maintenu aujourd'hui.",
@@ -120,7 +127,7 @@ const fr: Translations = {
 		metaTitle: 'Contacter Noam Roger | Parlons de votre projet backend',
 		metaDescription:
 			"Contactez Noam Roger pour discuter d'un projet backend, d'une collaboration ou d'une opportunité.",
-		heading: 'Contact',
+		heading: 'Contacter Noam Roger',
 		subtitle: "N'hésitez pas à me contacter pour discuter de vos projets",
 		infoTitle: 'Parlons de votre projet',
 		infoText:

@@ -23,7 +23,7 @@ const icons = [Lightning, Lock, Grid, Wrench];
 						{t.home.greeting} <span class="highlight">Noam Roger</span>
 					</h1>
 					<p class="hero-subtitle">
-						<span id="typing-text" data-texts={JSON.stringify(t.home.typingTexts)}></span><span class="typing-cursor"></span>
+						<span id="typing-text" data-texts={JSON.stringify(t.home.typingTexts)}>{t.home.typingTexts[0]}</span><span class="typing-cursor"></span>
 					</p>
 					<p class="hero-description">
 						{t.home.description}
@@ -454,8 +454,10 @@ const icons = [Lightning, Lock, Grid, Wrench];
 		const texts: string[] = JSON.parse(typingText.dataset.texts ?? '[]');
 		if (texts.length === 0) return;
 		let textIndex = 0;
-		let charIndex = 0;
-		let isDeleting = false;
+		// The first phrase is server-rendered, so resume from its end rather
+		// than retyping it and flashing the element empty.
+		let charIndex = (typingText.textContent ?? '').length;
+		let isDeleting = charIndex > 0;
 		let typingSpeed = 100;
 		let timeoutId: number;
 
