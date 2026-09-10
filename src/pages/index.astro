@@ -132,8 +132,15 @@ const featured = projects.slice(0, 3).map((project) => ({
 		left: 0;
 		right: 0;
 		bottom: 0;
+		/* The lower glow used to peak on the bottom edge, where the hero's
+		   overflow: hidden chopped it into a hard line against the section
+		   below. It now peaks above the fold, and the whole layer fades to
+		   nothing before the edge, so the hero ends on the same flat
+		   --bg-primary that the next section starts on. */
 		background: radial-gradient(ellipse at top right, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-					radial-gradient(ellipse at bottom left, rgba(96, 165, 250, 0.1) 0%, transparent 50%);
+					radial-gradient(ellipse at 0% 55%, rgba(96, 165, 250, 0.11) 0%, transparent 55%);
+		-webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+		mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
 		z-index: -2;
 	}
 
@@ -148,6 +155,7 @@ const featured = projects.slice(0, 3).map((project) => ({
 			linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
 		background-size: 50px 50px;
 		z-index: -1;
+		-webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
 		mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
 	}
 
