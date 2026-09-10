@@ -27,7 +27,7 @@ const fr: Translations = {
 		metaTitle: 'Noam Roger | Développeur backend - API et systèmes fiables',
 		metaDescription:
 			'Noam Roger, développeur backend basé au Mans. API robustes, systèmes capables de monter en charge et architectures propres.',
-		greeting: 'Bonjour, je suis',
+		greeting: "Salut, moi c'est",
 		typingTexts: ['Développeur backend', "Architecte d'API", 'Concepteur de systèmes', 'Résolveur de problèmes'],
 		description:
 			"Spécialisé dans la conception d'architectures robustes et performantes. Je transforme les idées complexes en solutions élégantes.",
