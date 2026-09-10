@@ -42,9 +42,22 @@ en attribut `data-*` sur l'élément et le relire depuis le script — voir
   404 est exclue).
 - **robots.txt** : généré par `src/pages/robots.txt.ts`, il pointe vers le
   sitemap du domaine courant.
-- **Métadonnées** : chaque page a sa propre `description` (clé
-  `metaDescription` dans les dictionnaires), plus Open Graph, Twitter Card et
-  un JSON-LD `Person` sur la page d'accueil.
+- **Métadonnées** : chaque page porte son `<title>` complet (clé
+  `metaTitle`, 50-60 caractères) et sa propre `description`
+  (`metaDescription`), plus Open Graph et Twitter Card avec dimensions et
+  texte alternatif d'image.
+- **Données structurées** : `Layout.astro` émet un `@graph` schema.org sur
+  chaque page indexable — `Person`, `ProfessionalService`, `WebSite`, un
+  noeud de page typé (`AboutPage`, `ContactPage`, `CollectionPage`) et un
+  `BreadcrumbList`. La page projets y ajoute une `ItemList` de
+  `SoftwareSourceCode`. Une page peut enrichir le graphe via la prop
+  `schema`, et son type via `pageType`.
+- **llms.txt** : `src/pages/llms.txt.ts` publie une carte du site en texte
+  brut pour les modèles de langage, sur le modèle de llmstxt.org.
+- **Sources partagées** : l'ordre et les dépôts des projets vivent dans
+  `src/data/projects.ts`, le texte dans `src/i18n`, associés par la même
+  clé. La page projets, le graphe schema.org et `llms.txt` lisent les mêmes
+  données.
 - **Images** : les visuels de projets vivent dans `src/assets/projects/` et
   passent par `<Image>` d'`astro:assets`, qui produit un `srcset` (380 à
   1024 px) et les dimensions intrinsèques. Ne pas les remettre dans `public/`,
