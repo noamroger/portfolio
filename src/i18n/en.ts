@@ -4,6 +4,8 @@ const en = {
 		description: "Noam Roger's portfolio - Backend Developer",
 		jobTitle: 'Backend Developer',
 		ogLocale: 'en_US',
+		ogLocaleAlternate: 'fr_FR',
+		ogImageAlt: 'Noam Roger, backend developer - site logo',
 	},
 	a11y: {
 		skipToContent: 'Skip to content',

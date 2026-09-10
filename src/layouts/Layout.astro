@@ -136,17 +136,26 @@ const graph = {
 		<meta property="og:title" content={fullTitle} />
 		<meta property="og:description" content={description} />
 		<meta property="og:url" content={canonical} />
+		<meta property="og:locale:alternate" content={t.meta.ogLocaleAlternate} />
 		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:type" content="image/png" />
+		<meta property="og:image:width" content="512" />
+		<meta property="og:image:height" content="512" />
+		<meta property="og:image:alt" content={t.meta.ogImageAlt} />
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content={fullTitle} />
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:image:alt" content={t.meta.ogImageAlt} />
 
 		{noindex ? (
 			<meta name="robots" content="noindex, follow" />
 		) : (
 			<Fragment>
+				{/* Without max-image-preview, Google caps previews at a thumbnail. */}
+				<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
 				<link rel="canonical" href={canonical} />
+				<link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
 				{locales.map((code) => (
 					<link rel="alternate" hreflang={code} href={origins[code] + path} />
 				))}

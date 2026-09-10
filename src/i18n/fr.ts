@@ -6,6 +6,8 @@ const fr: Translations = {
 		description: 'Portfolio de Noam Roger - Développeur backend',
 		jobTitle: 'Développeur backend',
 		ogLocale: 'fr_FR',
+		ogLocaleAlternate: 'en_US',
+		ogImageAlt: 'Noam Roger, développeur backend - logo du site',
 	},
 	a11y: {
 		skipToContent: 'Aller au contenu',
