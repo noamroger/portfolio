@@ -178,13 +178,16 @@ const otherHref = origins[otherLocale] + (currentPage === '/404' ? '/' : Astro.u
 
 		.logo {
 			grid-area: logo;
-			padding: 0.15rem 0;
+			display: inline-flex;
+			align-items: center;
+			min-height: 44px;
 		}
 
 		.lang-switch {
 			grid-area: lang;
 			justify-self: end;
-			padding: 0.45rem 0.8rem;
+			min-height: 44px;
+			padding: 0.5rem 0.9rem;
 		}
 
 		.nav-links {

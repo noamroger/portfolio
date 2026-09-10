@@ -219,6 +219,15 @@ const graph = {
 
 	html {
 		scroll-behavior: smooth;
+		/* Stops iOS inflating body text when the phone is turned sideways. */
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+	}
+
+	a,
+	button {
+		/* The default tap flash is an opaque light grey on this dark theme. */
+		-webkit-tap-highlight-color: rgba(59, 130, 246, 0.25);
 	}
 
 	body {
