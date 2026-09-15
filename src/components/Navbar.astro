@@ -36,6 +36,8 @@ const otherHref = origins[otherLocale] + (currentPage === '/404' ? '/' : Astro.u
 				hreflang={otherLocale}
 				rel="alternate"
 				aria-label={t.nav.switchLanguage}
+				data-umami-event="language-switch"
+				data-umami-event-to={otherLocale}
 			>
 				<svg class="lang-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 					<circle cx="12" cy="12" r="10"></circle>

@@ -32,7 +32,7 @@ import { contactEmail, t } from '../i18n';
 								</div>
 								<div>
 									<h3>{t.contact.emailLabel}</h3>
-									<a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+									<a href={`mailto:${contactEmail}`} data-umami-event="contact-email">{contactEmail}</a>
 								</div>
 							</div>
 
@@ -44,7 +44,7 @@ import { contactEmail, t } from '../i18n';
 								</div>
 								<div>
 									<h3>{t.contact.githubLabel}</h3>
-									<a href="https://github.com/noamroger" target="_blank" rel="me noopener noreferrer">github.com/noamroger</a>
+									<a href="https://github.com/noamroger" target="_blank" rel="me noopener noreferrer" data-umami-event="contact-github">github.com/noamroger</a>
 								</div>
 							</div>
 
@@ -58,7 +58,7 @@ import { contactEmail, t } from '../i18n';
 								</div>
 								<div>
 									<h3>{t.contact.linkedinLabel}</h3>
-									<a href="https://linkedin.com/in/noamroger" target="_blank" rel="me noopener noreferrer">linkedin.com/in/noamroger</a>
+									<a href="https://linkedin.com/in/noamroger" target="_blank" rel="me noopener noreferrer" data-umami-event="contact-linkedin">linkedin.com/in/noamroger</a>
 								</div>
 							</div>
 						</div>
@@ -316,6 +316,7 @@ import { contactEmail, t } from '../i18n';
 				const data = await response.json();
 
 				if (response.ok) {
+					(window as any).umami?.track('contact-form-sent');
 					alert(form.dataset.success);
 					form.reset();
 				} else {

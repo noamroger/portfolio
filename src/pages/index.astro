@@ -37,8 +37,8 @@ const featured = projects.slice(0, 3).map((project) => ({
 						{t.home.description}
 					</p>
 					<div class="hero-actions">
-						<a href="/projects" class="btn btn-primary">{t.home.ctaProjects}</a>
-						<a href="/contact" class="btn btn-secondary">{t.home.ctaContact}</a>
+						<a href="/projects" class="btn btn-primary" data-umami-event="hero-projects">{t.home.ctaProjects}</a>
+						<a href="/contact" class="btn btn-secondary" data-umami-event="hero-contact">{t.home.ctaContact}</a>
 					</div>
 				</div>
 				<div class="hero-visual">
@@ -75,7 +75,7 @@ const featured = projects.slice(0, 3).map((project) => ({
 					))}
 				</div>
 				<div class="featured-actions">
-					<a href="/projects" class="btn btn-secondary">{t.home.featuredCta}</a>
+					<a href="/projects" class="btn btn-secondary" data-umami-event="featured-all-projects">{t.home.featuredCta}</a>
 				</div>
 			</div>
 		</section>
