@@ -2,12 +2,26 @@
 import { t } from '../i18n';
 
 const currentYear = new Date().getFullYear();
+
+// Same switch as the tracker in Layout.astro: no ID, no stats, no toggle.
+const analyticsEnabled = Boolean(import.meta.env.PUBLIC_UMAMI_WEBSITE_ID);
 ---
 
 <footer class="footer">
 	<div class="container footer-content">
 		<div class="footer-left">
 			<p>&copy; {currentYear} Noam Roger. {t.footer.rights}</p>
+			{analyticsEnabled && (
+				<button
+					type="button"
+					class="analytics-toggle"
+					data-on={t.footer.analyticsOn}
+					data-off={t.footer.analyticsOff}
+					title={t.footer.analyticsHint}
+				>
+					{t.footer.analyticsOn}
+				</button>
+			)}
 		</div>
 		<div class="footer-right">
 			<a href="https://github.com/noamroger/portfolio" target="_blank" rel="me noopener noreferrer" aria-label="GitHub">
@@ -70,4 +84,84 @@ const currentYear = new Date().getFullYear();
 			text-align: center;
 		}
 	}
+
+	.footer-left {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.15rem;
+	}
+
+	.analytics-toggle {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+		padding: 0;
+		background: none;
+		border: none;
+		color: var(--text-muted);
+		font: inherit;
+		font-size: 0.8rem;
+		text-align: left;
+		cursor: pointer;
+		text-decoration: underline;
+		text-decoration-color: transparent;
+		text-underline-offset: 3px;
+		transition: color 0.2s ease, text-decoration-color 0.2s ease;
+	}
+
+	.analytics-toggle:hover {
+		color: var(--text-secondary);
+		text-decoration-color: currentColor;
+	}
+
+	@media (max-width: 768px) {
+		.footer-left {
+			align-items: center;
+		}
+
+		.analytics-toggle {
+			text-align: center;
+		}
+	}
 </style>
+
+<script>
+	// The Umami tracker skips every hit while localStorage["umami.disabled"] is
+	// set. This button is the opt-out the CNIL requires even for exempt,
+	// cookieless audience measurement.
+	const OPT_OUT_KEY = 'umami.disabled';
+
+	const initAnalyticsToggle = () => {
+		const button = document.querySelector<HTMLButtonElement>('.analytics-toggle');
+		if (!button) return;
+
+		const isOptedOut = () => {
+			try {
+				return localStorage.getItem(OPT_OUT_KEY) === '1';
+			} catch {
+				return false;
+			}
+		};
+
+		const render = () => {
+			const optedOut = isOptedOut();
+			button.textContent = (optedOut ? button.dataset.off : button.dataset.on) ?? '';
+			button.setAttribute('aria-pressed', String(!optedOut));
+		};
+
+		button.addEventListener('click', () => {
+			try {
+				if (isOptedOut()) localStorage.removeItem(OPT_OUT_KEY);
+				else localStorage.setItem(OPT_OUT_KEY, '1');
+			} catch {
+				// Storage blocked (private mode, strict settings): nothing to persist.
+			}
+			render();
+		});
+
+		render();
+	};
+
+	document.addEventListener('astro:page-load', initAnalyticsToggle);
+</script>

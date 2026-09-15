@@ -82,6 +82,26 @@ en attribut `data-*` sur l'élément et le relire depuis le script — voir
   `prefers-reduced-motion` (les particules et animations infinies sont
   désactivées).
 
+## Statistiques de visite
+
+Mesure d'audience avec [Umami Cloud](https://umami.is) : sans cookie, sans
+données personnelles, donc sans bandeau de consentement. Google Analytics a
+été écarté parce que la CNIL l'exclut de l'exemption de consentement, ce qui
+imposerait un bandeau cookies à chaque recruteur qui ouvre le portfolio.
+
+- Le script n'est injecté que si `PUBLIC_UMAMI_WEBSITE_ID` est défini. Chaque
+  site Netlify a son propre ID, donc les statistiques `.fr` et `.dev` sont
+  séparées. En local et sur les previews Netlify, rien n'est envoyé :
+  `data-domains` limite le comptage au vrai domaine.
+- Les navigations côté client d'Astro sont comptées automatiquement : le
+  tracker intercepte `history.pushState`.
+- Le pied de page propose un bouton pour refuser ou réactiver la mesure
+  (`localStorage["umami.disabled"]`). La CNIL exige cette possibilité même
+  pour un outil exempté de consentement.
+- La CSP de `netlify.toml` autorise `cloud.umami.is` (script) et
+  `gateway.umami.is` (envoi des données). En cas d'auto-hébergement, remplacer
+  ces deux hôtes et définir `PUBLIC_UMAMI_SRC` / `PUBLIC_UMAMI_HOST_URL`.
+
 ## Développement
 
 ```bash

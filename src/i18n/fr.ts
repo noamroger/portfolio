@@ -22,6 +22,9 @@ const fr: Translations = {
 	},
 	footer: {
 		rights: 'Tous droits réservés.',
+		analyticsOn: 'Statistiques de visite anonymes : activées',
+		analyticsOff: 'Statistiques de visite anonymes : désactivées',
+		analyticsHint: "Mesure d'audience anonyme, sans cookie. Cliquez pour la refuser, ou pour la réactiver.",
 	},
 	home: {
 		metaTitle: 'Noam Roger | Développeur backend - API et systèmes fiables',

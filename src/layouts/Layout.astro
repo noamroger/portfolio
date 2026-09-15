@@ -26,6 +26,20 @@ const canonical = origin + path;
 const fullTitle = title;
 const ogImage = `${origin}/og-image.png`;
 
+// Audience measurement (Umami Cloud). Off unless this Netlify site defines
+// PUBLIC_UMAMI_WEBSITE_ID, so local builds and deploy previews never send
+// anything. The tracker is cookieless and follows Astro's client-side
+// navigations on its own, since it hooks history.pushState.
+const umamiId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
+const umamiSrc = import.meta.env.PUBLIC_UMAMI_SRC ?? 'https://cloud.umami.is/script.js';
+const umamiHostUrl = import.meta.env.PUBLIC_UMAMI_HOST_URL;
+// Count hits on the real domain only (apex and www), never on localhost or
+// on a *.netlify.app preview URL.
+const siteHost = new URL(origin).hostname.startsWith('www.')
+	? new URL(origin).hostname.slice(4)
+	: new URL(origin).hostname;
+const umamiDomains = [siteHost, 'www.' + siteHost].join(',');
+
 // One @graph per page rather than scattered snippets: the nodes reference each
 // other by @id, so a crawler reading any page gets the whole picture.
 const personId = `${origin}/#person`;
@@ -165,6 +179,17 @@ const graph = {
 
 		{!noindex && (
 			<script type="application/ld+json" set:html={JSON.stringify(graph)} />
+		)}
+
+		{umamiId && (
+			<script
+				is:inline
+				defer
+				src={umamiSrc}
+				data-website-id={umamiId}
+				data-domains={umamiDomains}
+				data-host-url={umamiHostUrl}
+			></script>
 		)}
 
 		<ClientRouter />

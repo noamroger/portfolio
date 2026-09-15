@@ -20,6 +20,9 @@ const en = {
 	},
 	footer: {
 		rights: 'All rights reserved.',
+		analyticsOn: 'Anonymous visit stats: on',
+		analyticsOff: 'Anonymous visit stats: off',
+		analyticsHint: 'Cookieless, anonymous audience measurement. Click to opt out, or to opt back in.',
 	},
 	home: {
 		metaTitle: 'Noam Roger | Backend Developer - APIs & Scalable Systems',
