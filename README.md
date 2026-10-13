@@ -20,7 +20,8 @@ exactement les mêmes chemins (`/`, `/about`, `/projects`, `/contact`).
 - `src/i18n/index.ts` lit `SITE_LOCALE` et exporte le dictionnaire actif (`t`),
   la locale (`locale`), les origines des deux domaines (`origins`) et l'adresse
   de contact (`contactEmail`).
-- L'adresse de contact reste `contact@noamroger.fr` dans les deux langues.
+- L'adresse de contact suit le domaine : `contact@noamroger.fr` sur le site
+  français, `contact@noamroger.dev` sur l'anglais.
 - `Layout.astro` pose `<html lang>`, la `<meta name="description">`, le
   `<link rel="canonical">` du domaine courant et les `hreflang` croisés vers
   l'autre domaine. La page 404 est en `noindex` et sans canonical.

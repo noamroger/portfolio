@@ -29,8 +29,13 @@ export const origins: Record<Locale, string> = {
 	fr: 'https://www.noamroger.fr',
 };
 
-/** Contact address stays on the .fr domain regardless of the site language. */
-export const contactEmail = 'contact@noamroger.fr';
+/** Contact address: each domain has its own mailbox. */
+const contactEmails: Record<Locale, string> = {
+	en: 'contact@noamroger.dev',
+	fr: 'contact@noamroger.fr',
+};
+
+export const contactEmail = contactEmails[locale];
 
 /** Social profiles, used for schema.org sameAs and in the footer. */
 export const socialProfiles = [
