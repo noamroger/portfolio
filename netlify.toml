@@ -2,9 +2,11 @@
   command = "npm run build"
   publish = "dist"
 
-# Do NOT set SITE_LOCALE here: netlify.toml takes precedence over the values
-# defined in the Netlify UI, which would force the same language on both sites.
-# The French site sets SITE_LOCALE=fr in its own environment variables.
+# Netlify serves /404.html on its own. English pages need their own 404.
+[[redirects]]
+  from = "/en/*"
+  to = "/en/404/"
+  status = 404
 
 # Astro fingerprints everything it emits under /_astro/, so it can be cached
 # forever. Netlify's default is `max-age=0, must-revalidate`.
@@ -39,6 +41,11 @@
     Cache-Control = "public, max-age=60, stale-while-revalidate=86400"
 
 [[headers]]
+  for = "/en*"
+  [headers.values]
+    Cache-Control = "public, max-age=60, stale-while-revalidate=86400"
+
+[[headers]]
   for = "/about*"
   [headers.values]
     Cache-Control = "public, max-age=60, stale-while-revalidate=86400"
@@ -63,4 +70,4 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://forms.noam.ovh https://gateway.umami.is; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://form.noam.ovh https://gateway.umami.is; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'"

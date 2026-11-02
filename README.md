@@ -1,48 +1,49 @@
 # Portfolio
 
-Code source du portfolio de Noam Roger, déployé depuis Netlify sur deux domaines :
-
-| Domaine                | Langue   | `SITE_LOCALE` |
-| ---------------------- | -------- | ------------- |
-| https://www.noamroger.dev | anglais  | `en` (défaut) |
-| https://www.noamroger.fr  | français | `fr`          |
+Code source du portfolio de Noam Roger, déployé par Netlify sur
+https://www.noamroger.fr.
 
 ## Bilinguisme
 
-La langue est **figée au moment du build** : il n'y a ni préfixe d'URL, ni
-détection côté navigateur, ni sélecteur de langue. Les deux domaines exposent
-exactement les mêmes chemins (`/`, `/about`, `/projects`, `/contact`).
+Le site vit sur un seul domaine. Le français est à la racine et l'anglais sous
+`/en` : `/about/` et `/en/about/` sont la même page, générée au build dans les
+deux langues. Les deux versions restent donc indexables.
 
 - Tous les textes vivent dans `src/i18n/en.ts` et `src/i18n/fr.ts`.
   `en.ts` fait foi : son type `Translations` contraint `fr.ts`, donc oublier une
   clé en français est signalé dans l'éditeur (le build Astro, lui, ne
   typecheck pas).
-- `src/i18n/index.ts` lit `SITE_LOCALE` et exporte le dictionnaire actif (`t`),
-  la locale (`locale`), les origines des deux domaines (`origins`) et l'adresse
-  de contact (`contactEmail`).
-- L'adresse de contact suit le domaine : `contact@noamroger.fr` sur le site
-  français, `contact@noamroger.dev` sur l'anglais.
+- `src/views/` contient le contenu des pages. `src/pages/` et `src/pages/en/`
+  ne font que les afficher, une fois par langue.
+- Dans une page ou un composant, `getI18n(Astro.url.pathname)` donne le
+  dictionnaire (`t`), la langue (`locale`) et `path()`, qui préfixe les liens
+  internes.
+- Le bouton de langue de la barre de navigation enregistre le choix dans
+  `localStorage["lang"]`. Un script placé en tête de `Layout.astro` applique ce
+  choix avant l'affichage, y compris à la visite suivante. Sans choix enregistré,
+  la langue suit simplement l'URL.
+- `contact@noamroger.fr` est l'adresse de contact dans les deux langues.
 - `Layout.astro` pose `<html lang>`, la `<meta name="description">`, le
-  `<link rel="canonical">` du domaine courant et les `hreflang` croisés vers
-  l'autre domaine. La page 404 est en `noindex` et sans canonical.
+  `<link rel="canonical">` de la page et les `hreflang` croisés. La page 404 est
+  en `noindex` et sans canonical.
 
 ### Ajouter ou modifier un texte
 
 1. Ajouter la clé dans `src/i18n/en.ts`.
 2. Ajouter la traduction correspondante dans `src/i18n/fr.ts`.
-3. L'utiliser dans un composant via `import { t } from '../i18n'`.
+3. L'utiliser dans un composant via `const { t } = getI18n(Astro.url.pathname)`.
 
 Pour un texte utilisé par un script client (donc pas rendu au build), le passer
 en attribut `data-*` sur l'élément et le relire depuis le script — voir
-`#typing-text` dans `src/pages/index.astro` et le formulaire de
-`src/pages/contact.astro`.
+`#typing-text` dans `src/views/Home.astro` et le formulaire de
+`src/views/Contact.astro`.
 
 ## SEO et performance
 
-- **Sitemap** : `@astrojs/sitemap` génère `sitemap-index.xml` par domaine (la
-  404 est exclue).
+- **Sitemap** : `@astrojs/sitemap` génère `sitemap-index.xml` avec les pages des
+  deux langues (les 404 sont exclues).
 - **robots.txt** : généré par `src/pages/robots.txt.ts`, il pointe vers le
-  sitemap du domaine courant.
+  sitemap du site.
 - **Métadonnées** : chaque page porte son `<title>` complet (clé
   `metaTitle`, 50-60 caractères) et sa propre `description`
   (`metaDescription`), plus Open Graph et Twitter Card avec dimensions et
@@ -76,7 +77,7 @@ en attribut `data-*` sur l'élément et le relire depuis le script — voir
   fraîcheur pour que le préchargement ne soit pas annulé par une
   revalidation, et pose `Content-Security-Policy`,
   `X-Content-Type-Options`, `Referrer-Policy` et `Permissions-Policy`.
-  Le `connect-src` de la CSP autorise `https://forms.noam.ovh` pour le
+  Le `connect-src` de la CSP autorise `https://form.noam.ovh` pour le
   formulaire de contact : à mettre à jour si l'endpoint change.
 - **Accessibilité** : lien d'évitement, contour de focus visible sur fond
   sombre, icônes décoratives en `aria-hidden`, et respect de
@@ -90,9 +91,7 @@ données personnelles, donc sans bandeau de consentement. Google Analytics a
 été écarté parce que la CNIL l'exclut de l'exemption de consentement, ce qui
 imposerait un bandeau cookies à chaque recruteur qui ouvre le portfolio.
 
-- Le script n'est injecté que si `PUBLIC_UMAMI_WEBSITE_ID` est défini. Chaque
-  site Netlify a son propre ID, donc les statistiques `.fr` et `.dev` sont
-  séparées. En local et sur les previews Netlify, rien n'est envoyé :
+- Le script n'est injecté que si `PUBLIC_UMAMI_WEBSITE_ID` est défini. En local et sur les previews Netlify, rien n'est envoyé :
   `data-domains` limite le comptage au vrai domaine.
 - Les navigations côté client d'Astro sont comptées automatiquement : le
   tracker intercepte `history.pushState`.
@@ -110,25 +109,13 @@ npm install
 npm run dev
 ```
 
-Par défaut le site est en anglais. Pour travailler sur la version française,
-créer un fichier `.env` à la racine (voir `.env.example`) :
-
-```
-SITE_LOCALE=fr
-```
+Le français est sur `http://localhost:4321/`, l'anglais sur
+`http://localhost:4321/en/`.
 
 ## Déploiement Netlify
 
-Deux sites Netlify pointent sur ce même dépôt et la même branche :
+Le site Netlify `portfolio-noam-fr` se déploie à chaque push sur `main`. La
+commande de build et le dossier publié viennent de `netlify.toml`.
 
-- **Site anglais** (`noamroger.dev`) : aucune variable à définir, `en` est la
-  valeur par défaut.
-- **Site français** (`noamroger.fr`) : ajouter la variable d'environnement
-  `SITE_LOCALE=fr` dans _Site configuration > Environment variables_.
-
-La commande de build et le dossier publié sont communs et viennent de
-`netlify.toml`. Ne pas déclarer `SITE_LOCALE` dans `netlify.toml` : ce fichier
-est prioritaire sur les variables définies dans l'interface, ce qui forcerait la
-même langue sur les deux sites.
-
-Un `git push` déclenche donc deux déploiements, un par domaine.
+`noamroger.dev` est destiné à rediriger vers `noamroger.fr`, en envoyant chaque
+chemin vers sa version sous `/en`.

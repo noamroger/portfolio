@@ -1,41 +1,40 @@
 import en, { type Translations } from './en';
 import fr from './fr';
 
-export const locales = ['en', 'fr'] as const;
+export const locales = ['fr', 'en'] as const;
 export type Locale = (typeof locales)[number];
 
 const dictionaries: Record<Locale, Translations> = { en, fr };
 
-/**
- * The locale is frozen at build time by the SITE_LOCALE environment variable.
- * Each domain is its own Netlify site built from this repo:
- *   noamroger.dev -> SITE_LOCALE=en   (default)
- *   noamroger.fr  -> SITE_LOCALE=fr
- */
-function resolveLocale(): Locale {
-	const raw =
-		import.meta.env.SITE_LOCALE ??
-		(globalThis as any).process?.env?.SITE_LOCALE ??
-		'en';
-	return (locales as readonly string[]).includes(raw) ? (raw as Locale) : 'en';
+/** The site lives on a single domain: French at /, English under /en. */
+export const defaultLocale: Locale = 'fr';
+export const siteOrigin = 'https://www.noamroger.fr';
+export const contactEmail = 'contact@noamroger.fr';
+
+export function localeFromPath(pathname: string): Locale {
+	return /^\/en(\/|$)/.test(pathname) ? 'en' : defaultLocale;
 }
 
-export const locale = resolveLocale();
-export const t = dictionaries[locale];
+/** Removes the language prefix: /en/about/ becomes /about/. */
+export function stripLocale(pathname: string): string {
+	return pathname.replace(/^\/en(?=\/|$)/, '') || '/';
+}
 
-/** Canonical origin of each language version, used for hreflang alternates. */
-export const origins: Record<Locale, string> = {
-	en: 'https://www.noamroger.dev',
-	fr: 'https://www.noamroger.fr',
-};
+/** The same page in another language: /about/ becomes /en/about/. */
+export function localizedPath(pathname: string, locale: Locale): string {
+	const path = stripLocale(pathname);
+	return locale === defaultLocale ? path : `/${locale}${path}`;
+}
 
-/** Contact address: each domain has its own mailbox. */
-const contactEmails: Record<Locale, string> = {
-	en: 'contact@noamroger.dev',
-	fr: 'contact@noamroger.fr',
-};
-
-export const contactEmail = contactEmails[locale];
+/** Dictionary and link helper of the page being rendered. */
+export function getI18n(pathname: string) {
+	const locale = localeFromPath(pathname);
+	return {
+		locale,
+		t: dictionaries[locale],
+		path: (target: string) => localizedPath(target, locale),
+	};
+}
 
 /** Social profiles, used for schema.org sameAs and in the footer. */
 export const socialProfiles = [

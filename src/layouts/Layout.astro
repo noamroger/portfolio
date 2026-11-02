@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
-import { contactEmail, locale, locales, origins, socialProfiles, t, techStack } from '../i18n';
+import { contactEmail, getI18n, locales, localizedPath, siteOrigin, socialProfiles, stripLocale, techStack } from '../i18n';
+import { LANGUAGE_KEY } from '../i18n/preference';
 
 interface Props {
 	title: string;
@@ -12,6 +13,8 @@ interface Props {
 	schema?: Record<string, unknown>[];
 }
 
+const { t, locale } = getI18n(Astro.url.pathname);
+
 const {
 	title,
 	description = t.meta.description,
@@ -21,7 +24,7 @@ const {
 } = Astro.props;
 
 const path = Astro.url.pathname;
-const origin = origins[locale];
+const origin = siteOrigin;
 const canonical = origin + path;
 const fullTitle = title;
 const ogImage = `${origin}/og-image.png`;
@@ -58,7 +61,8 @@ const crumbLabels: Record<string, string> = {
 	'/projects': t.nav.projects,
 	'/contact': t.nav.contact,
 };
-const crumbKey = path !== '/' && path.endsWith('/') ? path.slice(0, -1) : path;
+const basePath = stripLocale(path);
+const crumbKey = basePath !== '/' && basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
 const crumbLabel = crumbLabels[crumbKey];
 
 const breadcrumb = crumbLabel
@@ -66,7 +70,7 @@ const breadcrumb = crumbLabel
 			'@type': 'BreadcrumbList',
 			'@id': `${canonical}#breadcrumb`,
 			itemListElement: [
-				{ '@type': 'ListItem', position: 1, name: t.nav.home, item: `${origin}/` },
+				{ '@type': 'ListItem', position: 1, name: t.nav.home, item: origin + localizedPath('/', locale) },
 				{ '@type': 'ListItem', position: 2, name: crumbLabel, item: canonical },
 			],
 		}
@@ -132,6 +136,18 @@ const graph = {
 <html lang={t.htmlLang}>
 	<head>
 		<meta charset="utf-8" />
+		{/* Before anything paints: a visitor who chose a language gets it straight away. */}
+		<script is:inline define:vars={{ key: LANGUAGE_KEY }}>
+			try {
+				const wanted = localStorage.getItem(key);
+				const { pathname, search, hash } = location;
+				const isEnglish = /^\/en(\/|$)/.test(pathname);
+				if (wanted === 'en' && !isEnglish) location.replace(`/en${pathname}${search}${hash}`);
+				if (wanted === 'fr' && isEnglish) location.replace(`${pathname.replace(/^\/en/, '') || '/'}${search}${hash}`);
+			} catch {
+				// Storage can be blocked: stay on the requested page.
+			}
+		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 
@@ -171,9 +187,9 @@ const graph = {
 				<link rel="canonical" href={canonical} />
 				<link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
 				{locales.map((code) => (
-					<link rel="alternate" hreflang={code} href={origins[code] + path} />
+					<link rel="alternate" hreflang={code} href={origin + localizedPath(path, code)} />
 				))}
-				<link rel="alternate" hreflang="x-default" href={origins.en + path} />
+				<link rel="alternate" hreflang="x-default" href={origin + localizedPath(path, 'fr')} />
 			</Fragment>
 		)}
 

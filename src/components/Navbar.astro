@@ -1,37 +1,40 @@
 ---
-import { locale, locales, origins, t } from '../i18n';
+import { getI18n, locales, localizedPath, stripLocale } from '../i18n';
 
-const pathname = Astro.url.pathname.replace(/\/$/, "");
+const { locale, t, path } = getI18n(Astro.url.pathname);
+const pathname = stripLocale(Astro.url.pathname).replace(/\/$/, "");
 const currentPage = pathname === "" ? "/" : pathname;
 
-// The other language lives on the other domain, at the same path. From the
+// The other language lives at the same path, under /en for English. From the
 // 404 page there is nothing to match over there, so point at the home page.
 const otherLocale = locales.find((code) => code !== locale)!;
-const otherHref = origins[otherLocale] + (currentPage === '/404' ? '/' : Astro.url.pathname);
+const otherHref = localizedPath(currentPage === '/404' ? '/' : Astro.url.pathname, otherLocale);
 ---
 
 <nav class="navbar">
 	<div class="container navbar-content">
-		<a href="/" class="logo" aria-label={t.nav.logoLabel}>
+		<a href={path('/')} class="logo" aria-label={t.nav.logoLabel}>
 			<span class="logo-text">NR</span>
 		</a>
 		<div class="navbar-right">
 			<ul class="nav-links">
 				<li>
-					<a href="/" class={currentPage === '/' ? 'active' : ''}>{t.nav.home}</a>
+					<a href={path('/')} class={currentPage === '/' ? 'active' : ''}>{t.nav.home}</a>
 				</li>
 				<li>
-					<a href="/about" class={currentPage === '/about' ? 'active' : ''}>{t.nav.about}</a>
+					<a href={path('/about/')} class={currentPage === '/about' ? 'active' : ''}>{t.nav.about}</a>
 				</li>
 				<li>
-					<a href="/projects" class={currentPage === '/projects' ? 'active' : ''}>{t.nav.projects}</a>
+					<a href={path('/projects/')} class={currentPage === '/projects' ? 'active' : ''}>{t.nav.projects}</a>
 				</li>
 				<li>
-					<a href="/contact" class={currentPage === '/contact' ? 'active' : ''}>{t.nav.contact}</a>
+					<a href={path('/contact/')} class={currentPage === '/contact' ? 'active' : ''}>{t.nav.contact}</a>
 				</li>
 			</ul>
 			<a
 				class="lang-switch"
+				data-lang-switch={otherLocale}
+				data-astro-prefetch="false"
 				href={otherHref}
 				hreflang={otherLocale}
 				rel="alternate"
@@ -49,6 +52,21 @@ const otherHref = origins[otherLocale] + (currentPage === '/404' ? '/' : Astro.u
 		</div>
 	</div>
 </nav>
+
+<script>
+	import { LANGUAGE_KEY } from '../i18n/preference';
+
+	// Delegated: the client router replaces the navbar on every navigation.
+	document.addEventListener('click', (event) => {
+		const link = (event.target as Element).closest<HTMLElement>('[data-lang-switch]');
+		if (!link) return;
+		try {
+			localStorage.setItem(LANGUAGE_KEY, link.dataset.langSwitch ?? '');
+		} catch {
+			// Storage can be blocked: the switch still works for this visit.
+		}
+	});
+</script>
 
 <style>
 	.navbar {
