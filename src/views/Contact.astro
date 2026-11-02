@@ -98,6 +98,7 @@ const { t } = getI18n(Astro.url.pathname);
 							</div>
 
 							<button type="submit" class="btn btn-primary">{t.contact.form.submit}</button>
+							<p class="form-status" id="form-status" role="status" aria-live="polite"></p>
 						</form>
 					</div>
 				</div>
@@ -246,6 +247,23 @@ const { t } = getI18n(Astro.url.pathname);
 		color: var(--text-muted);
 	}
 
+	.form-status {
+		margin: 0;
+		font-weight: 500;
+	}
+
+	.form-status:empty {
+		display: none;
+	}
+
+	.form-status[data-state='success'] {
+		color: #4ade80;
+	}
+
+	.form-status[data-state='error'] {
+		color: #f87171;
+	}
+
 	.btn {
 		padding: 0.875rem 2rem;
 		border-radius: 8px;
@@ -294,6 +312,12 @@ const { t } = getI18n(Astro.url.pathname);
 		if (!form) return;
 
 		const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+		const status = document.getElementById('form-status') as HTMLElement;
+
+		const showStatus = (message: string, state: 'success' | 'error') => {
+			status.textContent = message;
+			status.dataset.state = state;
+		};
 
 		form.addEventListener('submit', async (e) => {
 			e.preventDefault();
@@ -301,6 +325,8 @@ const { t } = getI18n(Astro.url.pathname);
 			const formData = new FormData(form);
 			const originalText = submitBtn.textContent;
 
+			status.textContent = '';
+			delete status.dataset.state;
 			submitBtn.textContent = form.dataset.sending ?? '';
 			submitBtn.disabled = true;
 
@@ -317,15 +343,15 @@ const { t } = getI18n(Astro.url.pathname);
 
 				if (response.ok) {
 					(window as any).umami?.track('contact-form-sent');
-					alert(form.dataset.success);
+					showStatus(form.dataset.success ?? '', 'success');
 					form.reset();
 				} else {
-					alert(form.dataset.error + data.message);
+					showStatus(form.dataset.error + data.message, 'error');
 				}
 
 			} catch (error) {
 				console.error("Form submission error:", error);
-				alert(form.dataset.failure);
+				showStatus(form.dataset.failure ?? '', 'error');
 			} finally {
 				submitBtn.textContent = originalText;
 				submitBtn.disabled = false;
