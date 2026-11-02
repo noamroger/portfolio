@@ -1,24 +1,13 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import { loadEnv } from 'vite';
 
-// The language is frozen at build time: each domain is its own Netlify site
-// built from this repo, with a different SITE_LOCALE.
-//   noamroger.dev -> SITE_LOCALE=en (default)
-//   noamroger.fr  -> SITE_LOCALE=fr
-const { SITE_LOCALE } = loadEnv(process.env.NODE_ENV ?? '', process.cwd(), '');
-const locale = SITE_LOCALE === 'fr' ? 'fr' : 'en';
-
-// Keep in sync with `origins` in src/i18n/index.ts
-const origins = {
-	en: 'https://www.noamroger.dev',
-	fr: 'https://www.noamroger.fr',
-};
+// Keep in sync with `siteOrigin` in src/i18n/index.ts
+const site = 'https://www.noamroger.fr';
 
 // https://astro.build/config
 export default defineConfig({
-	site: origins[locale],
+	site,
 	base: '/',
 	// `prefetch: true` alone only arms links that opt in with
 	// data-astro-prefetch, so nothing was actually being prefetched. With four
@@ -38,16 +27,14 @@ export default defineConfig({
 	integrations: [
 		sitemap({
 			filter: (page) => !page.includes('/404'),
-			// The two languages live on separate domains, so the built-in i18n
-			// option (which expects locale-prefixed paths) does not apply. Declare
-			// the alternates by hand instead, mirroring the <link rel="alternate">
-			// tags in the page head.
+			// Declare the alternates by hand, mirroring the <link rel="alternate">
+			// tags in the page head. French has no prefix, English lives under /en.
 			serialize(item) {
-				const { pathname } = new URL(item.url);
+				const french = new URL(item.url).pathname.replace(/^\/en(?=\/|$)/, '') || '/';
 				item.links = [
-					{ lang: 'en', url: origins.en + pathname },
-					{ lang: 'fr', url: origins.fr + pathname },
-					{ lang: 'x-default', url: origins.en + pathname },
+					{ lang: 'fr', url: site + french },
+					{ lang: 'en', url: `${site}/en${french}` },
+					{ lang: 'x-default', url: site + french },
 				];
 				return item;
 			},

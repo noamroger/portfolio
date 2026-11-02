@@ -1,10 +1,12 @@
 import type { APIRoute } from 'astro';
 import { projects } from '../data/projects';
-import { contactEmail, t } from '../i18n';
+import { contactEmail, getI18n } from '../i18n';
+
+const { t } = getI18n('/');
 
 /**
  * https://llmstxt.org/ - a plain-text map of the site for language models,
- * generated per domain so each one advertises its own language and URLs.
+ * in French, the default language of the site, with a pointer to the English pages.
  */
 export const GET: APIRoute = ({ site }) => {
 	const url = (path: string) => new URL(path, site).href;
@@ -26,6 +28,7 @@ export const GET: APIRoute = ({ site }) => {
 		'## Pages',
 		'',
 		...pages.map(([name, href, summary]) => `- [${name}](${href}): ${summary}`),
+		'- [English version](' + url('/en/') + '): the same pages, in English',
 		'',
 		`## ${t.nav.projects}`,
 		'',

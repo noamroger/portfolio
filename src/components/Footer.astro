@@ -1,5 +1,7 @@
 ---
-import { t } from '../i18n';
+import { getI18n } from '../i18n';
+
+const { t } = getI18n(Astro.url.pathname);
 
 const currentYear = new Date().getFullYear();
 
