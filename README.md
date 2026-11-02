@@ -77,8 +77,9 @@ en attribut `data-*` sur l'élément et le relire depuis le script — voir
   fraîcheur pour que le préchargement ne soit pas annulé par une
   revalidation, et pose `Content-Security-Policy`,
   `X-Content-Type-Options`, `Referrer-Policy` et `Permissions-Policy`.
-  Le `connect-src` de la CSP autorise `https://form.noam.ovh` pour le
-  formulaire de contact : à mettre à jour si l'endpoint change.
+  Le `connect-src` et le `form-action` de la CSP autorisent
+  `https://form.noam.ovh` pour le formulaire de contact : à mettre à jour si
+  l'endpoint change.
 - **Accessibilité** : lien d'évitement, contour de focus visible sur fond
   sombre, icônes décoratives en `aria-hidden`, et respect de
   `prefers-reduced-motion` (les particules et animations infinies sont
