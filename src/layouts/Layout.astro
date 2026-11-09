@@ -157,7 +157,7 @@ const graph = {
 					// Storage can be blocked: stay on the default.
 				}
 				document.documentElement.dataset.theme = theme;
-				document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#fafaf9' : '#0b0c0f');
+				document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#f4efe4' : '#0b0c0f');
 			};
 			applyTheme();
 			document.addEventListener('astro:after-swap', applyTheme);
@@ -209,6 +209,30 @@ const graph = {
 	<body>
 		<a href="#main" class="skip-link">{t.a11y.skipToContent}</a>
 		<slot />
+		<script>
+			const selector = '.page-header > .container, .section-head, .focus-item, .featured-card, .stack-row, .cta, .project-card, .timeline li, .approach li, .side-card, .contact-info, .contact-form-wrapper';
+
+			const initReveal = () => {
+				if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+				const observer = new IntersectionObserver((entries) => {
+					for (const entry of entries) {
+						if (!entry.isIntersecting) continue;
+						entry.target.classList.add('is-visible');
+						observer.unobserve(entry.target);
+					}
+				}, { rootMargin: '0px 0px -8% 0px' });
+
+				document.querySelectorAll<HTMLElement>(selector).forEach((el) => {
+					// Siblings in the same row come in one after the other.
+					const index = Array.prototype.indexOf.call(el.parentElement?.children ?? [], el);
+					el.style.setProperty('--reveal-delay', `${Math.min(index, 5) * 70}ms`);
+					el.classList.add('reveal');
+					observer.observe(el);
+				});
+			};
+
+			document.addEventListener('astro:page-load', initReveal);
+		</script>
 	</body>
 </html>
 
@@ -244,25 +268,25 @@ const graph = {
 
 	:root[data-theme='light'] {
 		color-scheme: light;
-		--bg: #fafaf9;
-		--bg-elevated: #ffffff;
-		--bg-subtle: #f3f3f1;
-		--border: #e5e5e2;
-		--border-strong: #d4d4d0;
-		--text: #15171c;
-		--text-secondary: #4a4f58;
-		--text-muted: #7a7f88;
+		--bg: #f4efe4;
+		--bg-elevated: #faf6ee;
+		--bg-subtle: #ebe4d5;
+		--border: #e0d7c5;
+		--border-strong: #cfc4ae;
+		--text: #2b2721;
+		--text-secondary: #5a5246;
+		--text-muted: #8a8070;
 		--accent: #0e7c50;
 		--accent-strong: #095c3b;
 		--accent-soft: rgba(14, 124, 80, 0.08);
 		--syntax-key: #2453c2;
 		--syntax-string: #9a5b00;
 		--syntax-keyword: #8b3fb8;
-		--dot-grid: rgba(20, 22, 28, 0.09);
+		--dot-grid: rgba(60, 45, 20, 0.1);
 		--on-accent: #ffffff;
 		--success: #16855a;
 		--danger: #c4323a;
-		--shadow: 0 1px 2px rgba(20, 22, 28, 0.06);
+		--shadow: 0 1px 2px rgba(60, 45, 20, 0.06);
 	}
 
 	* {
@@ -636,7 +660,28 @@ const graph = {
 		}
 	}
 
+	/* Scroll reveal: the class is only added by script, so nothing stays hidden without JS. */
+	.reveal:not(.is-visible) {
+		opacity: 0;
+	}
+
+	/* An animation rather than a transition, so it never fights hover effects. */
+	.reveal.is-visible {
+		animation: reveal 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0s) backwards;
+	}
+
+	@keyframes reveal {
+		from {
+			opacity: 0;
+			transform: translateY(16px);
+		}
+	}
+
 	@media (prefers-reduced-motion: reduce) {
+		.reveal:not(.is-visible) {
+			opacity: 1;
+		}
+
 		html {
 			scroll-behavior: auto;
 		}
