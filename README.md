@@ -1,6 +1,6 @@
 # Portfolio
 
-Code source du portfolio de Noam Roger, déployé par Netlify sur
+Code source du portfolio de Noam Roger, servi par un Cloudflare Worker sur
 https://www.noamroger.fr.
 
 ## Bilinguisme
@@ -72,7 +72,7 @@ en attribut `data-*` sur l'élément et le relire depuis le script — voir
   requête réseau. Sans ça, chaque navigation coûtait deux allers-retours en
   série — le HTML, puis la feuille de style découverte dedans — soit ~560 ms
   mesurés en production.
-- **En-têtes HTTP** : `netlify.toml` met `/_astro/*` en cache immuable (les
+- **En-têtes HTTP** : `public/_headers` (copié tel quel dans `dist/`) met `/_astro/*` en cache immuable (les
   noms de fichiers sont hashés), donne aux pages une courte fenêtre de
   fraîcheur pour que le préchargement ne soit pas annulé par une
   revalidation, et pose `Content-Security-Policy`,
@@ -92,14 +92,14 @@ données personnelles, donc sans bandeau de consentement. Google Analytics a
 été écarté parce que la CNIL l'exclut de l'exemption de consentement, ce qui
 imposerait un bandeau cookies à chaque recruteur qui ouvre le portfolio.
 
-- Le script n'est injecté que si `PUBLIC_UMAMI_WEBSITE_ID` est défini. En local et sur les previews Netlify, rien n'est envoyé :
+- Le script n'est injecté que si `PUBLIC_UMAMI_WEBSITE_ID` est défini au build. En local et sur les URL de preview `*.workers.dev`, rien n'est envoyé :
   `data-domains` limite le comptage au vrai domaine.
 - Les navigations côté client d'Astro sont comptées automatiquement : le
   tracker intercepte `history.pushState`.
 - Le pied de page propose un bouton pour refuser ou réactiver la mesure
   (`localStorage["umami.disabled"]`). La CNIL exige cette possibilité même
   pour un outil exempté de consentement.
-- La CSP de `netlify.toml` autorise `cloud.umami.is` (script) et
+- La CSP de `public/_headers` autorise `cloud.umami.is` (script) et
   `gateway.umami.is` (envoi des données). En cas d'auto-hébergement, remplacer
   ces deux hôtes et définir `PUBLIC_UMAMI_SRC` / `PUBLIC_UMAMI_HOST_URL`.
 
@@ -113,10 +113,34 @@ npm run dev
 Le français est sur `http://localhost:4321/`, l'anglais sur
 `http://localhost:4321/en/`.
 
-## Déploiement Netlify
+## Déploiement Cloudflare Workers
 
-Le site Netlify `portfolio-noam-fr` se déploie à chaque push sur `main`. La
-commande de build et le dossier publié viennent de `netlify.toml`.
+Le site est un Worker `portfolio` avec des assets statiques (`wrangler.jsonc`) :
+Astro génère `dist/`, que Cloudflare sert directement.
+
+- **Rebuild automatique** : le Worker est relié au dépôt GitHub par Workers
+  Builds. Chaque push sur `main` lance `npm run build` puis
+  `npx wrangler deploy`. Les autres branches produisent une version de preview
+  sur `*.workers.dev` sans toucher à la production.
+- **Variables de build** : `PUBLIC_UMAMI_WEBSITE_ID` se définit dans le
+  dashboard Cloudflare, Worker `portfolio` > Settings > Build > Variables and
+  secrets. C'est une variable de *build*, pas de runtime : Astro l'intègre au
+  HTML.
+- **Domaines** : `routes` dans `wrangler.jsonc` rattache `noamroger.fr` et
+  `www.noamroger.fr` au Worker et crée leurs enregistrements DNS. Le déploiement
+  échoue si un de ces noms a encore un autre enregistrement A, AAAA ou CNAME.
+- **`worker/index.js`** redirige `noamroger.fr` vers `www.noamroger.fr` (301)
+  et sert la 404 anglaise sous `/en/`, puisque Astro l'émet en
+  `/en/404/index.html` et que la gestion des 404 des assets ne cherche que des
+  fichiers `404.html`.
+- **En-têtes** : `public/_headers`, voir « SEO et performance ».
+
+Déployer à la main ou tester le Worker en local :
+
+```bash
+npm run deploy          # build + wrangler deploy (demande un login Cloudflare)
+npm run preview:worker  # build + wrangler dev
+```
 
 `noamroger.dev` est destiné à rediriger vers `noamroger.fr`, en envoyant chaque
 chemin vers sa version sous `/en`.
