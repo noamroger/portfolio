@@ -42,9 +42,15 @@ async function fetchStats(token) {
 		},
 		body: JSON.stringify({ query: QUERY }),
 	});
-	if (!response.ok) throw new Error(`GitHub answered ${response.status}`);
+	if (!response.ok) {
+		// 401: wrong or expired token. 403: token without access, or rate limit.
+		throw new Error(`GitHub answered HTTP ${response.status}`);
+	}
 	const { data, errors } = await response.json();
-	if (errors?.length || !data) throw new Error(errors?.[0]?.message ?? 'Empty GitHub answer');
+	// GraphQL can answer with partial data and a list of errors (for example a
+	// field the token may not read): use what came back as long as it is usable.
+	if (!data?.viewer?.repositories) throw new Error(errors?.[0]?.message ?? 'Empty GitHub answer');
+	if (errors?.length) console.warn('GitHub partial answer:', errors.map((error) => error.message).join('; '));
 
 	const { repositories, contributionsCollection } = data.viewer;
 	const repos = repositories.nodes;
@@ -52,7 +58,7 @@ async function fetchStats(token) {
 	// Bytes of code per language, across every repository.
 	const bytes = new Map();
 	for (const repo of repos) {
-		for (const { size, node } of repo.languages.edges) {
+		for (const { size, node } of repo.languages?.edges ?? []) {
 			bytes.set(node.name, (bytes.get(node.name) ?? 0) + size);
 		}
 	}
@@ -74,7 +80,7 @@ async function fetchStats(token) {
 		languageCount: bytes.size,
 		languages,
 		lastPushAt: repos[0]?.pushedAt ?? null,
-		contributionsYear: contributionsCollection.contributionCalendar.totalContributions,
+		contributionsYear: contributionsCollection?.contributionCalendar?.totalContributions ?? 0,
 		recent: repos.slice(0, RECENT_COUNT).map((repo) => ({
 			// Private repositories stay anonymous.
 			name: repo.isPrivate ? null : repo.name,
@@ -94,7 +100,10 @@ export async function handleGitHubStats(request, env, ctx) {
 	if (cached) return cached;
 
 	if (!env.GITHUB_TOKEN) {
-		return Response.json({ error: 'not configured' }, { status: 503, headers: { 'Cache-Control': 'no-store' } });
+		return Response.json(
+			{ error: 'not configured', detail: 'GITHUB_TOKEN is not set as a runtime secret of this Worker' },
+			{ status: 503, headers: { 'Cache-Control': 'no-store' } },
+		);
 	}
 
 	try {
@@ -106,6 +115,11 @@ export async function handleGitHubStats(request, env, ctx) {
 		return response;
 	} catch (error) {
 		console.error('GitHub stats failed:', error);
-		return Response.json({ error: 'unavailable' }, { status: 502, headers: { 'Cache-Control': 'no-store' } });
+		// The message never contains the token: it is the HTTP status or GitHub's
+		// own error text, which is what is needed to fix the setup.
+		return Response.json(
+			{ error: 'unavailable', detail: String(error?.message ?? error) },
+			{ status: 502, headers: { 'Cache-Control': 'no-store' } },
+		);
 	}
 }
