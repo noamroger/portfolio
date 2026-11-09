@@ -34,9 +34,19 @@ deux langues. Les deux versions restent donc indexables.
 3. L'utiliser dans un composant via `const { t } = getI18n(Astro.url.pathname)`.
 
 Pour un texte utilisé par un script client (donc pas rendu au build), le passer
-en attribut `data-*` sur l'élément et le relire depuis le script — voir
-`#typing-text` dans `src/views/Home.astro` et le formulaire de
+en attribut `data-*` sur l'élément et le relire depuis le script — voir le
+bouton de thème de `src/components/Navbar.astro` et le formulaire de
 `src/views/Contact.astro`.
+
+## Thème clair / sombre
+
+Le site est en sombre par défaut. Le bouton soleil/lune de la barre de
+navigation bascule en clair et enregistre le choix dans
+`localStorage["theme"]`. Un script en tête de `Layout.astro` pose
+`data-theme` sur `<html>` avant l'affichage, et le réapplique après chaque
+navigation du routeur client. Toutes les couleurs sont des variables CSS
+définies dans `Layout.astro` (`:root` pour le sombre,
+`:root[data-theme='light']` pour le clair).
 
 ## SEO et performance
 

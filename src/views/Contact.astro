@@ -10,14 +10,15 @@ const { t } = getI18n(Astro.url.pathname);
 <Layout title={t.contact.metaTitle} description={t.contact.metaDescription} pageType="ContactPage">
 	<Navbar />
 	<main id="main" class="contact">
-		<section class="contact-hero">
+		<header class="page-header">
 			<div class="container">
-				<h1 class="page-title">{t.contact.heading}</h1>
-				<p class="page-subtitle">{t.contact.subtitle}</p>
+				<span class="eyebrow">{t.contact.eyebrow}</span>
+				<h1>{t.contact.heading}</h1>
+				<p>{t.contact.subtitle}</p>
 			</div>
-		</section>
+		</header>
 
-		<section class="contact-content">
+		<section class="section">
 			<div class="container">
 				<div class="contact-grid">
 					<div class="contact-info">
@@ -27,7 +28,7 @@ const { t } = getI18n(Astro.url.pathname);
 						<div class="contact-methods">
 							<div class="contact-method">
 								<div class="contact-icon">
-									<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 										<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
 										<polyline points="22,6 12,13 2,6"></polyline>
 									</svg>
@@ -40,7 +41,7 @@ const { t } = getI18n(Astro.url.pathname);
 
 							<div class="contact-method">
 								<div class="contact-icon">
-									<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 										<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
 									</svg>
 								</div>
@@ -52,7 +53,7 @@ const { t } = getI18n(Astro.url.pathname);
 
 							<div class="contact-method">
 								<div class="contact-icon">
-									<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 										<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
 										<rect x="2" y="9" width="4" height="12"></rect>
 										<circle cx="4" cy="4" r="2"></circle>
@@ -66,7 +67,8 @@ const { t } = getI18n(Astro.url.pathname);
 						</div>
 					</div>
 
-					<div class="contact-form-wrapper">
+					<div class="card contact-form-wrapper">
+						<h2 class="form-title">{t.contact.formTitle}</h2>
 						<form
 							class="contact-form"
 							id="contact-form"
@@ -79,6 +81,7 @@ const { t } = getI18n(Astro.url.pathname);
 							data-failure={t.contact.form.failure}
 						>
 
+							<div class="form-row">
 							<div class="form-group">
 								<label for="name">{t.contact.form.name}</label>
 								<input type="text" id="name" name="name" required placeholder={t.contact.form.namePlaceholder} />
@@ -87,6 +90,8 @@ const { t } = getI18n(Astro.url.pathname);
 							<div class="form-group">
 								<label for="email">{t.contact.form.email}</label>
 								<input type="email" id="email" name="email" required placeholder={t.contact.form.emailPlaceholder} />
+							</div>
+
 							</div>
 
 							<div class="form-group">
@@ -166,133 +171,125 @@ const { t } = getI18n(Astro.url.pathname);
 		flex: 1;
 	}
 
-	.contact-hero {
-		padding: 4rem 0;
-		background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-		text-align: center;
-	}
-
-	.page-title {
-		font-size: 3rem;
-		font-weight: 800;
-		margin-bottom: 1rem;
-	}
-
-	.page-subtitle {
-		font-size: 1.25rem;
-		color: var(--text-secondary);
-		max-width: 600px;
-		margin: 0 auto;
-	}
-
-	.contact-content {
-		padding: 4rem 0;
-	}
-
 	.contact-grid {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
 		gap: 4rem;
+		align-items: start;
 	}
 
 	.contact-info h2 {
-		font-size: 1.75rem;
-		margin-bottom: 1rem;
+		font-size: 1.25rem;
+		margin-bottom: 0.75rem;
 	}
 
 	.contact-info > p {
 		color: var(--text-secondary);
-		line-height: 1.8;
 		margin-bottom: 2rem;
+		max-width: 46ch;
 	}
 
 	.contact-methods {
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
+		border-top: 1px solid var(--border);
 	}
 
 	.contact-method {
 		display: flex;
-		align-items: flex-start;
+		align-items: center;
 		gap: 1rem;
-	}
-
-	@media (max-width: 768px) {
-		.contact-method a {
-			display: inline-flex;
-			align-items: center;
-			min-height: 44px;
-		}
+		padding: 1rem 0;
+		border-bottom: 1px solid var(--border);
 	}
 
 	.contact-icon {
-		width: 48px;
-		height: 48px;
-		background: var(--bg-tertiary);
-		border: 1px solid var(--border-color);
-		border-radius: 12px;
+		width: 38px;
+		height: 38px;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-sm);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: var(--accent-blue);
+		color: var(--text-secondary);
 		flex-shrink: 0;
 	}
 
 	.contact-method h3 {
-		font-size: 1rem;
-		margin-bottom: 0.25rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 400;
+		letter-spacing: 0;
+		color: var(--text-muted);
+		margin-bottom: 0.1rem;
 	}
 
 	.contact-method a {
-		color: var(--text-secondary);
-		font-size: 0.9rem;
+		color: var(--text);
+		font-size: 0.95rem;
+		font-weight: 500;
 	}
 
 	.contact-method a:hover {
-		color: var(--accent-blue);
+		color: var(--accent);
 	}
 
 	.contact-form-wrapper {
-		background: var(--bg-secondary);
-		border: 1px solid var(--border-color);
-		border-radius: 12px;
 		padding: 2rem;
+	}
+
+	.form-title {
+		font-size: 1.1rem;
+		margin-bottom: 1.5rem;
 	}
 
 	.contact-form {
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
+		gap: 1.25rem;
+	}
+
+	.form-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 1rem;
 	}
 
 	.form-group {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.4rem;
 	}
 
 	.form-group label {
-		font-size: 0.9rem;
+		font-size: 0.85rem;
 		font-weight: 500;
 		color: var(--text-secondary);
 	}
 
 	.form-group input,
 	.form-group textarea {
-		background: var(--bg-tertiary);
-		border: 1px solid var(--border-color);
-		border-radius: 8px;
-		padding: 0.875rem 1rem;
-		color: var(--text-primary);
-		font-size: 1rem;
-		transition: border-color 0.2s ease;
+		background: var(--bg);
+		border: 1px solid var(--border-strong);
+		border-radius: var(--radius-sm);
+		padding: 0.7rem 0.85rem;
+		color: var(--text);
+		font: inherit;
+		font-size: 0.95rem;
+		width: 100%;
+		transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	}
+
+	.form-group textarea {
+		resize: vertical;
+		min-height: 140px;
 	}
 
 	.form-group input:focus,
 	.form-group textarea:focus {
 		outline: none;
-		border-color: var(--accent-blue);
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px var(--accent-soft);
 	}
 
 	.form-group input::placeholder,
@@ -300,8 +297,13 @@ const { t } = getI18n(Astro.url.pathname);
 		color: var(--text-muted);
 	}
 
+	.contact-form .btn {
+		align-self: flex-start;
+	}
+
 	.form-status {
 		margin: 0;
+		font-size: 0.925rem;
 		font-weight: 500;
 	}
 
@@ -310,51 +312,37 @@ const { t } = getI18n(Astro.url.pathname);
 	}
 
 	.form-status[data-state='success'] {
-		color: #4ade80;
+		color: var(--success);
 	}
 
 	.form-status[data-state='error'] {
-		color: #f87171;
+		color: var(--danger);
 	}
 
-	.btn {
-		padding: 0.875rem 2rem;
-		border-radius: 8px;
-		font-weight: 600;
-		transition: all 0.2s ease;
-		display: inline-block;
-		border: none;
-		cursor: pointer;
-		font-size: 1rem;
-	}
-
-	.btn-primary {
-		background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark));
-		color: white;
-	}
-
-	.btn-primary:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
-	}
-
-	@media (max-width: 1024px) {
+	@media (max-width: 960px) {
 		.contact-grid {
 			grid-template-columns: 1fr;
+			gap: 3rem;
 		}
 	}
 
 	@media (max-width: 768px) {
-		.page-title {
-			font-size: 2rem;
+		.contact-method a {
+			display: inline-flex;
+			align-items: center;
+			min-height: 44px;
 		}
 
-		.contact-content {
-			padding: 2rem 0;
+		.form-row {
+			grid-template-columns: 1fr;
 		}
 
 		.contact-form-wrapper {
 			padding: 1.5rem;
+		}
+
+		.contact-form .btn {
+			align-self: stretch;
 		}
 	}
 </style>

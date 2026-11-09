@@ -13,8 +13,18 @@ const { t, path } = getI18n(Astro.url.pathname);
 		<section class="error-hero">
 			<div class="container">
 				<div class="error-content">
-					<h1 class="error-code">404</h1>
-					<h2 class="error-title">{t.notFound.title}</h2>
+					<div class="card error-term" aria-hidden="true">
+						<div class="window-bar"><i></i><i></i><i></i><span>bash</span></div>
+						<pre><span class="t-prompt">$</span> cd <span data-missing-path>/page</span>
+<span class="t-err">bash: cd: <span data-missing-path>/page</span>: No such file or directory</span>
+<span class="t-prompt">$</span> echo $?
+<span class="t-code">404</span>
+<span class="t-prompt">$</span> <span class="cursor"></span></pre>
+					</div>
+					<script is:inline data-astro-rerun>
+						document.querySelectorAll('[data-missing-path]').forEach((el) => { el.textContent = location.pathname; });
+					</script>
+					<h1 class="error-title">{t.notFound.title}</h1>
 					<p class="error-message">{t.notFound.message}</p>
 					<div class="error-actions">
 						<a href={path('/')} class="btn btn-primary">{t.notFound.back}</a>
@@ -31,71 +41,55 @@ const { t, path } = getI18n(Astro.url.pathname);
 		flex: 1;
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		padding: 4rem 0;
+		padding: 6rem 0;
 	}
 
 	.error-hero {
-		text-align: center;
+		width: 100%;
 	}
 
 	.error-content {
-		max-width: 600px;
-		margin: 0 auto;
+		max-width: 560px;
 	}
 
-	.error-code {
-		font-size: 8rem;
-		font-weight: 800;
-		line-height: 1;
-		margin-bottom: 1rem;
-		background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-light));
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-		filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3));
+	.error-term {
+		overflow: hidden;
+		margin-bottom: 2.5rem;
+		transform: rotate(-0.6deg);
+	}
+
+	.error-term pre {
+		padding: 1rem 1.25rem 1.25rem;
+		font-family: var(--font-mono);
+		font-size: 0.85rem;
+		line-height: 1.8;
+		color: var(--text);
+		white-space: pre-wrap;
+		word-break: break-all;
+	}
+
+	.t-prompt {
+		color: var(--accent);
+		font-weight: 600;
+	}
+
+	.t-err {
+		color: var(--danger);
+	}
+
+	.t-code {
+		color: var(--syntax-string);
+		font-weight: 600;
 	}
 
 	.error-title {
-		font-size: 2.5rem;
-		margin-bottom: 1.5rem;
-		color: var(--text-primary);
+		font-size: clamp(2rem, 4vw, 2.75rem);
+		margin-bottom: 1rem;
 	}
 
 	.error-message {
-		font-size: 1.1rem;
+		font-size: 1.05rem;
 		color: var(--text-secondary);
-		margin-bottom: 2.5rem;
-	}
-
-	.btn {
-		display: inline-block;
-		padding: 0.8rem 2rem;
-		border-radius: 8px;
-		font-weight: 600;
-		transition: all 0.3s ease;
-		text-decoration: none;
-	}
-
-	.btn-primary {
-		background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark));
-		color: white;
-		box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-	}
-
-	.btn-primary:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
-		color: white;
-	}
-
-	@media (max-width: 768px) {
-		.error-code {
-			font-size: 5rem;
-		}
-
-		.error-title {
-			font-size: 1.8rem;
-		}
+		margin-bottom: 2rem;
 	}
 </style>

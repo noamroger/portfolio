@@ -2,16 +2,11 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-import Lightning from '../components/icons/Lightning.astro';
-import Lock from '../components/icons/Lock.astro';
-import Grid from '../components/icons/Grid.astro';
-import Wrench from '../components/icons/Wrench.astro';
-import { getI18n, techStack } from '../i18n';
+import StackList from '../components/StackList.astro';
+import { getI18n } from '../i18n';
 import { projects } from '../data/projects';
 
 const { t, path } = getI18n(Astro.url.pathname);
-
-const icons = [Lightning, Lock, Grid, Wrench];
 
 // The three cards at the top of the Projects page, so the home page carries
 // real copy and links through to the full list.
@@ -25,87 +20,110 @@ const featured = projects.slice(0, 3).map((project) => ({
 	<Navbar />
 	<main id="main" class="home">
 		<section class="hero">
-			<div class="hero-bg"></div>
-			<div class="hero-grid"></div>
-			<div class="container hero-content">
+			<div class="hero-bg dot-grid" aria-hidden="true"></div>
+			<div class="container hero-grid">
 				<div class="hero-text">
-					<h1 class="hero-title">
-						{t.home.greeting} <span class="highlight">Noam Roger</span>
-					</h1>
-					<p class="hero-subtitle">
-						<span id="typing-text" data-texts={JSON.stringify(t.home.typingTexts)}>{t.home.typingTexts[0]}</span><span class="typing-cursor"></span>
-					</p>
-					<p class="hero-description">
-						{t.home.description}
-					</p>
+					<span class="eyebrow">{t.home.eyebrow}</span>
+					<h1>{t.home.title}</h1>
+					<p class="hero-description">{t.home.description}</p>
 					<div class="hero-actions">
 						<a href={path('/projects/')} class="btn btn-primary">{t.home.ctaProjects}</a>
 						<a href={path('/contact/')} class="btn btn-secondary">{t.home.ctaContact}</a>
 					</div>
 				</div>
-				<div class="hero-visual">
-					<div class="code-block">
-						<pre><code><span class="keyword">class</span> <span class="class">Developer</span> {'{'}
-  <span class="keyword">constructor</span>() {'{'}
-    <span class="property">this</span>.name = <span class="string">"Noam Roger"</span>;
-    <span class="property">this</span>.role = <span class="string">"{t.home.code.role}"</span>;
-    <span class="property">this</span>.passion = <span class="string">"{t.home.code.passion}"</span>;
-  {'}'}
 
-  <span class="function">build</span>() {'{'}
-    <span class="keyword">return</span> <span class="string">"{t.home.code.returns}"</span>;
-  {'}'}
-{'}'}</code></pre>
+				<aside class="card terminal" aria-labelledby="profile-title">
+					<div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>noam@roger: ~</span></div>
+					<div class="terminal-body">
+						<p class="terminal-cmd" aria-hidden="true"><span class="t-prompt">$</span> kubectl get developer noam-roger -o yaml</p>
+						<h2 class="sr-only" id="profile-title">{t.home.profile.title}</h2>
+						<dl class="yaml">
+							<div class="yaml-line" aria-hidden="true"><span class="t-key">kind</span>: <span class="t-kw">Developer</span></div>
+							<div class="yaml-line" aria-hidden="true"><span class="t-key">metadata</span>:</div>
+							<div class="yaml-line yaml-indent" aria-hidden="true"><span class="t-key">name</span>: <span class="t-str">noam-roger</span></div>
+							<div class="yaml-line" aria-hidden="true"><span class="t-key">spec</span>:</div>
+							{t.home.profile.rows.map((row) => (
+								<div class="yaml-line yaml-indent">
+									<dt><span class="t-key" aria-hidden="true">{row.key}</span><span class="sr-only">{row.label}</span><span aria-hidden="true">: </span></dt>
+									<dd><span class="t-str">{row.value}</span> <span class="t-comment" aria-hidden="true"># {row.label}</span></dd>
+								</div>
+							))}
+							<div class="yaml-line" aria-hidden="true"><span class="t-key">status</span>:</div>
+						</dl>
+						<p class="terminal-status">
+							<span class="status-dot" aria-hidden="true"></span>
+							{t.home.profile.status}
+						</p>
+						<p class="terminal-cmd terminal-last" aria-hidden="true"><span class="t-prompt">$</span> <span class="cursor"></span></p>
 					</div>
-				</div>
+				</aside>
 			</div>
 		</section>
 
-		<section class="featured">
+		<section class="section">
 			<div class="container">
-				<h2 class="section-title">{t.home.featuredTitle}</h2>
-				<p class="section-intro">{t.home.featuredIntro}</p>
-				<div class="featured-grid">
-					{featured.map((project) => (
-						<article class="featured-card">
-							<h3>{project.title}</h3>
-							<p>{project.description}</p>
-							<div class="featured-tech">
-								{project.tech.map((tech) => <span class="tech-tag">{tech}</span>)}
-							</div>
+				<div class="section-head">
+					<div>
+						<h2>{t.home.focusTitle}</h2>
+						<p>{t.home.focusIntro}</p>
+					</div>
+				</div>
+				<div class="focus-grid">
+					{t.home.focus.map((item, i) => (
+						<article class="focus-item">
+							<span class="focus-index">{String(i + 1).padStart(2, '0')}</span>
+							<h3>{item.title}</h3>
+							<p>{item.description}</p>
 						</article>
 					))}
 				</div>
-				<div class="featured-actions">
-					<a href={path('/projects/')} class="btn btn-secondary">{t.home.featuredCta}</a>
-				</div>
 			</div>
 		</section>
 
-		<section class="stack">
+		<section class="section">
 			<div class="container">
-				<h2 class="section-title">{t.home.featuredStackTitle}</h2>
-				<p class="section-intro">{t.home.featuredStackIntro}</p>
-				<div class="stack-list">
-					{techStack.map((tech) => <span class="tech-tag">{tech}</span>)}
+				<div class="section-head">
+					<div>
+						<h2>{t.home.featuredTitle}</h2>
+						<p>{t.home.featuredIntro}</p>
+					</div>
+					<a href={path('/projects/')} class="link-arrow">{t.home.featuredCta}</a>
 				</div>
-			</div>
-		</section>
-
-		<section class="skills">
-			<div class="container">
-				<h2 class="section-title">{t.home.skillsTitle}</h2>
-				<div class="skills-grid">
-					{t.home.skills.map((skill, i) => {
-						const Icon = icons[i];
-						return (
-							<div class="skill-card">
-								<Icon class="skill-icon" width="64" height="64" />
-								<h3>{skill.title}</h3>
-								<p>{skill.description}</p>
+				<div class="featured-grid">
+					{featured.map((project) => (
+						<a class="card featured-card" href={project.github} target="_blank" rel="noopener noreferrer">
+							<span class="featured-context">{project.context}</span>
+							<h3>{project.title}</h3>
+							<p>{project.description}</p>
+							<div class="tag-list">
+								{project.tech.map((tech) => <span class="tag">{tech}</span>)}
 							</div>
-						);
-					})}
+						</a>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section class="section">
+			<div class="container">
+				<div class="section-head">
+					<div>
+						<h2>{t.home.stackTitle}</h2>
+						<p>{t.home.stackIntro}</p>
+					</div>
+				</div>
+				<StackList />
+			</div>
+		</section>
+
+		<section class="section cta-section">
+			<div class="container">
+				<div class="card cta">
+					<div>
+						<h2>{t.home.ctaTitle}</h2>
+						<p>{t.home.ctaText}</p>
+					</div>
+					<a href={path('/contact/')} class="btn btn-primary">{t.home.ctaButton}</a>
 				</div>
 			</div>
 		</section>
@@ -119,525 +137,293 @@ const featured = projects.slice(0, 3).map((project) => ({
 	}
 
 	.hero {
-		min-height: calc(100vh - 80px);
-		min-height: calc(100svh - 80px);
-		display: flex;
-		align-items: center;
-		padding: 4rem 0;
 		position: relative;
+		padding: 6rem 0 5rem;
+		border-bottom: 1px solid var(--border);
 		overflow: hidden;
 	}
 
 	.hero-bg {
 		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		/* The lower glow used to peak on the bottom edge, where the hero's
-		   overflow: hidden chopped it into a hard line against the section
-		   below. It now peaks above the fold, and the whole layer fades to
-		   nothing before the edge, so the hero ends on the same flat
-		   --bg-primary that the next section starts on. */
-		background: radial-gradient(ellipse at top right, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-					radial-gradient(ellipse at 0% 55%, rgba(96, 165, 250, 0.11) 0%, transparent 55%);
-		-webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
-		mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
-		z-index: -2;
+		inset: 0;
+		-webkit-mask-image: radial-gradient(ellipse 70% 80% at 75% 40%, #000 20%, transparent 75%);
+		mask-image: radial-gradient(ellipse 70% 80% at 75% 40%, #000 20%, transparent 75%);
+		pointer-events: none;
 	}
 
 	.hero-grid {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-image:
-			linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
-		background-size: 50px 50px;
-		z-index: -1;
-		-webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
-		mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+		position: relative;
 	}
 
-	.hero-content {
+	.hero-grid {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
 		gap: 4rem;
 		align-items: center;
-		position: relative;
-		z-index: 1;
 	}
 
-	.hero-text {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
-
-	.hero-title {
-		font-size: 3.5rem;
-		font-weight: 800;
-		line-height: 1.1;
-		opacity: 0;
-		animation: fadeInUp 0.8s ease forwards;
-	}
-
-	.highlight {
-		background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-light));
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-	}
-
-	.hero-subtitle {
-		font-size: 1.5rem;
-		color: var(--accent-blue);
-		font-weight: 600;
-		opacity: 0;
-		animation: fadeInUp 0.8s ease 0.2s forwards;
-	}
-
-	.typing-cursor {
-		display: inline-block;
-		width: 3px;
-		height: 1.2em;
-		background: var(--accent-blue);
-		margin-left: 4px;
-		animation: blink 1s infinite;
-		vertical-align: text-bottom;
-	}
-
-	@keyframes blink {
-		0%, 50% { opacity: 1; }
-		51%, 100% { opacity: 0; }
+	.hero-text h1 {
+		font-size: clamp(2.1rem, 4.4vw, 3.1rem);
+		line-height: 1.12;
+		letter-spacing: -0.03em;
+		margin-bottom: 1.5rem;
+		max-width: 20ch;
 	}
 
 	.hero-description {
 		font-size: 1.1rem;
 		color: var(--text-secondary);
-		max-width: 500px;
-		opacity: 0;
-		animation: fadeInUp 0.8s ease 0.4s forwards;
+		max-width: 56ch;
+		margin-bottom: 2rem;
 	}
 
 	.hero-actions {
 		display: flex;
-		gap: 1rem;
-		opacity: 0;
-		animation: fadeInUp 0.8s ease 0.6s forwards;
+		flex-wrap: wrap;
+		gap: 0.75rem;
 	}
 
-	.btn {
-		padding: 0.875rem 2rem;
-		border-radius: 8px;
+	.terminal {
+		overflow: hidden;
+		font-family: var(--font-mono);
+		box-shadow: var(--shadow), 0 24px 48px -24px rgba(0, 0, 0, 0.35);
+		transform: rotate(0.6deg);
+		transition: transform 0.3s ease;
+	}
+
+	.terminal:hover {
+		transform: rotate(0deg);
+	}
+
+	.terminal-body {
+		padding: 1.15rem 1.25rem 1.25rem;
+		font-size: 0.78rem;
+		line-height: 1.75;
+	}
+
+	.terminal-cmd {
+		color: var(--text);
+		margin-bottom: 0.5rem;
+	}
+
+	.terminal-last {
+		margin: 0.75rem 0 0;
+	}
+
+	.t-prompt {
+		color: var(--accent);
 		font-weight: 600;
-		transition: all 0.2s ease;
-		display: inline-block;
 	}
 
-	.btn-primary {
-		background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark));
-		color: white;
-		position: relative;
-		overflow: hidden;
+	.t-key {
+		color: var(--syntax-key);
 	}
 
-	.btn-primary::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: -100%;
-		width: 100%;
-		height: 100%;
-		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-		transition: left 0.5s ease;
+	.t-str {
+		color: var(--syntax-string);
 	}
 
-	.btn-primary:hover::before {
-		left: 100%;
+	.t-kw {
+		color: var(--syntax-keyword);
 	}
 
-	.btn-primary:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+	.t-comment {
+		color: var(--text-muted);
+		font-style: italic;
 	}
 
-	.btn-secondary {
-		background: var(--bg-tertiary);
-		color: var(--text-primary);
-		border: 1px solid var(--border-color);
-		position: relative;
-		overflow: hidden;
-	}
-
-	.btn-secondary::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: -100%;
-		width: 100%;
-		height: 100%;
-		background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
-		transition: left 0.5s ease;
-	}
-
-	.btn-secondary:hover::before {
-		left: 100%;
-	}
-
-	.btn-secondary:hover {
-		background: var(--border-color);
-		transform: translateY(-2px);
-	}
-
-		.hero-visual {
-			animation: float 6s ease-in-out infinite;
-		}
-
-		@keyframes float {
-			0%, 100% {
-				transform: translateY(0);
-			}
-			50% {
-				transform: translateY(-20px);
-			}
-		}
-
-	.code-block {
-		background: var(--bg-secondary);
-		border: 1px solid var(--border-color);
-		border-radius: 12px;
-		padding: 2rem;
-		font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
-		font-size: 0.9rem;
-		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-		opacity: 0;
-		animation: fadeInUp 0.8s ease 0.8s forwards, pulse 3s ease-in-out infinite 2s;
-	}
-
-	@keyframes pulse {
-		0%, 100% {
-			box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-		}
-		50% {
-			box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
-		}
-	}
-
-	.code-block code {
-		color: var(--text-primary);
-	}
-
-	.keyword {
-		color: #c792ea;
-	}
-
-	.class {
-		color: #ffcb6b;
-	}
-
-	.property {
-		color: #82aaff;
-	}
-
-	.string {
-		color: #c3e88d;
-	}
-
-	.function {
-		color: #82aaff;
-	}
-
-	.section-intro {
-		max-width: 640px;
-		margin: -2rem auto 3rem;
-		text-align: center;
+	.yaml-line {
 		color: var(--text-secondary);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
-	.featured {
-		padding: 6rem 0;
+	.yaml-line dt,
+	.yaml-line dd {
+		display: inline;
+	}
+
+	.yaml-indent {
+		padding-left: 2ch;
+	}
+
+
+	.terminal-status {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		margin-left: 2ch;
+		padding: 0.6rem 0.8rem;
+		border-radius: var(--radius-sm);
+		border: 1px dashed color-mix(in srgb, var(--success) 50%, transparent);
+		background: color-mix(in srgb, var(--success) 8%, transparent);
+		font-family: var(--font-sans);
+		font-size: 0.85rem;
+		line-height: 1.45;
+		color: var(--text);
+	}
+
+	.focus-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		border-top: 1px solid var(--border);
+	}
+
+	.focus-item {
+		padding: 1.75rem 2rem 0.5rem 0;
+	}
+
+	.focus-item + .focus-item {
+		padding-left: 2rem;
+		border-left: 1px solid var(--border);
+	}
+
+	.focus-item h3 {
+		transition: color 0.15s ease;
+	}
+
+	.focus-item:hover h3 {
+		color: var(--accent);
+	}
+
+	.focus-index {
+		display: block;
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		color: var(--accent);
+		margin-bottom: 1rem;
+	}
+
+	.focus-item h3 {
+		font-size: 1.1rem;
+		margin-bottom: 0.6rem;
+	}
+
+	.focus-item p {
+		color: var(--text-secondary);
+		font-size: 0.95rem;
 	}
 
 	.featured-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-		gap: 2rem;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.25rem;
 	}
 
 	.featured-card {
-		background: var(--bg-secondary);
-		border: 1px solid var(--border-color);
-		border-radius: 12px;
-		padding: 1.75rem;
-		transition: transform 0.3s ease, border-color 0.3s ease;
+		display: flex;
+		flex-direction: column;
+		padding: 1.5rem;
+		color: var(--text);
+		transition: border-color 0.15s ease;
+	}
+
+	.featured-card {
+		transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 	}
 
 	.featured-card:hover {
-		transform: translateY(-4px);
-		border-color: var(--accent-blue);
+		color: var(--text);
+		border-color: var(--accent);
+		transform: translate(-2px, -2px);
+		box-shadow: 4px 4px 0 color-mix(in srgb, var(--accent) 45%, transparent);
+	}
+
+	.featured-card:hover h3 {
+		color: var(--accent);
+	}
+
+	.featured-context {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		margin-bottom: 0.75rem;
 	}
 
 	.featured-card h3 {
-		font-size: 1.15rem;
-		margin-bottom: 0.75rem;
+		font-size: 1.1rem;
+		margin-bottom: 0.6rem;
+		transition: color 0.15s ease;
 	}
 
 	.featured-card p {
 		color: var(--text-secondary);
-		font-size: 0.95rem;
+		font-size: 0.925rem;
 		margin-bottom: 1.25rem;
+		flex: 1;
 	}
 
-	.featured-tech,
-	.stack-list {
+	.cta-section {
+		padding-top: 0;
+		border-top: none !important;
+	}
+
+	.cta {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.stack-list {
-		justify-content: center;
-	}
-
-	.tech-tag {
-		background: var(--bg-tertiary);
-		border: 1px solid var(--border-color);
-		border-radius: 999px;
-		padding: 0.25rem 0.75rem;
-		font-size: 0.8rem;
-		color: var(--text-secondary);
-	}
-
-	.featured-actions {
-		display: flex;
-		justify-content: center;
-		margin-top: 3rem;
-	}
-
-	.stack {
-		padding: 0 0 6rem;
-	}
-
-	.skills {
-		padding: 6rem 0;
-		background: var(--bg-secondary);
-		position: relative;
-	}
-
-	.skills::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		height: 1px;
-		background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
-		opacity: 0.3;
-	}
-
-	.section-title {
-		font-size: 2.5rem;
-		font-weight: 700;
-		text-align: center;
-		margin-bottom: 3rem;
-		opacity: 0;
-		transform: translateY(30px);
-		animation: fadeInUp 0.8s ease forwards;
-	}
-
-	.skills-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		justify-content: space-between;
+		align-items: center;
 		gap: 2rem;
+		padding: 2rem 2.25rem;
 	}
 
-	.skill-card {
-		background: var(--bg-tertiary);
-		border: 1px solid var(--border-color);
-		border-radius: 12px;
-		padding: 2rem;
-		text-align: center;
-		transition: all 0.3s ease;
-		position: relative;
-		overflow: hidden;
-		opacity: 0;
-		transform: translateY(30px);
+	.cta h2 {
+		font-size: 1.35rem;
+		margin-bottom: 0.4rem;
 	}
 
-	.skill-card::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: -100%;
-		width: 100%;
-		height: 100%;
-		background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
-		transition: left 0.5s ease;
-	}
-
-	.skill-card:hover::before {
-		left: 100%;
-	}
-
-	.skill-card:hover {
-		transform: translateY(-4px);
-		border-color: var(--accent-blue);
-		background: linear-gradient(135deg, var(--bg-tertiary), rgba(59, 130, 246, 0.1));
-		box-shadow: 0 8px 30px rgba(59, 130, 246, 0.2);
-	}
-
-	.skill-card:nth-child(1) { animation: fadeInUp 0.8s ease 0.2s forwards; }
-	.skill-card:nth-child(2) { animation: fadeInUp 0.8s ease 0.4s forwards; }
-	.skill-card:nth-child(3) { animation: fadeInUp 0.8s ease 0.6s forwards; }
-	.skill-card:nth-child(4) { animation: fadeInUp 0.8s ease 0.8s forwards; }
-
-	@keyframes fadeInUp {
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
-	.skill-icon {
-		width: 64px;
-		height: 64px;
-		color: var(--accent-blue);
-		transition: all 0.3s ease;
-		margin: 12px auto;
-	}
-
-	.skill-card:hover .skill-icon {
-		color: var(--accent-blue-light);
-		transform: scale(1.1) rotate(5deg);
-	}
-
-	.skill-card h3 {
-		font-size: 1.25rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.skill-card p {
+	.cta p {
 		color: var(--text-secondary);
-		font-size: 0.95rem;
+		max-width: 60ch;
 	}
 
-	@media (max-width: 1024px) {
-		.hero-content {
+	.cta .btn {
+		flex-shrink: 0;
+	}
+
+	@media (max-width: 960px) {
+		.hero-grid {
 			grid-template-columns: 1fr;
-			text-align: center;
+			gap: 3rem;
 		}
 
-		.hero-text {
-			align-items: center;
+		.featured-grid,
+		.focus-grid {
+			grid-template-columns: 1fr;
 		}
 
-		.hero-description {
-			max-width: 100%;
+		.focus-item,
+		.focus-item + .focus-item {
+			padding: 1.5rem 0;
+			border-left: none;
 		}
 
-		.hero-actions {
-			justify-content: center;
-		}
-
-		.code-block {
-			max-width: 500px;
-			text-align: left;
+		.focus-item + .focus-item {
+			border-top: 1px solid var(--border);
 		}
 	}
 
 	@media (max-width: 768px) {
 		.hero {
-			/* The mobile navbar is two rows, not the 80px of the desktop one. */
-			min-height: calc(100vh - 100px);
-			min-height: calc(100svh - 100px);
-			padding: 2.5rem 0 3.5rem;
+			padding: 3rem 0;
 		}
 
-		.hero-title {
-			font-size: 2.25rem;
+		.hero-actions .btn {
+			flex: 1;
 		}
 
-		.hero-subtitle {
-			font-size: 1.15rem;
+		.terminal {
+			transform: none;
 		}
 
-		/* Side by side, both labels wrapped onto two lines. */
-		.hero-actions {
+		.t-comment {
+			display: none;
+		}
+
+		.cta {
 			flex-direction: column;
-			align-self: stretch;
-			gap: 0.75rem;
-		}
-
-		.btn {
-			text-align: center;
-			padding: 0.9rem 1.5rem;
-		}
-
-		.code-block {
-			padding: 1.25rem;
-			font-size: 0.8rem;
-		}
-
-		.section-title {
-			font-size: 2rem;
-		}
-
-		.skills,
-		.featured {
-			padding: 4rem 0;
-		}
-
-		.stack {
-			padding: 0 0 4rem;
+			align-items: flex-start;
+			padding: 1.5rem;
 		}
 	}
 </style>
-
-<script>
-	const initTyping = () => {
-		const typingText = document.getElementById('typing-text');
-		if (!typingText) return;
-
-		const texts: string[] = JSON.parse(typingText.dataset.texts ?? '[]');
-		if (texts.length === 0) return;
-		let textIndex = 0;
-		// The first phrase is server-rendered, so resume from its end rather
-		// than retyping it and flashing the element empty.
-		let charIndex = (typingText.textContent ?? '').length;
-		let isDeleting = charIndex > 0;
-		let typingSpeed = 100;
-		let timeoutId: number;
-
-		function type() {
-			const currentText = texts[textIndex];
-
-			if (isDeleting) {
-				typingText.textContent = currentText.substring(0, charIndex - 1);
-				charIndex--;
-				typingSpeed = 50;
-			} else {
-				typingText.textContent = currentText.substring(0, charIndex + 1);
-				charIndex++;
-				typingSpeed = 100;
-			}
-
-			if (!isDeleting && charIndex === currentText.length) {
-				isDeleting = true;
-				typingSpeed = 2000;
-			} else if (isDeleting && charIndex === 0) {
-				isDeleting = false;
-				textIndex = (textIndex + 1) % texts.length;
-				typingSpeed = 500;
-			}
-
-			timeoutId = setTimeout(type, typingSpeed) as unknown as number;
-		}
-
-		timeoutId = setTimeout(type, 1000) as unknown as number;
-	};
-
-	document.addEventListener('astro:page-load', initTyping);
-</script>

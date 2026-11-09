@@ -9,54 +9,91 @@ const currentPage = pathname === "" ? "/" : pathname;
 // 404 page there is nothing to match over there, so point at the home page.
 const otherLocale = locales.find((code) => code !== locale)!;
 const otherHref = localizedPath(currentPage === '/404' ? '/' : Astro.url.pathname, otherLocale);
+
+const links = [
+	{ href: '/', key: '/', label: t.nav.home },
+	{ href: '/about/', key: '/about', label: t.nav.about },
+	{ href: '/projects/', key: '/projects', label: t.nav.projects },
+	{ href: '/contact/', key: '/contact', label: t.nav.contact },
+];
 ---
 
-<nav class="navbar">
+<header class="navbar">
 	<div class="container navbar-content">
-		<a href={path('/')} class="logo" aria-label={t.nav.logoLabel}>
-			<span class="logo-text">NR</span>
+		<a href={path('/')} class="brand" aria-label={t.nav.logoLabel}>
+			<span class="brand-prompt" aria-hidden="true">~/</span><span class="brand-name">noam<span class="brand-dot">.</span>roger</span><span class="cursor" aria-hidden="true"></span>
 		</a>
-		<div class="navbar-right">
-			<ul class="nav-links">
-				<li>
-					<a href={path('/')} class={currentPage === '/' ? 'active' : ''}>{t.nav.home}</a>
-				</li>
-				<li>
-					<a href={path('/about/')} class={currentPage === '/about' ? 'active' : ''}>{t.nav.about}</a>
-				</li>
-				<li>
-					<a href={path('/projects/')} class={currentPage === '/projects' ? 'active' : ''}>{t.nav.projects}</a>
-				</li>
-				<li>
-					<a href={path('/contact/')} class={currentPage === '/contact' ? 'active' : ''}>{t.nav.contact}</a>
-				</li>
-			</ul>
+		<nav class="nav-links" aria-label="Navigation">
+			{links.map((link) => (
+				<a href={path(link.href)} aria-current={currentPage === link.key ? 'page' : undefined}>{link.label}</a>
+			))}
+		</nav>
+		<div class="nav-tools">
+			<button
+				type="button"
+				class="tool theme-toggle"
+				data-theme-toggle
+				data-label-light={t.nav.themeToLight}
+				data-label-dark={t.nav.themeToDark}
+				aria-label={t.nav.themeToLight}
+				title={t.nav.themeToLight}
+			>
+				<svg class="icon-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="12" cy="12" r="4"></circle>
+					<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+				</svg>
+				<svg class="icon-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+				</svg>
+			</button>
 			<a
-				class="lang-switch"
+				class="tool lang-switch"
 				data-lang-switch={otherLocale}
 				data-astro-prefetch="false"
 				href={otherHref}
 				hreflang={otherLocale}
 				rel="alternate"
 				aria-label={t.nav.switchLanguage}
+				title={t.nav.switchLanguage}
 			>
-				<svg class="lang-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<circle cx="12" cy="12" r="10"></circle>
-					<path d="M2 12h20"></path>
-					<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-				</svg>
 				<span lang={otherLocale}>{otherLocale.toUpperCase()}</span>
 			</a>
 		</div>
 	</div>
-</nav>
+</header>
 
 <script>
-	import { LANGUAGE_KEY } from '../i18n/preference';
+	import { LANGUAGE_KEY, THEME_KEY } from '../i18n/preference';
+
+	const syncToggleLabel = () => {
+		const button = document.querySelector<HTMLElement>('[data-theme-toggle]');
+		if (!button) return;
+		const isLight = document.documentElement.dataset.theme === 'light';
+		const label = (isLight ? button.dataset.labelDark : button.dataset.labelLight) ?? '';
+		button.setAttribute('aria-label', label);
+		button.setAttribute('title', label);
+	};
+
+	document.addEventListener('astro:page-load', syncToggleLabel);
 
 	// Delegated: the client router replaces the navbar on every navigation.
 	document.addEventListener('click', (event) => {
-		const link = (event.target as Element).closest<HTMLElement>('[data-lang-switch]');
+		const target = event.target as Element;
+
+		if (target.closest('[data-theme-toggle]')) {
+			const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+			document.documentElement.dataset.theme = next;
+			document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'light' ? '#fafaf9' : '#0b0c0f');
+			try {
+				localStorage.setItem(THEME_KEY, next);
+			} catch {
+				// Storage can be blocked: the theme still applies for this page.
+			}
+			syncToggleLabel();
+			return;
+		}
+
+		const link = target.closest<HTMLElement>('[data-lang-switch]');
 		if (!link) return;
 		try {
 			localStorage.setItem(LANGUAGE_KEY, link.dataset.langSwitch ?? '');
@@ -68,168 +105,167 @@ const otherHref = localizedPath(currentPage === '/404' ? '/' : Astro.url.pathnam
 
 <style>
 	.navbar {
-		background-color: var(--bg-secondary);
-		border-bottom: 1px solid var(--border-color);
 		position: sticky;
 		top: 0;
 		z-index: 100;
+		background: color-mix(in srgb, var(--bg) 85%, transparent);
+		backdrop-filter: saturate(160%) blur(10px);
+		-webkit-backdrop-filter: saturate(160%) blur(10px);
+		border-bottom: 1px solid var(--border);
 	}
 
 	.navbar-content {
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding-top: 1rem;
-		padding-bottom: 1rem;
-	}
-
-	.logo {
-		font-size: 1.5rem;
-		font-weight: 700;
-		color: var(--text-primary);
-		position: relative;
-	}
-
-	.logo::after {
-		content: '';
-		position: absolute;
-		bottom: -4px;
-		left: 0;
-		width: 100%;
-		height: 2px;
-		background: linear-gradient(90deg, var(--accent-blue), var(--accent-blue-light));
-		transform: scaleX(0);
-		transition: transform 0.3s ease;
-	}
-
-	.logo:hover::after {
-		transform: scaleX(1);
-	}
-
-	.logo-text {
-		background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-light));
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-	}
-
-	.navbar-right {
-		display: flex;
 		align-items: center;
 		gap: 2rem;
+		height: 64px;
+	}
+
+	.brand {
+		display: inline-flex;
+		align-items: center;
+		color: var(--text);
+		font-family: var(--font-mono);
+		font-size: 0.95rem;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+	}
+
+	.brand:hover {
+		color: var(--text);
+	}
+
+	.brand-prompt {
+		color: var(--accent);
+		margin-right: 0.1rem;
+	}
+
+	.brand-dot {
+		color: var(--text-muted);
+	}
+
+	.brand .cursor {
+		width: 0.5em;
+		height: 1.1em;
 	}
 
 	.nav-links {
 		display: flex;
-		list-style: none;
-		gap: 2rem;
-	}
-
-	.lang-switch {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.4rem;
-		padding: 0.3rem 0.7rem;
-		border: 1px solid var(--border-color);
-		border-radius: 999px;
-		color: var(--text-secondary);
-		font-size: 0.85rem;
-		font-weight: 600;
-		letter-spacing: 0.03em;
-		transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
-	}
-
-	.lang-switch:hover {
-		color: var(--accent-blue);
-		border-color: var(--accent-blue);
-		background: rgba(59, 130, 246, 0.1);
-	}
-
-	.lang-icon {
-		width: 15px;
-		height: 15px;
-		flex-shrink: 0;
+		gap: 0.25rem;
+		margin-left: auto;
 	}
 
 	.nav-links a {
+		padding: 0.4rem 0.75rem;
+		border-radius: var(--radius-sm);
 		color: var(--text-secondary);
+		font-size: 0.925rem;
 		font-weight: 500;
-		position: relative;
+		transition: color 0.15s ease, background-color 0.15s ease;
 	}
 
-	.nav-links a:hover,
-	.nav-links a.active {
-		color: var(--accent-blue);
+	.nav-links a:hover {
+		color: var(--text);
+		background: var(--bg-subtle);
 	}
 
-	.nav-links a::after {
-		content: '';
-		position: absolute;
-		bottom: -4px;
-		left: 0;
-		width: 0;
-		height: 2px;
-		background: linear-gradient(90deg, var(--accent-blue), var(--accent-blue-light));
-		transition: width 0.3s ease;
+	.nav-links a[aria-current='page'] {
+		color: var(--text);
+		background: var(--bg-subtle);
 	}
 
-	.nav-links a:hover::after,
-	.nav-links a.active::after {
-		width: 100%;
+	.nav-tools {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding-left: 1rem;
+		border-left: 1px solid var(--border);
+	}
+
+	.tool {
+		display: inline-grid;
+		place-items: center;
+		min-width: 34px;
+		height: 34px;
+		padding: 0 0.5rem;
+		border-radius: var(--radius-sm);
+		border: 1px solid var(--border);
+		background: transparent;
+		color: var(--text-secondary);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+	}
+
+	.tool:hover {
+		color: var(--text);
+		border-color: var(--border-strong);
+		background: var(--bg-subtle);
+	}
+
+	.tool svg {
+		width: 16px;
+		height: 16px;
+	}
+
+	/* Shows what the button switches to. */
+	.icon-moon {
+		display: none;
+	}
+
+	:global([data-theme='light']) .icon-sun {
+		display: none;
+	}
+
+	:global([data-theme='light']) .icon-moon {
+		display: block;
 	}
 
 	@media (max-width: 768px) {
 		.navbar-content {
 			display: grid;
-			grid-template-columns: auto 1fr;
+			grid-template-columns: 1fr auto;
 			grid-template-areas:
-				"logo lang"
-				"links links";
-			align-items: center;
+				'brand tools'
+				'links links';
+			height: auto;
+			gap: 0;
 			padding-top: 0.5rem;
-			padding-bottom: 0;
 		}
 
-		.navbar-right {
-			display: contents;
-		}
-
-		.logo {
-			grid-area: logo;
-			display: inline-flex;
-			align-items: center;
+		.brand {
+			grid-area: brand;
 			min-height: 44px;
 		}
 
-		.lang-switch {
-			grid-area: lang;
-			justify-self: end;
-			min-height: 44px;
-			padding: 0.5rem 0.9rem;
+		.nav-tools {
+			grid-area: tools;
+			border-left: none;
+			padding-left: 0;
+		}
+
+		.tool {
+			min-width: 44px;
+			height: 44px;
 		}
 
 		.nav-links {
 			grid-area: links;
+			margin: 0 -0.5rem;
 			justify-content: space-between;
-			gap: 0;
-			font-size: 0.95rem;
 		}
 
 		.nav-links a {
-			display: block;
-			padding: 0.7rem 0.35rem;
-			white-space: nowrap;
+			padding: 0.7rem 0.5rem;
+			background: none !important;
+			border-bottom: 2px solid transparent;
+			border-radius: 0;
 		}
 
-		/* Keep the underline against the text, not the padding box. */
-		.nav-links a::after {
-			bottom: 0.45rem;
-			left: 0.35rem;
-		}
-
-		.nav-links a:hover::after,
-		.nav-links a.active::after {
-			width: calc(100% - 0.7rem);
+		.nav-links a[aria-current='page'] {
+			border-bottom-color: var(--text);
 		}
 	}
 </style>

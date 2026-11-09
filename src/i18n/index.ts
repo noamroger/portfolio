@@ -42,8 +42,19 @@ export const socialProfiles = [
 	'https://linkedin.com/in/noamroger',
 ];
 
-/** Shown on the About page and reused as schema.org knowsAbout. */
-export const techStack = [
-	'Node.js', 'TypeScript', 'C', 'Java', 'PHP', 'Python', 'PostgreSQL',
-	'MariaDB', 'MySQL', 'Docker', 'React', 'Astro', 'Cloudflare', 'Git', 'Proxmox',
-];
+/**
+ * The stack, grouped. Group labels live in src/i18n (`stack.groups`), keyed by
+ * the same `key`. `learning` marks what is being learned right now.
+ */
+export const stackGroups = [
+	{ key: 'languages', items: ['TypeScript', 'Node.js', 'C', 'Java', 'PHP', 'Python'] },
+	{ key: 'data', items: ['PostgreSQL', 'MariaDB', 'MySQL'] },
+	{ key: 'infra', items: ['Docker', 'CI/CD', 'Linux', 'Proxmox', 'Cloudflare', 'Git'], learning: ['Kubernetes'] },
+	{ key: 'web', items: ['Express', 'React', 'Astro'] },
+] as const;
+
+/** Flat list, reused as schema.org knowsAbout. */
+export const techStack: string[] = stackGroups.flatMap((group) => [
+	...group.items,
+	...('learning' in group ? group.learning : []),
+]);
