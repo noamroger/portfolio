@@ -11,6 +11,7 @@ const currentYear = new Date().getFullYear();
 		<div class="footer-left">
 			<p class="footer-name">Noam Roger</p>
 			<p>{t.footer.tagline}</p>
+			<p class="footer-gh" data-gh-block hidden><span class="status-dot" aria-hidden="true"></span><span data-gh={t.github.footer}></span></p>
 			<p class="footer-legal">&copy; {currentYear} · <a href="https://github.com/noamroger/portfolio" target="_blank" rel="noopener noreferrer">{t.footer.source}</a></p>
 		</div>
 		<div class="footer-right">
@@ -28,7 +29,20 @@ const currentYear = new Date().getFullYear();
 	</div>
 </footer>
 
+<script>
+	import '../scripts/github-stats';
+</script>
+
 <style>
+	.footer-gh {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		margin-top: 0.6rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem !important;
+	}
+
 	.footer {
 		border-top: 1px solid var(--border);
 		margin-top: auto;

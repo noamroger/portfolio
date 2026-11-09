@@ -64,6 +64,7 @@ const projectList = [
 				<span class="eyebrow">{t.projects.eyebrow}</span>
 				<h1>{t.projects.heading}</h1>
 				<p>{t.projects.subtitle}</p>
+				<p class="gh-line" data-gh-block hidden><span class="status-dot" aria-hidden="true"></span><span data-gh={t.github.projectsLine}></span></p>
 			</div>
 		</header>
 
@@ -119,7 +120,21 @@ const projectList = [
 	<Footer />
 </Layout>
 
+<script>
+	import '../scripts/github-stats';
+</script>
+
 <style>
+	.gh-line {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		margin-top: 1.5rem;
+		font-family: var(--font-mono);
+		font-size: 0.8rem !important;
+		color: var(--text-muted) !important;
+	}
+
 	.projects {
 		flex: 1;
 	}

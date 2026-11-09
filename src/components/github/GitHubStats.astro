@@ -1,0 +1,87 @@
+---
+import { getI18n } from '../../i18n';
+
+const { t } = getI18n(Astro.url.pathname);
+const g = t.github;
+
+const stats = [
+	{ label: g.repos, value: '{total}', sub: g.reposSub },
+	{ label: g.contributions, value: '{contributions}', sub: g.contributionsSub },
+	{ label: g.languages, value: '{languageCount}', sub: g.languagesSub },
+	{ label: g.lastPush, value: '{when}', sub: g.lastPushSub },
+];
+---
+
+<div class="gh-stats" data-gh-block hidden>
+	<dl class="gh-grid">
+		{stats.map((stat) => (
+			<div class="gh-stat">
+				<dt>{stat.label}</dt>
+				<dd class="gh-value" data-gh={stat.value}></dd>
+				<dd class="gh-sub" data-gh={stat.sub}></dd>
+			</div>
+		))}
+	</dl>
+	<p class="gh-source"><span class="status-dot" aria-hidden="true"></span>{g.source}</p>
+</div>
+
+<script>
+	import '../../scripts/github-stats';
+</script>
+
+<style>
+	.gh-stats {
+		margin-top: 4rem;
+		padding-top: 2rem;
+		border-top: 1px dashed var(--border-strong);
+	}
+
+	.gh-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 2rem;
+	}
+
+	.gh-stat dt {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		margin-bottom: 0.4rem;
+	}
+
+	.gh-value {
+		font-size: 2rem;
+		font-weight: 600;
+		letter-spacing: -0.03em;
+		line-height: 1.15;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.gh-sub {
+		margin-top: 0.3rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--text-secondary);
+	}
+
+	.gh-source {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		margin-top: 1.75rem;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		color: var(--text-muted);
+	}
+
+	@media (max-width: 860px) {
+		.gh-grid {
+			grid-template-columns: 1fr 1fr;
+			gap: 1.5rem 1rem;
+		}
+
+		.gh-value {
+			font-size: 1.5rem;
+		}
+	}
+</style>

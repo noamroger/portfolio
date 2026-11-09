@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import StackList from '../components/StackList.astro';
+import GitHubLanguages from '../components/github/GitHubLanguages.astro';
 import { getI18n } from '../i18n';
 
 const { t } = getI18n(Astro.url.pathname);
@@ -70,6 +71,7 @@ const info = [
 						<h2 class="side-title">{t.about.techTitle}</h2>
 						<StackList compact />
 					</div>
+					<GitHubLanguages />
 				</aside>
 			</div>
 		</section>
@@ -180,8 +182,6 @@ const info = [
 		display: flex;
 		flex-direction: column;
 		gap: 1.25rem;
-		position: sticky;
-		top: 88px;
 	}
 
 	.side-card {

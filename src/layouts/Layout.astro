@@ -350,6 +350,11 @@ const graph = {
 		border-radius: 2px;
 	}
 
+	/* Keeps [hidden] winning over component display rules. */
+	[hidden] {
+		display: none !important;
+	}
+
 	.sr-only {
 		position: absolute;
 		width: 1px;
@@ -446,7 +451,7 @@ const graph = {
 		padding: 5rem 0;
 	}
 
-	.section + .section {
+	.section ~ .section {
 		border-top: 1px solid var(--border);
 	}
 

@@ -132,3 +132,13 @@ npm run preview:worker  # build + wrangler dev
 
 `noamroger.dev` est destiné à rediriger vers `noamroger.fr`, en envoyant chaque
 chemin vers sa version sous `/en`.
+
+## Statistiques GitHub
+
+`worker/github.js` sert `/api/github` : des totaux neutres (dépôts, langages,
+contributions sur 12 mois, dernier push, 5 derniers dépôts poussés). Il
+interroge l'API GraphQL de GitHub avec le secret `GITHUB_TOKEN` du Worker
+(token fine-grained, tous les dépôts, permission Metadata en lecture seule) et
+met la réponse en cache une heure. Les dépôts privés ne sont que comptés : ni
+nom ni lien ne sortent du Worker. Sans token, la route répond 503 et
+`src/scripts/github-stats.ts` laisse les blocs `[data-gh-block]` masqués.

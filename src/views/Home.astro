@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import StackList from '../components/StackList.astro';
+import GitHubStats from '../components/github/GitHubStats.astro';
+import GitHubRecent from '../components/github/GitHubRecent.astro';
 import { getI18n } from '../i18n';
 import { projects } from '../data/projects';
 
@@ -58,6 +60,9 @@ const featured = projects.slice(0, 3).map((project) => ({
 					</div>
 				</aside>
 			</div>
+			<div class="container hero-stats">
+				<GitHubStats />
+			</div>
 		</section>
 
 		<section class="section">
@@ -103,6 +108,8 @@ const featured = projects.slice(0, 3).map((project) => ({
 				</div>
 			</div>
 		</section>
+
+		<GitHubRecent />
 
 		<section class="section">
 			<div class="container">
@@ -151,7 +158,8 @@ const featured = projects.slice(0, 3).map((project) => ({
 		pointer-events: none;
 	}
 
-	.hero-grid {
+	.hero-grid,
+	.hero-stats {
 		position: relative;
 	}
 

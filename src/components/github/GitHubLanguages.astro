@@ -1,0 +1,75 @@
+---
+import { getI18n } from '../../i18n';
+
+const { t } = getI18n(Astro.url.pathname);
+---
+
+<div class="card side-card gh-lang-card" data-gh-block data-gh-languages hidden>
+	<h2 class="side-title">{t.github.languagesTitle}</h2>
+	<div class="lang-bar" data-gh-bar aria-hidden="true"></div>
+	<ul class="lang-legend" data-gh-legend></ul>
+	<p class="lang-note">{t.github.languagesNote}</p>
+</div>
+
+<script>
+	import '../../scripts/github-stats';
+</script>
+
+<style>
+	.gh-lang-card {
+		padding: 1.5rem;
+	}
+
+	.side-title {
+		font-size: 0.95rem;
+		margin-bottom: 1rem;
+	}
+
+	.lang-bar {
+		display: flex;
+		height: 8px;
+		border-radius: 999px;
+		overflow: hidden;
+		gap: 2px;
+		margin-bottom: 1rem;
+	}
+
+	.lang-legend {
+		list-style: none;
+		display: grid;
+		gap: 0.45rem;
+		font-size: 0.875rem;
+	}
+
+	.lang-legend :global(li) {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
+
+	.lang-legend :global(.lang-percent) {
+		margin-left: auto;
+		font-family: var(--font-mono);
+		font-size: 0.78rem;
+		color: var(--text-muted);
+	}
+
+	.gh-lang-card :global(.lang-dot) {
+		width: 8px;
+		height: 8px;
+		border-radius: 2px;
+	}
+
+	.gh-lang-card :global(.lang-0) { background: var(--accent); }
+	.gh-lang-card :global(.lang-1) { background: var(--syntax-key); }
+	.gh-lang-card :global(.lang-2) { background: var(--syntax-string); }
+	.gh-lang-card :global(.lang-3) { background: var(--syntax-keyword); }
+	.gh-lang-card :global(.lang-4) { background: var(--text-muted); }
+
+	.lang-note {
+		margin-top: 1rem;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		color: var(--text-muted);
+	}
+</style>

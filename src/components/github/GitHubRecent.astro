@@ -1,0 +1,99 @@
+---
+import { getI18n } from '../../i18n';
+
+const { t } = getI18n(Astro.url.pathname);
+---
+
+<section class="section" data-gh-block hidden>
+	<div class="container">
+		<div class="section-head">
+			<div>
+				<h2>{t.github.recentTitle}</h2>
+				<p>{t.github.recentIntro}</p>
+			</div>
+		</div>
+		<div class="card recent-card">
+			<div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>git log --all-repos</span></div>
+			<ol class="recent" data-gh-recent data-private-label={t.github.privateRepo}></ol>
+		</div>
+	</div>
+</section>
+
+<script>
+	import '../../scripts/github-stats';
+</script>
+
+<style>
+	.recent-card {
+		overflow: hidden;
+	}
+
+	.recent {
+		list-style: none;
+		padding: 0.5rem 0;
+		font-family: var(--font-mono);
+		font-size: 0.85rem;
+	}
+
+	.recent :global(li) {
+		display: grid;
+		grid-template-columns: 1fr 9rem 12rem;
+		gap: 1rem;
+		align-items: center;
+		padding: 0.7rem 1.25rem;
+	}
+
+	.recent :global(li + li) {
+		border-top: 1px dashed var(--border);
+	}
+
+	.recent :global(.recent-name) {
+		color: var(--text);
+		font-weight: 500;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.recent :global(.recent-name)::before {
+		content: '●';
+		margin-right: 0.75rem;
+		color: var(--accent);
+		font-size: 0.7em;
+		vertical-align: 0.15em;
+	}
+
+	.recent :global(a.recent-name:hover) {
+		color: var(--accent);
+	}
+
+	.recent :global(.is-private .recent-name) {
+		color: var(--text-muted);
+		font-style: italic;
+	}
+
+	.recent :global(.is-private .recent-name)::before {
+		content: '○';
+		color: var(--text-muted);
+		font-style: normal;
+	}
+
+	.recent :global(.recent-lang) {
+		color: var(--syntax-string);
+	}
+
+	.recent :global(.recent-time) {
+		color: var(--text-muted);
+		text-align: right;
+	}
+
+	@media (max-width: 640px) {
+		.recent :global(li) {
+			grid-template-columns: 1fr auto;
+		}
+
+		.recent :global(.recent-lang) {
+			display: none;
+		}
+	}
+</style>
