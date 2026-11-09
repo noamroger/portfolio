@@ -33,12 +33,9 @@
 /contact*
   Cache-Control: public, max-age=60, stale-while-revalidate=86400
 
-# Umami Cloud: the tracker loads from cloud.umami.is but posts its hits to
-# gateway.umami.is/api/send. Both must be allowed or the stats stay at zero with
-# no visible error. If Umami is ever self-hosted, swap these two hosts.
 # form.noam.ovh receives the contact form.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://form.noam.ovh https://gateway.umami.is; form-action 'self' https://form.noam.ovh; base-uri 'self'; frame-ancestors 'none'; object-src 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://form.noam.ovh; form-action 'self' https://form.noam.ovh; base-uri 'self'; frame-ancestors 'none'; object-src 'none'
