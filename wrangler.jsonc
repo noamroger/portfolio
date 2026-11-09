@@ -1,0 +1,24 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "portfolio",
+	"main": "worker/index.js",
+	"compatibility_date": "2026-11-01",
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS",
+		// Unknown URLs get the closest 404.html with a real 404 status.
+		"not_found_handling": "404-page",
+		// Needed so worker/index.js can send the apex domain to www before any
+		// file is served. Without it, assets would be served on both hosts.
+		"run_worker_first": true
+	},
+	// Wrangler attaches these hostnames to the Worker on each deploy and
+	// creates the matching DNS records. Deploying fails while noamroger.fr or
+	// www still has another A/AAAA/CNAME record (for example the old Netlify
+	// ones): delete those first.
+	"routes": [
+		{ "pattern": "noamroger.fr", "custom_domain": true },
+		{ "pattern": "www.noamroger.fr", "custom_domain": true }
+	],
+	"observability": { "enabled": true }
+}
