@@ -34,7 +34,7 @@ const { t } = getI18n(Astro.url.pathname);
 								</div>
 								<div>
 									<h3>{t.contact.emailLabel}</h3>
-									<a href={`mailto:${contactEmail}`} data-umami-event="contact-email">{contactEmail}</a>
+									<a href={`mailto:${contactEmail}`}>{contactEmail}</a>
 								</div>
 							</div>
 
@@ -46,7 +46,7 @@ const { t } = getI18n(Astro.url.pathname);
 								</div>
 								<div>
 									<h3>{t.contact.githubLabel}</h3>
-									<a href="https://github.com/noamroger" target="_blank" rel="me noopener noreferrer" data-umami-event="contact-github">github.com/noamroger</a>
+									<a href="https://github.com/noamroger" target="_blank" rel="me noopener noreferrer">github.com/noamroger</a>
 								</div>
 							</div>
 
@@ -60,7 +60,7 @@ const { t } = getI18n(Astro.url.pathname);
 								</div>
 								<div>
 									<h3>{t.contact.linkedinLabel}</h3>
-									<a href="https://linkedin.com/in/noamroger" target="_blank" rel="me noopener noreferrer" data-umami-event="contact-linkedin">linkedin.com/in/noamroger</a>
+									<a href="https://linkedin.com/in/noamroger" target="_blank" rel="me noopener noreferrer">linkedin.com/in/noamroger</a>
 								</div>
 							</div>
 						</div>
@@ -138,7 +138,6 @@ const { t } = getI18n(Astro.url.pathname);
 										const data = await response.json();
 
 										if (response.ok) {
-											window.umami?.track('contact-form-sent');
 											showStatus(form.dataset.success, 'success');
 											form.reset();
 										} else {

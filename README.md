@@ -85,24 +85,6 @@ en attribut `data-*` sur l'élément et le relire depuis le script — voir
   `prefers-reduced-motion` (les particules et animations infinies sont
   désactivées).
 
-## Statistiques de visite
-
-Mesure d'audience avec [Umami Cloud](https://umami.is) : sans cookie, sans
-données personnelles, donc sans bandeau de consentement. Google Analytics a
-été écarté parce que la CNIL l'exclut de l'exemption de consentement, ce qui
-imposerait un bandeau cookies à chaque recruteur qui ouvre le portfolio.
-
-- Le script n'est injecté que si `PUBLIC_UMAMI_WEBSITE_ID` est défini au build. En local et sur les URL de preview `*.workers.dev`, rien n'est envoyé :
-  `data-domains` limite le comptage au vrai domaine.
-- Les navigations côté client d'Astro sont comptées automatiquement : le
-  tracker intercepte `history.pushState`.
-- Le pied de page propose un bouton pour refuser ou réactiver la mesure
-  (`localStorage["umami.disabled"]`). La CNIL exige cette possibilité même
-  pour un outil exempté de consentement.
-- La CSP de `public/_headers` autorise `cloud.umami.is` (script) et
-  `gateway.umami.is` (envoi des données). En cas d'auto-hébergement, remplacer
-  ces deux hôtes et définir `PUBLIC_UMAMI_SRC` / `PUBLIC_UMAMI_HOST_URL`.
-
 ## Développement
 
 ```bash
@@ -122,10 +104,6 @@ Astro génère `dist/`, que Cloudflare sert directement.
   Builds. Chaque push sur `main` lance `npm run build` puis
   `npx wrangler deploy`. Les autres branches produisent une version de preview
   sur `*.workers.dev` sans toucher à la production.
-- **Variables de build** : `PUBLIC_UMAMI_WEBSITE_ID` se définit dans le
-  dashboard Cloudflare, Worker `portfolio` > Settings > Build > Variables and
-  secrets. C'est une variable de *build*, pas de runtime : Astro l'intègre au
-  HTML.
 - **Domaines** : `routes` dans `wrangler.jsonc` rattache `noamroger.fr` et
   `www.noamroger.fr` au Worker et crée leurs enregistrements DNS. Le déploiement
   échoue si un de ces noms a encore un autre enregistrement A, AAAA ou CNAME.
