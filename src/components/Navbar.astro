@@ -21,7 +21,7 @@ const links = [
 <header class="navbar">
 	<div class="container navbar-content">
 		<a href={path('/')} class="brand" aria-label={t.nav.logoLabel}>
-			<span class="brand-prompt" aria-hidden="true">~/</span><span class="brand-name">noam<span class="brand-dot">.</span>roger</span><span class="cursor" aria-hidden="true"></span>
+			<span class="brand-prompt" aria-hidden="true">~/</span><span class="brand-name">noam<span class="brand-dot">.</span>roger</span>
 		</a>
 		<nav class="nav-links" aria-label="Navigation">
 			{links.map((link) => (
@@ -144,12 +144,7 @@ const links = [
 		color: var(--text-muted);
 	}
 
-	.brand .cursor {
-		width: 0.5em;
-		height: 1.1em;
-	}
-
-	.nav-links {
+.nav-links {
 		display: flex;
 		gap: 0.25rem;
 		margin-left: auto;
