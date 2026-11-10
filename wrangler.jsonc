@@ -20,5 +20,11 @@
 		{ "pattern": "noamroger.fr", "custom_domain": true },
 		{ "pattern": "www.noamroger.fr", "custom_domain": true }
 	],
+	// Turnstile site key (public). These are runtime vars, so the Astro build
+	// can't see them on its own: astro.config.mjs reads this value and inlines
+	// it into the contact page. A PUBLIC_TURNSTILE_SITE_KEY build variable wins.
+	"vars": {
+		"PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAAF7VsvZt9muSld1K"
+	},
 	"observability": { "enabled": true }
 }

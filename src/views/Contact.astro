@@ -4,7 +4,12 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { contactEmail, getI18n } from '../i18n';
 
-const { t } = getI18n(Astro.url.pathname);
+const { t, locale } = getI18n(Astro.url.pathname);
+
+// Public Turnstile site key, inlined at build time from wrangler.jsonc `vars`
+// (see astro.config.mjs). Without it the widget is left out and the form works
+// as before.
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 ---
 
 <Layout title={t.contact.metaTitle} description={t.contact.metaDescription} pageType="ContactPage">
@@ -104,6 +109,15 @@ const { t } = getI18n(Astro.url.pathname);
 								<textarea id="message" name="message" rows="5" required placeholder={t.contact.form.messagePlaceholder}></textarea>
 							</div>
 
+							{turnstileSiteKey && (
+								<div
+									class="turnstile"
+									id="contact-turnstile"
+									data-sitekey={turnstileSiteKey}
+									data-language={locale}
+								></div>
+							)}
+
 							<button type="submit" class="btn btn-primary">{t.contact.form.submit}</button>
 							<p class="form-status" id="form-status" role="status" aria-live="polite"></p>
 						</form>
@@ -124,6 +138,56 @@ const { t } = getI18n(Astro.url.pathname);
 									status.textContent = message;
 									status.dataset.state = state;
 								};
+
+								// Turnstile, rendered explicitly: its auto-render only scans the
+								// page once, which misses forms reached through the client router.
+								// The widget adds a hidden cf-turnstile-response input to the form,
+								// so the token travels in the JSON body with the other fields.
+								const container = document.getElementById('contact-turnstile');
+								let widgetId;
+
+								const renderWidget = () => {
+									if (!container?.isConnected || !window.turnstile) return;
+									if (widgetId !== undefined) window.turnstile.remove(widgetId);
+									widgetId = window.turnstile.render(container, {
+										sitekey: container.dataset.sitekey,
+										language: container.dataset.language,
+										theme: document.documentElement.dataset.theme === 'light' ? 'light' : 'dark',
+										// The flexible widget needs 300px; narrow phones get the compact one.
+										size: container.clientWidth < 300 ? 'compact' : 'flexible',
+									});
+								};
+
+								// A token is single use: get a fresh one after each attempt.
+								const resetWidget = () => {
+									if (widgetId !== undefined) window.turnstile?.reset(widgetId);
+								};
+
+								if (container) {
+									if (window.turnstile) {
+										renderWidget();
+									} else {
+										window.onTurnstileLoad = () => {
+											window.dispatchEvent(new Event('turnstile-ready'));
+										};
+										if (!document.getElementById('turnstile-api')) {
+											const api = document.createElement('script');
+											api.id = 'turnstile-api';
+											api.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad';
+											api.async = true;
+											document.head.appendChild(api);
+										}
+										window.addEventListener('turnstile-ready', renderWidget, { once: true });
+									}
+
+									// Follow the navbar theme toggle, and stop when leaving the page.
+									const themeObserver = new MutationObserver(renderWidget);
+									themeObserver.observe(document.documentElement, { attributeFilter: ['data-theme'] });
+									document.addEventListener('astro:before-swap', () => {
+										themeObserver.disconnect();
+										if (widgetId !== undefined) window.turnstile?.remove(widgetId);
+									}, { once: true });
+								}
 
 								form.addEventListener('submit', async (event) => {
 									event.preventDefault();
@@ -152,6 +216,7 @@ const { t } = getI18n(Astro.url.pathname);
 										console.error('Form submission error:', error);
 										showStatus(form.dataset.failure, 'error');
 									} finally {
+										resetWidget();
 										button.textContent = originalText;
 										button.disabled = false;
 									}
@@ -299,6 +364,11 @@ const { t } = getI18n(Astro.url.pathname);
 
 	.contact-form .btn {
 		align-self: flex-start;
+	}
+
+	/* Reserve the widget's height so the button doesn't jump when it loads. */
+	.turnstile {
+		min-height: 65px;
 	}
 
 	.form-status {
