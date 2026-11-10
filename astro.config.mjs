@@ -18,6 +18,12 @@ export default defineConfig({
 	site,
 	base: '/',
 	vite: {
+		build: {
+			// Vite inlines files under 4 kB as data: URIs, which caught one tiny
+			// font subset; the CSP (font-src 'self') then blocked it. Keep fonts
+			// as files, everything else follows the default.
+			assetsInlineLimit: (file) => (/\.woff2?$/.test(file) ? false : undefined),
+		},
 		define: {
 			'import.meta.env.PUBLIC_TURNSTILE_SITE_KEY': JSON.stringify(turnstileSiteKey),
 		},
