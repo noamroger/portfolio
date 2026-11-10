@@ -14,24 +14,38 @@ import { isVideo, withRange } from './range.js';
 const CANONICAL_HOST = 'www.noamroger.fr';
 const APEX_HOST = 'noamroger.fr';
 
+// public/_headers only reaches the responses that come from the assets
+// binding. The ones built here (redirect, API) get the essentials by hand.
+// Keep HSTS in sync with public/_headers.
+const HSTS = 'max-age=31536000';
+
+function withSecurityHeaders(response) {
+	const secured = new Response(response.body, response);
+	secured.headers.set('Strict-Transport-Security', HSTS);
+	secured.headers.set('X-Content-Type-Options', 'nosniff');
+	return secured;
+}
+
 export default {
 	async fetch(request, env, ctx) {
 		const url = new URL(request.url);
 
 		if (url.hostname === APEX_HOST) {
 			url.hostname = CANONICAL_HOST;
-			return Response.redirect(url.toString(), 301);
+			return withSecurityHeaders(Response.redirect(url.toString(), 301));
 		}
 
 		if (url.pathname === '/api/github') {
-			return handleGitHubStats(request, env, ctx);
+			return withSecurityHeaders(await handleGitHubStats(request, env, ctx));
 		}
 
 		if (isVideo(url.pathname)) {
-			// Ask for the whole file: the slice is cut in withRange.
-			const assetRequest = new Request(request, { headers: new Headers(request.headers) });
-			assetRequest.headers.delete('Range');
-			assetRequest.headers.delete('If-Range');
+			// Ask for the whole file, always with GET: the slice is cut in
+			// withRange, which needs the length (a HEAD answer has none).
+			const headers = new Headers(request.headers);
+			headers.delete('Range');
+			headers.delete('If-Range');
+			const assetRequest = new Request(request.url, { method: 'GET', headers });
 			return withRange(request, await env.ASSETS.fetch(assetRequest));
 		}
 

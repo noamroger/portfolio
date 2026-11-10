@@ -6,6 +6,9 @@
 // for an hour, so GitHub sees at most one request per hour per data centre.
 
 const CACHE_SECONDS = 3600;
+// A failure is cached too, briefly: otherwise every visit during a GitHub
+// outage (or a bad token) would call GitHub again and burn the token's quota.
+const ERROR_CACHE_SECONDS = 60;
 const RECENT_COUNT = 5;
 const TOP_LANGUAGES = 5;
 
@@ -93,17 +96,30 @@ async function fetchStats(token) {
 }
 
 export async function handleGitHubStats(request, env, ctx) {
+	if (request.method !== 'GET' && request.method !== 'HEAD') {
+		return new Response(null, { status: 405, headers: { Allow: 'GET, HEAD' } });
+	}
+
 	const cache = caches.default;
 	const cacheKey = new Request(new URL('/api/github', request.url).toString());
 
 	const cached = await cache.match(cacheKey);
 	if (cached) return cached;
 
-	if (!env.GITHUB_TOKEN) {
-		return Response.json(
-			{ error: 'not configured', detail: 'GITHUB_TOKEN is not set as a runtime secret of this Worker' },
-			{ status: 503, headers: { 'Cache-Control': 'no-store' } },
+	// The details (missing secret, GitHub's own error) only go to the Worker
+	// logs: visitors get a neutral answer, and the page hides the blocks.
+	const fail = (status, detail) => {
+		console.error('GitHub stats failed:', detail);
+		const response = Response.json(
+			{ error: 'unavailable' },
+			{ status, headers: { 'Cache-Control': `public, max-age=${ERROR_CACHE_SECONDS}` } },
 		);
+		ctx.waitUntil(cache.put(cacheKey, response.clone()));
+		return response;
+	};
+
+	if (!env.GITHUB_TOKEN) {
+		return fail(503, 'GITHUB_TOKEN is not set as a runtime secret of this Worker');
 	}
 
 	try {
@@ -114,12 +130,8 @@ export async function handleGitHubStats(request, env, ctx) {
 		ctx.waitUntil(cache.put(cacheKey, response.clone()));
 		return response;
 	} catch (error) {
-		console.error('GitHub stats failed:', error);
-		// The message never contains the token: it is the HTTP status or GitHub's
-		// own error text, which is what is needed to fix the setup.
-		return Response.json(
-			{ error: 'unavailable', detail: String(error?.message ?? error) },
-			{ status: 502, headers: { 'Cache-Control': 'no-store' } },
-		);
+		// The message never contains the token: it is the HTTP status or
+		// GitHub's own error text.
+		return fail(502, String(error?.message ?? error));
 	}
 }

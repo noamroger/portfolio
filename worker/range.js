@@ -80,6 +80,10 @@ export async function withRange(request, response) {
 	const rangeStillValid = !ifRange || ifRange === etag;
 
 	if (!header || !(size > 0) || !rangeStillValid) {
+		if (request.method === 'HEAD') {
+			response.body?.cancel();
+			return new Response(null, { status: 200, headers });
+		}
 		return new Response(response.body, { status: 200, headers });
 	}
 
@@ -98,6 +102,7 @@ export async function withRange(request, response) {
 	headers.set('Content-Length', String(end - start + 1));
 
 	if (request.method === 'HEAD' || !response.body) {
+		response.body?.cancel();
 		return new Response(null, { status: 206, headers });
 	}
 	// A FixedLengthStream keeps Content-Length on the response: a plain stream

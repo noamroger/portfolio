@@ -2,6 +2,12 @@
 import { ClientRouter } from 'astro:transitions';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/jetbrains-mono';
+// The Latin subsets are the ones every page needs. Preloading them starts the
+// download with the HTML instead of after the styles are applied, which
+// shortens the swap from the fallback font. Vite gives these imports the same
+// hashed URL as the @font-face rules, so nothing is fetched twice.
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import monoLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 import { contactEmail, getI18n, locales, localizedPath, siteOrigin, socialProfiles, stripLocale, techStack } from '../i18n';
 import { LANGUAGE_KEY, THEME_KEY } from '../i18n/preference';
 
@@ -137,6 +143,8 @@ const graph = {
 			}
 		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+		<link rel="preload" href={monoLatin} as="font" type="font/woff2" crossorigin />
 		<meta name="generator" content={Astro.generator} />
 
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />

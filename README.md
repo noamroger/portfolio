@@ -142,3 +142,6 @@ interroge l'API GraphQL de GitHub avec le secret `GITHUB_TOKEN` du Worker
 met la réponse en cache une heure. Les dépôts privés ne sont que comptés : ni
 nom ni lien ne sortent du Worker. Sans token, la route répond 503 et
 `src/scripts/github-stats.ts` laisse les blocs `[data-gh-block]` masqués.
+Une erreur (token absent, GitHub en panne) est mise en cache 60 secondes pour
+ne pas épuiser le quota du token ; sa cause n'apparaît que dans les logs du
+Worker, la réponse publique reste `{"error":"unavailable"}`.
