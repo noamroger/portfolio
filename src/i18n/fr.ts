@@ -96,7 +96,7 @@ const fr: Translations = {
 			},
 		],
 		featuredTitle: 'Projets sélectionnés',
-		featuredIntro: 'Trois projets représentatifs. Tous sont open source.',
+		featuredIntro: 'Trois projets représentatifs, de l’infrastructure au code.',
 		featuredCta: 'Tous les projets',
 		stackTitle: 'Stack technique',
 		stackIntro: "Ce que j'utilise au quotidien, regroupé par usage.",
@@ -146,13 +146,21 @@ const fr: Translations = {
 	projects: {
 		metaTitle: 'Projets | API, bots Discord et C - Noam Roger',
 		metaDescription:
-			"Une sélection des projets de Noam Roger : agent IA, bots Discord et Twitch, bases de serveur Node.js et TypeScript, jeu multijoueur en C.",
+			"Une sélection des projets de Noam Roger : homelab Proxmox, agent IA, bots Discord et Twitch, base de serveur TypeScript, jeu multijoueur en C.",
 		eyebrow: 'Projets',
 		heading: "Ce que j'ai construit, et dans quel contexte.",
-		subtitle: "Des bots qui ont tourné en production aux hackathons de 24 heures. Tous les dépôts sont publics.",
+		subtitle: "De mon homelab aux hackathons de 24 heures, en passant par des bots qui ont tourné en production.",
 		codeLink: 'Code',
 		demoLink: 'Démo',
 		items: {
+			homelab: {
+				context: 'Projet personnel · en cours',
+				imageAlt: "Interface web de Proxmox VE : résumé d'un nœud avec ses conteneurs et machines virtuelles",
+				title: 'Homelab',
+				description:
+					"Mon infrastructure personnelle sous Proxmox : des services conteneurisés avec Docker et déployés automatiquement, exposés derrière un reverse proxy, et des machines reliées entre elles par un réseau VPN mesh. Mon terrain d'entraînement pour le DevOps.",
+				tech: ['Proxmox', 'Docker', 'Reverse proxy', 'VPN mesh', 'Linux'],
+			},
 			californyan: {
 				context: 'Hackathon · 2025',
 				imageAlt: "Interface de Californyan : un réceptionniste d'hôtel propulsé par l'IA répondant à un client",
@@ -160,14 +168,6 @@ const fr: Translations = {
 				description:
 					"Un réceptionniste d'hôtel propulsé par l'IA, développé en 24 heures aux 24 Heures du Code 2025 (CCI du Mans). Mon premier agent construit avec LangChain.",
 				tech: ['Node.js', 'LangChain', 'LLM', 'API'],
-			},
-			webserver: {
-				context: 'Hackathon · 2024',
-				imageAlt: 'Base de serveur web Node.js et Express, code source du projet de départ',
-				title: 'Base de serveur web Node.js',
-				description:
-					"Écrite pour les 24 Heures du Code 2024 (lycée Réaumur, Laval), puis réutilisée comme socle de mes projets pendant près d'un an.",
-				tech: ['Node.js', 'Express', 'JavaScript'],
 			},
 			romaybot: {
 				context: 'Commande client',
@@ -190,7 +190,7 @@ const fr: Translations = {
 				imageAlt: 'Base de serveur web TypeScript avec frontend et backend séparés',
 				title: 'Base de serveur web TypeScript',
 				description:
-					'La suite de la base Node.js : frontend et backend séparés, tous deux en TypeScript. Le socle de mes prochains projets.',
+					'Une base de serveur web avec frontend et backend séparés, tous deux en TypeScript. Le socle de mes prochains projets.',
 				tech: ['TypeScript', 'Node.js', 'Express', 'React'],
 			},
 			gaulia: {

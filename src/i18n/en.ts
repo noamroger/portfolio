@@ -94,7 +94,7 @@ const en = {
 			},
 		],
 		featuredTitle: 'Selected projects',
-		featuredIntro: 'Three representative projects. All of them are open source.',
+		featuredIntro: 'Three representative projects, from infrastructure to code.',
 		featuredCta: 'All projects',
 		stackTitle: 'Technical stack',
 		stackIntro: 'What I use day to day, grouped by role.',
@@ -144,13 +144,21 @@ const en = {
 	projects: {
 		metaTitle: 'Projects | APIs, Discord bots and C - Noam Roger',
 		metaDescription:
-			"A selection of Noam Roger's projects: AI agent, Discord and Twitch bots, Node.js and TypeScript server bases, multiplayer game in C.",
+			"A selection of Noam Roger's projects: Proxmox homelab, AI agent, Discord and Twitch bots, TypeScript server base, multiplayer game in C.",
 		eyebrow: 'Projects',
 		heading: 'What I have built, and in what context.',
-		subtitle: 'From bots that ran in production to 24-hour hackathons. Every repository is public.',
+		subtitle: 'From my homelab to 24-hour hackathons, by way of bots that ran in production.',
 		codeLink: 'Code',
 		demoLink: 'Demo',
 		items: {
+			homelab: {
+				context: 'Personal project · ongoing',
+				imageAlt: 'Proxmox VE web interface: summary of a node with its containers and virtual machines',
+				title: 'Homelab',
+				description:
+					'My personal infrastructure running on Proxmox: services containerized with Docker and deployed automatically, exposed behind a reverse proxy, and machines linked together by a mesh VPN network. My DevOps training ground.',
+				tech: ['Proxmox', 'Docker', 'Reverse proxy', 'Mesh VPN', 'Linux'],
+			},
 			californyan: {
 				context: 'Hackathon · 2025',
 				imageAlt: 'Californyan interface: an AI-powered hotel receptionist answering a guest',
@@ -158,14 +166,6 @@ const en = {
 				description:
 					'An AI-powered hotel receptionist, built in 24 hours at the 24 Heures du Code 2025 (CCI Le Mans). My first agent built with LangChain.',
 				tech: ['Node.js', 'LangChain', 'LLM', 'API'],
-			},
-			webserver: {
-				context: 'Hackathon · 2024',
-				imageAlt: 'Node.js and Express web server base, starter project source code',
-				title: 'Node.js web server base',
-				description:
-					'Built for the 24 Heures du Code 2024 (Lycée Réaumur, Laval), then reused as the base of my projects for about a year.',
-				tech: ['Node.js', 'Express', 'JavaScript'],
 			},
 			romaybot: {
 				context: 'Client commission',
@@ -188,7 +188,7 @@ const en = {
 				imageAlt: 'TypeScript web server base with separate frontend and backend',
 				title: 'TypeScript web server base',
 				description:
-					'The successor of the Node.js base: separate frontend and backend, both in TypeScript. The foundation of my upcoming projects.',
+					'A web server base with separate frontend and backend, both in TypeScript. The foundation of my upcoming projects.',
 				tech: ['TypeScript', 'Node.js', 'Express', 'React'],
 			},
 			gaulia: {

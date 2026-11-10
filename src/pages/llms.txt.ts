@@ -34,7 +34,8 @@ export const GET: APIRoute = ({ site }) => {
 		'',
 		...projects.map((project) => {
 			const item = t.projects.items[project.key];
-			return `- [${item.title}](${project.github}): ${item.description} (${item.tech.join(', ')})`;
+			const name = project.github ? `[${item.title}](${project.github})` : item.title;
+			return `- ${name}: ${item.description} (${item.tech.join(', ')})`;
 		}),
 		'',
 		`## ${t.nav.contact}`,

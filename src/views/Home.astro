@@ -14,7 +14,9 @@ const { t, path } = getI18n(Astro.url.pathname);
 // real copy and links through to the full list.
 const featured = projects.slice(0, 3).map((project) => ({
 	...t.projects.items[project.key],
-	github: project.github,
+	// Projects without a public repository (the homelab) link to the Projects page.
+	href: project.github ?? path('/projects/'),
+	external: project.github !== null,
 }));
 ---
 
@@ -96,7 +98,7 @@ const featured = projects.slice(0, 3).map((project) => ({
 				</div>
 				<div class="featured-grid">
 					{featured.map((project) => (
-						<a class="card featured-card" href={project.github} target="_blank" rel="noopener noreferrer">
+						<a class="card featured-card" href={project.href} target={project.external ? '_blank' : undefined} rel={project.external ? 'noopener noreferrer' : undefined}>
 							<span class="featured-context">{project.context}</span>
 							<h3>{project.title}</h3>
 							<p>{project.description}</p>

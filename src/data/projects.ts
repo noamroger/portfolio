@@ -5,13 +5,13 @@
  */
 export const projects = [
 	{
-		key: 'californyan',
-		github: 'https://github.com/noamroger/llm-hotel-24h',
+		key: 'homelab',
+		github: null,
 		demo: null,
 	},
 	{
-		key: 'webserver',
-		github: 'https://github.com/noamroger/base-nodejs-webserver',
+		key: 'californyan',
+		github: 'https://github.com/noamroger/llm-hotel-24h',
 		demo: null,
 	},
 	{
@@ -34,6 +34,6 @@ export const projects = [
 		github: 'https://github.com/noamroger/GauliaMusique',
 		demo: null,
 	},
-] as const;
+] as const satisfies readonly { key: string; github: string | null; demo: string | null }[];
 
 export type ProjectKey = (typeof projects)[number]['key'];
