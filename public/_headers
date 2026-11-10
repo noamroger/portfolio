@@ -33,10 +33,10 @@
 /contact*
   Cache-Control: public, max-age=60, stale-while-revalidate=86400
 
-# form.noam.ovh receives the contact form. challenges.cloudflare.com serves the
+# Videos are same-origin files (media-src). form.noam.ovh receives the contact form. challenges.cloudflare.com serves the
 # Turnstile script and its iframe on the contact page.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://form.noam.ovh; frame-src https://challenges.cloudflare.com; form-action 'self' https://form.noam.ovh; base-uri 'self'; frame-ancestors 'none'; object-src 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self' https://form.noam.ovh; frame-src https://challenges.cloudflare.com; form-action 'self' https://form.noam.ovh; base-uri 'self'; frame-ancestors 'none'; object-src 'none'

@@ -1,13 +1,15 @@
 // Serves the static Astro build from ./dist (see wrangler.jsonc).
 //
-// Two things static assets can't do on their own:
+// What static assets can't do on their own:
 // - noamroger.fr must redirect to www.noamroger.fr, the canonical origin
 //   declared in astro.config.mjs (Netlify used to do this as primary domain).
+// - Videos need byte ranges, which static assets don't serve (worker/range.js).
 // - English pages need the English 404. `not_found_handling: "404-page"` looks
 //   for a 404.html file, and Astro emits the English one as /en/404/index.html,
 //   so every miss would otherwise get the French page.
 
 import { handleGitHubStats } from './github.js';
+import { isVideo, withRange } from './range.js';
 
 const CANONICAL_HOST = 'www.noamroger.fr';
 const APEX_HOST = 'noamroger.fr';
@@ -23,6 +25,14 @@ export default {
 
 		if (url.pathname === '/api/github') {
 			return handleGitHubStats(request, env, ctx);
+		}
+
+		if (isVideo(url.pathname)) {
+			// Ask for the whole file: the slice is cut in withRange.
+			const assetRequest = new Request(request, { headers: new Headers(request.headers) });
+			assetRequest.headers.delete('Range');
+			assetRequest.headers.delete('If-Range');
+			return withRange(request, await env.ASSETS.fetch(assetRequest));
 		}
 
 		const response = await env.ASSETS.fetch(request);

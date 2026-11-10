@@ -22,7 +22,8 @@ export const projects = [
 	{
 		key: 'codenames',
 		github: 'https://github.com/noamroger/codenames-c',
-		demo: 'https://github.com/noamroger/codenames-c/blob/main/rapport/presentation-video.mp4',
+		// The demo video is hosted on the site and plays in a modal: see Projects.astro.
+		demo: null,
 	},
 	{
 		key: 'webserverTs',
