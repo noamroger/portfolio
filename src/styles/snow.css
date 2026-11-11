@@ -1,8 +1,10 @@
 /*
  * December snowfall (src/scripts/snow.ts). Everything is styled here so the
  * script never writes inline styles.
- * Stacking: the sticky navbar is at z-index 100, the video player is a <dialog>
- * in the top layer, so the snow sits just above the navbar and below dialogs.
+ * Stacking: the snow falls behind the content. z-index -1 paints the canvas
+ * above the page background (set on body, which paints on the root) but under
+ * every block, card and the navbar. The button stays above everything except
+ * the video player, a <dialog> in the top layer.
  */
 
 .snow-canvas {
@@ -11,7 +13,7 @@
 	width: 100%;
 	height: 100%;
 	pointer-events: none;
-	z-index: 101;
+	z-index: -1;
 	/* Read by the script as the flake colour. */
 	color: #ffffff;
 	opacity: 0;
