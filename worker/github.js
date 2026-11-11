@@ -108,18 +108,20 @@ export async function handleGitHubStats(request, env, ctx) {
 
 	// The details (missing secret, GitHub's own error) only go to the Worker
 	// logs: visitors get a neutral answer, and the page hides the blocks.
-	const fail = (status, detail) => {
+	// The answer is a 200 on purpose: a browser logs every 4xx/5xx fetch in
+	// the visitor's console, and this failure is not theirs to see.
+	const fail = (detail) => {
 		console.error('GitHub stats failed:', detail);
 		const response = Response.json(
 			{ error: 'unavailable' },
-			{ status, headers: { 'Cache-Control': `public, max-age=${ERROR_CACHE_SECONDS}` } },
+			{ headers: { 'Cache-Control': `public, max-age=${ERROR_CACHE_SECONDS}` } },
 		);
 		ctx.waitUntil(cache.put(cacheKey, response.clone()));
 		return response;
 	};
 
 	if (!env.GITHUB_TOKEN) {
-		return fail(503, 'GITHUB_TOKEN is not set as a runtime secret of this Worker');
+		return fail('GITHUB_TOKEN is not set as a runtime secret of this Worker');
 	}
 
 	try {
@@ -132,6 +134,6 @@ export async function handleGitHubStats(request, env, ctx) {
 	} catch (error) {
 		// The message never contains the token: it is the HTTP status or
 		// GitHub's own error text.
-		return fail(502, String(error?.message ?? error));
+		return fail(String(error?.message ?? error));
 	}
 }

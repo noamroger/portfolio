@@ -17,7 +17,9 @@ let request: Promise<Stats | null> | null = null;
 
 function load(): Promise<Stats | null> {
 	request ??= fetch('/api/github')
-		.then((response) => (response.ok ? (response.json() as Promise<Stats>) : null))
+		.then((response) => (response.ok ? (response.json() as Promise<Stats | { error: string }>) : null))
+		// A failure comes back as a 200 carrying { error } (see worker/github.js).
+		.then((data) => (data && !('error' in data) ? data : null))
 		.catch(() => null);
 	return request;
 }

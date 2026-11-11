@@ -163,25 +163,43 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 									if (widgetId !== undefined) window.turnstile?.reset(widgetId);
 								};
 
-								if (container) {
+								// Loaded on the first interaction with the form rather than with
+								// the page: a visitor who only reads the page never downloads it,
+								// and the warnings Turnstile's iframe logs in Firefox stay out of
+								// the console. The required fields guarantee a focus before any
+								// submit, which leaves the widget time to get its token.
+								const loadWidget = () => {
 									if (window.turnstile) {
 										renderWidget();
-									} else {
-										window.onTurnstileLoad = () => {
-											window.dispatchEvent(new Event('turnstile-ready'));
-										};
-										if (!document.getElementById('turnstile-api')) {
-											const api = document.createElement('script');
-											api.id = 'turnstile-api';
-											api.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad';
-											api.async = true;
-											document.head.appendChild(api);
-										}
-										window.addEventListener('turnstile-ready', renderWidget, { once: true });
+										return;
 									}
+									window.onTurnstileLoad = () => {
+										window.dispatchEvent(new Event('turnstile-ready'));
+									};
+									if (!document.getElementById('turnstile-api')) {
+										const api = document.createElement('script');
+										api.id = 'turnstile-api';
+										api.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad';
+										api.async = true;
+										document.head.appendChild(api);
+									}
+									window.addEventListener('turnstile-ready', renderWidget, { once: true });
+								};
+
+								if (container) {
+									let requested = false;
+									const requestWidget = () => {
+										if (requested) return;
+										requested = true;
+										loadWidget();
+									};
+									form.addEventListener('focusin', requestWidget, { once: true });
+									form.addEventListener('pointerdown', requestWidget, { once: true });
 
 									// Follow the navbar theme toggle, and stop when leaving the page.
-									const themeObserver = new MutationObserver(renderWidget);
+									const themeObserver = new MutationObserver(() => {
+										if (requested) renderWidget();
+									});
 									themeObserver.observe(document.documentElement, { attributeFilter: ['data-theme'] });
 									document.addEventListener('astro:before-swap', () => {
 										themeObserver.disconnect();
@@ -212,8 +230,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 										} else {
 											showStatus(form.dataset.error + data.message, 'error');
 										}
-									} catch (error) {
-										console.error('Form submission error:', error);
+									} catch {
 										showStatus(form.dataset.failure, 'error');
 									} finally {
 										resetWidget();
