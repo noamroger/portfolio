@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { getI18n } from '../i18n';
+import WindowBar from '../components/WindowBar.astro';
 
 const { t, path } = getI18n(Astro.url.pathname);
 ---
@@ -14,7 +15,7 @@ const { t, path } = getI18n(Astro.url.pathname);
 			<div class="container">
 				<div class="error-content">
 					<div class="card error-term" aria-hidden="true">
-						<div class="window-bar"><i></i><i></i><i></i><span>bash</span></div>
+						<WindowBar title="bash" />
 						<pre><span class="t-prompt">$</span> cd <span data-missing-path>/page</span>
 <span class="t-err">bash: cd: <span data-missing-path>/page</span>: No such file or directory</span>
 <span class="t-prompt">$</span> echo $?

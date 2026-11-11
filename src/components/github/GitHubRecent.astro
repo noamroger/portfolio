@@ -1,5 +1,6 @@
 ---
 import { getI18n } from '../../i18n';
+import WindowBar from '../WindowBar.astro';
 
 const { t } = getI18n(Astro.url.pathname);
 ---
@@ -13,7 +14,7 @@ const { t } = getI18n(Astro.url.pathname);
 			</div>
 		</div>
 		<div class="card recent-card">
-			<div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>git log --all-repos</span></div>
+			<WindowBar title="git log --all-repos" />
 			<ol class="recent" data-gh-recent data-private-label={t.github.privateRepo}></ol>
 		</div>
 	</div>

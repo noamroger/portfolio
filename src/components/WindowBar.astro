@@ -1,0 +1,26 @@
+---
+/**
+ * Title bar shared by every fake window of the site (terminals, cards, the
+ * video modal): three macOS-style lights on the left, the title centred on the
+ * full width of the bar. The lights are decoration only: their glyphs show up
+ * when the pointer is over the group, and a click does nothing.
+ *
+ * Anything passed as children lands on the right side of the bar (the modal
+ * puts its real close button there).
+ */
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<div class="window-bar">
+	<span class="window-controls" aria-hidden="true">
+		<i class="wc-close"><svg viewBox="0 0 10 10"><path d="M 2,2 L 8,8 M 8,2 L 2,8" /></svg></i>
+		<i class="wc-min"><svg viewBox="0 0 10 10"><path d="M 2,5 L 8,5" /></svg></i>
+		<i class="wc-max"><svg viewBox="0 0 10 10"><path d="M 2,2 L 5,2 L 2,5 Z M 8,8 L 5,8 L 8,5 Z" /></svg></i>
+	</span>
+	<span class="window-title" aria-hidden="true">{title}</span>
+	<slot />
+</div>

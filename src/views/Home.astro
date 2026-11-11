@@ -6,6 +6,7 @@ import StackList from '../components/StackList.astro';
 import GitHubStats from '../components/github/GitHubStats.astro';
 import GitHubRecent from '../components/github/GitHubRecent.astro';
 import { getI18n } from '../i18n';
+import WindowBar from '../components/WindowBar.astro';
 import { projects } from '../data/projects';
 
 const { t, path } = getI18n(Astro.url.pathname);
@@ -37,7 +38,7 @@ const featured = projects.slice(0, 3).map((project) => ({
 				</div>
 
 				<aside class="card terminal" aria-labelledby="profile-title">
-					<div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>noam@roger: ~</span></div>
+					<WindowBar title="noam@roger: ~" />
 					<div class="terminal-body" data-terminal>
 						<p class="terminal-cmd" aria-hidden="true"><span class="t-prompt">$</span> <span class="typed">kubectl get developer noam-roger -o yaml</span></p>
 						<h2 class="sr-only" id="profile-title">{t.home.profile.title}</h2>

@@ -603,11 +603,14 @@ const graph = {
 		background-size: 22px 22px;
 	}
 
-	/* Fake window chrome for terminal-style cards. */
+	/* Fake window chrome for terminal-style cards (see WindowBar.astro). The two
+	   outer columns always share the same width, so the title stays centred on
+	   the bar whatever sits on either side. */
 	.window-bar {
-		display: flex;
+		display: grid;
+		grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
 		align-items: center;
-		gap: 0.45rem;
+		gap: 0.75rem;
 		padding: 0.75rem 1rem;
 		border-bottom: 1px solid var(--border);
 		font-family: var(--font-mono);
@@ -615,21 +618,67 @@ const graph = {
 		color: var(--text-muted);
 	}
 
-	.window-bar i {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		background: var(--border-strong);
+	.window-controls {
+		grid-column: 1;
+		justify-self: start;
+		display: flex;
+		gap: 8px;
+		cursor: default;
+		user-select: none;
+		-webkit-user-select: none;
 	}
 
-	.window-bar i:nth-child(1) { background: #ff5f57; }
-	.window-bar i:nth-child(2) { background: #febc2e; }
-	.window-bar i:nth-child(3) { background: #28c840; }
+	.window-controls i {
+		display: grid;
+		place-items: center;
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+	}
 
-	.window-bar span {
-		margin-left: auto;
-		margin-right: auto;
-		padding-right: 2.5rem;
+	.window-controls .wc-close { background: #ff5f56; }
+	.window-controls .wc-min { background: #ffbd2e; }
+	.window-controls .wc-max { background: #27c93f; }
+
+	/* Glyphs: hidden at rest, all three shown together when the pointer is over
+	   the group, the one under the pointer a little stronger. */
+	/* 8px in a 12px light: 2px on every side, so the glyph lands on whole
+	   pixels and stays dead centre. */
+	.window-controls svg {
+		display: block;
+		width: 8px;
+		height: 8px;
+		fill: none;
+		stroke: #000;
+		stroke-width: 1.5;
+		stroke-linecap: round;
+		opacity: 0;
+		transition: opacity 0.15s ease;
+	}
+
+	/* Filled shapes look heavier than strokes at the same opacity: the
+	   triangles are lightened to sit level with the cross and the dash. */
+	.window-controls .wc-max svg {
+		fill: #000;
+		fill-opacity: 0.7;
+		stroke: none;
+	}
+
+	.window-controls:hover svg { opacity: 0.55; }
+	.window-controls i:hover svg { opacity: 0.85; }
+
+	.window-title {
+		grid-column: 2;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		text-align: center;
+	}
+
+	.window-bar > :nth-child(n + 3) {
+		grid-column: 3;
+		justify-self: end;
 	}
 
 	.cursor {

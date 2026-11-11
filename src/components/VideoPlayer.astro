@@ -7,6 +7,7 @@
  */
 import { getImage } from 'astro:assets';
 import { getI18n } from '../i18n';
+import WindowBar from './WindowBar.astro';
 
 interface Props {
 	id: string;
@@ -26,14 +27,12 @@ const posterImage = await getImage({ src: poster, width: 1280, format: 'webp' })
 
 <dialog class="vm" id={id} aria-label={p.dialogLabel.replace('{title}', title)} data-video-modal>
 	<div class="vm-window">
-		<div class="window-bar vm-bar">
-			<i></i><i></i><i></i>
-			<span aria-hidden="true">{label}</span>
+		<WindowBar title={label}>
 			<button type="button" class="vm-close" data-vp-close aria-label={p.close}>
 				<kbd aria-hidden="true">esc</kbd>
 				<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
 			</button>
-		</div>
+		</WindowBar>
 
 		<div class="vp" data-vp data-paused tabindex="-1">
 			<video playsinline preload="none" data-src={src} data-poster={posterImage.src}></video>
@@ -583,13 +582,6 @@ const posterImage = await getImage({ src: poster, width: 1280, format: 'webp' })
 		border-radius: var(--radius);
 		box-shadow: 6px 6px 0 color-mix(in srgb, var(--accent) 40%, transparent), 0 24px 60px rgba(0, 0, 0, 0.45);
 		overflow: hidden;
-	}
-
-	.vm-bar span {
-		padding-right: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
 
 	.vm-close {
