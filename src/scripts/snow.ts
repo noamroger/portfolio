@@ -10,7 +10,7 @@
  * The client router replaces <body> on every navigation, so the canvas and the
  * button are re-attached after each swap and the animation keeps running.
  */
-import { SNOW_KEY, SNOW_PREVIEW_KEY } from '../i18n/preference';
+import { SNOW_KEY } from '../i18n/preference';
 
 const labels = {
 	fr: { turnOff: 'Désactiver la neige', turnOn: 'Activer la neige' },
@@ -30,21 +30,7 @@ interface Flake {
 	alpha: number;
 }
 
-// TEMPORARY: preview outside December. ?snow=true keeps the snow on for the rest
-// of the tab session (even after navigating), ?snow=false clears it. Remove this
-// function and its call once the feature has been checked.
-function isPreviewEnabled(): boolean {
-	try {
-		const param = new URLSearchParams(location.search).get('snow');
-		if (param === 'true') sessionStorage.setItem(SNOW_PREVIEW_KEY, '1');
-		if (param === 'false') sessionStorage.removeItem(SNOW_PREVIEW_KEY);
-		return sessionStorage.getItem(SNOW_PREVIEW_KEY) === '1';
-	} catch {
-		return false;
-	}
-}
-
-const inSeason = new Date().getMonth() === 11 || isPreviewEnabled();
+const inSeason = new Date().getMonth() === 11;
 
 if (inSeason) initSnow();
 

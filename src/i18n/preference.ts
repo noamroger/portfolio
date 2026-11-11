@@ -4,5 +4,3 @@ export const LANGUAGE_KEY = 'lang';
 export const THEME_KEY = 'theme';
 /** localStorage key holding the snowfall choice: "on" or "off". */
 export const SNOW_KEY = 'snow';
-/** TEMPORARY: sessionStorage key set by ?snow=true to preview the snow outside December. */
-export const SNOW_PREVIEW_KEY = 'snow-preview';
