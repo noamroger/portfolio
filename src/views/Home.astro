@@ -322,6 +322,11 @@ const featured = projects.slice(0, 3).map((project) => ({
 		color: var(--text);
 	}
 
+	.terminal-output :global(a) {
+		color: var(--accent);
+		text-underline-offset: 3px;
+	}
+
 	.terminal-output :global(.t-prompt) {
 		color: var(--accent);
 		font-weight: 600;

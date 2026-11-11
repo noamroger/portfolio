@@ -1,0 +1,150 @@
+---
+/**
+ * /ruinthefun: every easter egg of the site, listed. Reached from the
+ * `ruinthefun` command of the home page terminal, not from the navigation,
+ * and kept out of search engines and of the sitemap.
+ */
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import WindowBar from '../components/WindowBar.astro';
+import { getI18n } from '../i18n';
+import { eggs } from '../data/eggs';
+
+const { locale } = getI18n(Astro.url.pathname);
+const page = eggs[locale];
+---
+
+<Layout title={page.metaTitle} description={page.metaDescription} noindex>
+	<Navbar />
+	<main id="main" class="ruin">
+		<header class="page-header">
+			<div class="container">
+				<span class="eyebrow">{page.eyebrow}</span>
+				<h1>{page.heading}</h1>
+				<p>{page.subtitle}</p>
+			</div>
+		</header>
+
+		<section class="section">
+			<div class="container">
+				<div class="ruin-list">
+				{page.sections.map((section) => (
+					<section class="card ruin-card">
+						<WindowBar title={section.file} />
+						<div class="ruin-body">
+							<h2>{section.title}</h2>
+							{section.intro && <p class="ruin-intro">{section.intro}</p>}
+							<table>
+								<thead class="sr-only">
+									<tr>
+										<th scope="col">{page.columns[0]}</th>
+										<th scope="col">{page.columns[1]}</th>
+									</tr>
+								</thead>
+								<tbody>
+									{section.rows.map(([what, effect]) => (
+										<tr>
+											<th scope="row"><code>{what}</code></th>
+											<td>{effect}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</section>
+				))}
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.ruin-list {
+		display: grid;
+		gap: 2rem;
+		max-width: 920px;
+	}
+
+	.ruin-card {
+		overflow: hidden;
+	}
+
+	.ruin-body {
+		padding: 1.5rem 1.5rem 1rem;
+	}
+
+	.ruin-body h2 {
+		font-size: 1.25rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.ruin-intro {
+		color: var(--text-secondary);
+		margin-bottom: 0.75rem;
+		max-width: 70ch;
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	tr + tr {
+		border-top: 1px solid var(--border);
+	}
+
+	th,
+	td {
+		padding: 0.7rem 0;
+		text-align: left;
+		vertical-align: baseline;
+		font-size: 0.925rem;
+	}
+
+	th {
+		width: 38%;
+		padding-right: 1.25rem;
+		font-weight: 400;
+	}
+
+	td {
+		color: var(--text-secondary);
+	}
+
+	code {
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		color: var(--accent);
+		overflow-wrap: anywhere;
+	}
+
+	@media (max-width: 640px) {
+		.ruin-body {
+			padding: 1.25rem 1.1rem 0.75rem;
+		}
+
+		/* One column: the command above what it does. */
+		tr,
+		th,
+		td {
+			display: block;
+			width: auto;
+		}
+
+		tr {
+			padding: 0.7rem 0;
+		}
+
+		th,
+		td {
+			padding: 0;
+		}
+
+		th {
+			margin-bottom: 0.25rem;
+		}
+	}
+</style>

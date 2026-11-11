@@ -30,6 +30,7 @@ const HELP = `Available commands:
   lang <fr|en>            Switch the language
   whoami                  Print current session context
   clear                   Clear terminal buffer
+  ruinthefun              Give up and read the answers
 
 Not everything is listed here.`;
 
@@ -413,6 +414,7 @@ function completions(): string[] {
 		'help',
 		'whoami',
 		'clear',
+		'ruinthefun',
 		'ls',
 		'cat humans.txt',
 		'cat robots.txt',
@@ -445,6 +447,8 @@ function complete(value: string): string {
 interface Shell {
 	/** Runs once the output has been printed (navigation, closing the window). */
 	after(action: () => void): void;
+	/** Prints a real link under the output. */
+	link(href: string): void;
 }
 
 const isEnglish = () => /^\/en(\/|$)/.test(location.pathname);
@@ -483,6 +487,9 @@ async function run(raw: string, shell: Shell, elevated = isRoot()): Promise<stri
 			return elevated ? HELP + ROOT_HELP : HELP;
 		case 'clear':
 			return null;
+		case 'ruinthefun':
+			shell.link(localized('/ruinthefun/'));
+			return 'List of easter eggs for those who do not like to play:';
 		case 'whoami':
 			return elevated ? 'root - you found every flag. Feel free to reach out at contact@noamroger.fr' : 'guest - feel free to reach out at contact@noamroger.fr';
 		case 'kubectl':
@@ -705,12 +712,19 @@ function initTerminal(): void {
 		if (raw.trim()) {
 			if (history[history.length - 1] !== raw.trim()) history.push(raw.trim());
 			let after: (() => void) | undefined;
-			const result = await run(raw, { after: (action) => (after = action) });
+			let link = '';
+			const result = await run(raw, { after: (action) => (after = action), link: (href) => (link = href) });
 			if (result === null) {
 				clear();
 			} else if (result) {
 				// Tables keep their columns and scroll sideways; sentences wrap.
 				print(result.includes('\n') ? 'terminal-out' : 'terminal-out terminal-wrap', result);
+			}
+			if (link) {
+				const anchor = document.createElement('a');
+				anchor.href = link;
+				anchor.textContent = new URL(link, location.href).href;
+				print('terminal-out terminal-wrap', '').append(anchor);
 			}
 			// Leave a beat to read the line before the page or the window goes.
 			if (after) setTimeout(after, 350);

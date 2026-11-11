@@ -33,6 +33,9 @@
 /contact*
   Cache-Control: public, max-age=60, stale-while-revalidate=86400
 
+/ruinthefun*
+  Cache-Control: public, max-age=60, stale-while-revalidate=86400
+
 # Videos are same-origin files (media-src). form.noam.ovh receives the contact form. challenges.cloudflare.com serves the
 # Turnstile script and its iframe on the contact page.
 # X-Hiring and X-Flag are for whoever runs curl -I: keep in sync with

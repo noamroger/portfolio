@@ -45,7 +45,8 @@ export default defineConfig({
 	},
 	integrations: [
 		sitemap({
-			filter: (page) => !page.includes('/404'),
+			// /ruinthefun spoils every easter egg: reachable, but not advertised.
+			filter: (page) => !page.includes('/404') && !page.includes('/ruinthefun'),
 			// Declare the alternates by hand, mirroring the <link rel="alternate">
 			// tags in the page head. French has no prefix, English lives under /en.
 			serialize(item) {
