@@ -1,8 +1,8 @@
 /**
  * Easter egg for the browser console, in the language of the page. The
- * greeting is printed once per visit, in the language of the page that was
- * loaded; the `noam` object it points at answers in the language of the page
- * being looked at when it is called.
+ * greeting is printed once per visit, and again in the new language when the
+ * visitor switches; the `noam` object it points at answers in the language of
+ * the page being looked at when it is called.
  */
 const mono = 'font-family: monospace; font-size: 12px;';
 const say = (text: string) => console.log(`%c${text}`, `${mono} color: #a1a1aa;`);
@@ -30,9 +30,27 @@ const en: typeof fr = {
 /** The dictionary of the page on screen right now. */
 const t = () => (document.documentElement.lang === 'en' ? en : fr);
 
-console.log(`%c${t().hello}`, 'color: #22c55e; font-family: monospace; font-size: 14px; font-weight: bold;');
-say(t().intro);
-console.log(`%c${t().next}%cnoam.help()`, `${mono} color: #a1a1aa;`, `${mono} color: #22c55e; font-weight: bold;`);
+const greet = () => {
+	console.log(`%c${t().hello}`, 'color: #22c55e; font-family: monospace; font-size: 14px; font-weight: bold;');
+	say(t().intro);
+	console.log(`%c${t().next}%cnoam.help()`, `${mono} color: #a1a1aa;`, `${mono} color: #22c55e; font-weight: bold;`);
+};
+
+// Once per visit, and once more whenever the visitor switches language:
+// navigating between pages of the same language stays silent.
+let greeted = '';
+const greetOnce = () => {
+	const lang = document.documentElement.lang;
+	if (lang === greeted) return;
+	// A switch of language without a reload: drop the greeting written in the
+	// other language rather than leaving two. (A console set to keep its logs
+	// ignores the clear, and simply shows both.)
+	if (greeted) console.clear();
+	greeted = lang;
+	greet();
+};
+greetOnce();
+document.addEventListener('astro:page-load', greetOnce);
 
 const noam = {
 	help() {
