@@ -429,16 +429,22 @@ const graph = {
 		position: relative;
 		padding: 5rem 0 3rem;
 		border-bottom: 1px solid var(--border);
-		background-image: radial-gradient(var(--dot-grid) 1px, transparent 1px);
-		background-size: 22px 22px;
 	}
 
-	/* Fades the dot grid towards the left so the title stays on a plain background. */
+	/*
+	 * Dot grid, faded towards the left so the title stays on a plain background.
+	 * Drawn on a layer at z-index -2 rather than on the header itself, so the
+	 * December snow (z-index -1) falls in front of it but behind the text.
+	 */
 	.page-header::before {
 		content: '';
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(90deg, var(--bg) 35%, color-mix(in srgb, var(--bg) 40%, transparent) 100%);
+		z-index: -2;
+		background:
+			linear-gradient(90deg, var(--bg) 35%, color-mix(in srgb, var(--bg) 40%, transparent) 100%),
+			radial-gradient(var(--dot-grid) 1px, transparent 1px);
+		background-size: auto, 22px 22px;
 		pointer-events: none;
 	}
 

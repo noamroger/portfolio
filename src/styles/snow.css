@@ -1,10 +1,11 @@
 /*
  * December snowfall (src/scripts/snow.ts). Everything is styled here so the
  * script never writes inline styles.
- * Stacking: the snow falls behind the content. z-index -1 paints the canvas
- * above the page background (set on body, which paints on the root) but under
- * every block, card and the navbar. The button stays above everything except
- * the video player, a <dialog> in the top layer.
+ * Stacking: z-index -1 paints the canvas above the page background (set on
+ * body, which paints on the root) and above the decorative dot grids (page
+ * header, home hero), which sit at z-index -2. Text, cards and the navbar are
+ * in the normal flow and paint on top. The button stays above everything
+ * except the video player, a <dialog> in the top layer.
  */
 
 .snow-canvas {
