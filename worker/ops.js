@@ -2,6 +2,7 @@
 //
 // - /healthz, /version, /metrics: what a service usually exposes. The commit
 //   comes from /version.json, written at build time (src/pages/version.json.ts).
+// - /.well-known/security.txt: answered with the file built at /security.txt.
 // - /coffee: 418, the pod of the home page terminal answering for real.
 // - `curl noamroger.fr`: command-line clients get the home page as plain text
 //   (src/data/cli.ts) instead of HTML they would have to read through.
@@ -64,6 +65,11 @@ export async function handleOps(request, env, url) {
 			return text(metrics(await version(env, url), request.cf?.colo), 200, {
 				'Content-Type': 'text/plain; version=0.0.4; charset=utf-8',
 			});
+		case '/.well-known/security.txt': {
+			// The canonical address (RFC 9116), served from the file built at /security.txt.
+			const file = await env.ASSETS.fetch(new URL('/security.txt', url));
+			return file.ok ? text(file.body, 200, { 'Cache-Control': 'public, max-age=3600' }) : null;
+		}
 		case '/coffee':
 			return text(
 				`418 I'm a teapot
