@@ -8,3 +8,8 @@ export const SNOW_KEY = 'snow';
 export const COFFEE_KEY = 'coffee-restarts';
 /** localStorage key holding the hashes of the flags unlocked in the terminal. */
 export const FLAGS_KEY = 'flags';
+/** localStorage key: "1" while the terminal session is a root shell (earned with the flags). */
+export const ROOT_KEY = 'root';
+/** localStorage keys: when the first and the last flag were unlocked, in ms. */
+export const FLAGS_START_KEY = 'flags-start';
+export const FLAGS_DONE_KEY = 'flags-done';

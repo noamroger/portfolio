@@ -6,16 +6,19 @@
  * English, whatever the page language. Output is always written with
  * textContent, never as HTML.
  *
- * `help` only lists part of it: the rest is there for whoever tries.
+ * `help` only lists part of it: the rest is there for whoever tries. Finding
+ * the three flags of the hunt makes `sudo` work: the root shell has a few
+ * commands and files of its own.
  *
  * The client router swaps <body> on navigation, so the prompt is wired again on
  * every astro:page-load.
  */
 import { navigate } from 'astro:transitions/client';
-import { COFFEE_KEY, FLAGS_KEY, LANGUAGE_KEY } from '../i18n/preference';
+import { COFFEE_KEY, FLAGS_DONE_KEY, FLAGS_KEY, FLAGS_START_KEY, LANGUAGE_KEY, ROOT_KEY } from '../i18n/preference';
 import { setSnow } from './snow';
 
 const PROMPT = 'guest@noamroger.fr:~$';
+const ROOT_PROMPT = 'root@noamroger.fr:~#';
 
 const HELP = `Available commands:
   kubectl get pods        Inspect running cluster pods
@@ -29,6 +32,15 @@ const HELP = `Available commands:
   clear                   Clear terminal buffer
 
 Not everything is listed here.`;
+
+const ROOT_HELP = `
+
+Root only:
+  ls, cat <file>          There is more in here now
+  kubectl get secrets     What guests cannot read
+  make coffee             Fix the coffee maker, at last
+  certificate             Print your certificate again
+  exit                    Back to guest`;
 
 // --- Storage (can be blocked: everything falls back to the page) -------------
 
@@ -131,6 +143,12 @@ GET /.git/config  404  1ms`;
 level=info msg="containers up to date"
 level=info msg="next run in 15m"`;
 	}
+	if (pod.status === 'Running') {
+		return `[boot]  coffee-maker-api listening on :8080
+[info]  COFFEE_MAKER_MODE=coffee
+[info]  POST /brew -> 201 Created
+[info]  fresh pot ready`;
+	}
 	return `[boot]  coffee-maker-api listening on :8080
 [warn]  water tank: empty
 [info]  GET /coffee -> 418 I'm a teapot
@@ -183,7 +201,7 @@ function deletePod(pod: Pod): string {
 	return `pod "${old}" deleted\n# ...and already replaced: run 'kubectl get pods'.`;
 }
 
-function kubectl(args: string[]): string {
+function kubectl(args: string[], elevated: boolean): string {
 	const [verb, resource, name] = args;
 	const isPods = /^(pods?|po)$/.test(resource ?? '');
 
@@ -205,6 +223,27 @@ function kubectl(args: string[]): string {
 			]);
 		}
 		if (!resource) return 'You must specify the type of resource to get.';
+		if (elevated && /^secrets?$/.test(resource)) {
+			if (!name || name.startsWith('-')) {
+				return `${table([
+					['NAME', 'TYPE', 'DATA', 'AGE'],
+					['recruiter-note', 'Opaque', '1', age(pods[0].born)],
+				])}\n# kubectl get secret recruiter-note`;
+			}
+			if (name !== 'recruiter-note') return `Error from server (NotFound): secrets "${name}" not found`;
+			return [
+				'apiVersion: v1',
+				'kind: Secret',
+				'metadata:',
+				'  name: recruiter-note',
+				'stringData:',
+				'  note: |',
+				'    You read the headers, the source and the logs before getting here.',
+				'    That is the kind of curiosity I would like to work with.',
+				'    I am looking for a work-study position (DevOps / Cloud Master,',
+				'    September 2027): contact@noamroger.fr',
+			].join('\n');
+		}
 		return forbidden('list', resource);
 	}
 
@@ -247,6 +286,40 @@ function foundFlags(): Set<string> {
 	return new Set((read(FLAGS_KEY) ?? '').split(',').filter((hash) => known.includes(hash)));
 }
 
+const hasRoot = () => {
+	const found = foundFlags();
+	return FLAGS.every((flag) => found.has(flag.hash));
+};
+
+/** A root shell is earned with the flags, then entered with sudo. */
+const isRoot = () => hasRoot() && read(ROOT_KEY) === '1';
+
+function certificate(): string {
+	const found = foundFlags();
+	const bonus = found.has(BONUS.hash);
+	const start = Number(read(FLAGS_START_KEY));
+	const done = Number(read(FLAGS_DONE_KEY));
+	const took = start && done >= start ? age(Date.now() - (done - start)) : 'unknown';
+	const date = new Date(done || Date.now()).toISOString().slice(0, 10);
+	const rows = [
+		'',
+		'CERTIFIED CURIOUS',
+		'',
+		`Flags   ${FLAGS.length}/${FLAGS.length}${bonus ? ' + bonus (DNS)' : ''}`,
+		`Rank    ${bonus ? 'cluster-admin' : 'root'}`,
+		`Date    ${date}`,
+		`Time    ${took} from first to last flag`,
+		`Build   ${commit || 'unknown'}`,
+		'',
+		'Issued by noamroger.fr to whoever reads headers,',
+		'sources and logs before being asked to.',
+		'',
+	];
+	const width = Math.max(...rows.map((row) => row.length));
+	const line = `+${'-'.repeat(width + 4)}+`;
+	return [line, ...rows.map((row, i) => `|  ${i === 1 ? row.padStart(Math.floor((width + row.length) / 2)).padEnd(width) : row.padEnd(width)}  |`), line].join('\n');
+}
+
 function flagStatus(): string {
 	const found = foundFlags();
 	const lines = FLAGS.map((flag, i) => `  [${found.has(flag.hash) ? 'x' : ' '}] flag ${i + 1}   ${found.has(flag.hash) ? 'found' : flag.hint}`);
@@ -265,24 +338,57 @@ async function unlock(candidate: string): Promise<string> {
 
 	const found = foundFlags();
 	const already = found.has(hash);
+	const hadRoot = hasRoot();
 	found.add(hash);
 	write(FLAGS_KEY, [...found].join(','));
+	if (!read(FLAGS_START_KEY)) write(FLAGS_START_KEY, String(Date.now()));
+	if (!hadRoot && hasRoot()) write(FLAGS_DONE_KEY, String(Date.now()));
 
 	const count = FLAGS.filter((flag) => found.has(flag.hash)).length;
 	const next = FLAGS.find((flag) => !found.has(flag.hash));
-	const head = already ? 'Already unlocked.' : hash === BONUS.hash ? 'Bonus flag unlocked. You even checked the DNS.' : `Flag unlocked (${count}/${FLAGS.length}).`;
+	const isBonus = hash === BONUS.hash;
+	const head = already ? 'Already unlocked.' : isBonus ? 'Bonus flag unlocked. You even checked the DNS.' : `Flag unlocked (${count}/${FLAGS.length}).`;
 	if (next) return `${head}\nNext: ${next.hint}.`;
-	return `${head}\nAll ${FLAGS.length} flags found. You clearly have the reflexes: I would be glad to talk.\n-> contact@noamroger.fr${found.has(BONUS.hash) ? '' : `\n(bonus: ${BONUS.hint})`}`;
+	if (already) return `${head}\nType 'certificate' to see it again.`;
+	if (isBonus) return `${head}\nRank raised to cluster-admin:\n${certificate()}`;
+	return [
+		head,
+		`All ${FLAGS.length} flags found. You clearly have the reflexes: I would be glad to talk.`,
+		certificate(),
+		'-> contact@noamroger.fr',
+		"One more thing: you are in the sudoers file now. Try 'sudo -i'.",
+		...(found.has(BONUS.hash) ? [] : [`(bonus: ${BONUS.hint})`]),
+	].join('\n');
 }
 
 // --- Files -------------------------------------------------------------------
 
 const DIRECTORIES = ['about', 'contact', 'projects'];
 const FILES = ['humans.txt', 'robots.txt'];
+/** What only a root shell lists and reads. */
+const ROOT_FILES = ['certificate.txt', 'cv.txt', 'private-key.pem'];
 
-async function cat(file: string | undefined): Promise<string> {
+// Chosen by fair dice roll. Guaranteed to be random.
+const PRIVATE_KEY = '-----BEGIN RSA PRIVATE KEY-----\n4\n-----END RSA PRIVATE KEY-----';
+
+async function cat(file: string | undefined, elevated: boolean): Promise<string> {
 	if (!file) return 'usage: cat <file>';
-	const name = file.replace(/^(\.\/|\/)/, '').replace(/\/$/, '');
+	const name = file.replace(/^(\.\/|\/root\/|~\/|\/)/, '').replace(/\/$/, '');
+	if (elevated) {
+		if (name === 'private-key.pem') return PRIVATE_KEY;
+		if (name === 'certificate.txt') return certificate();
+		if (name === '.env') return 'COFFEE_MAKER_MODE=teapot\n# That explains a lot. Try: make coffee';
+		if (name === 'cv.txt') {
+			try {
+				const response = await fetch(localized('/cli.txt'));
+				if (!response.ok) throw new Error(String(response.status));
+				// The file is written for curl: drop its colour codes.
+				return (await response.text()).replace(/\x1b\[[0-9;]*m/g, '').trim();
+			} catch {
+				return 'cat: cv.txt: Input/output error';
+			}
+		}
+	}
 	if (name === '.env') return 'cat: .env: Permission denied\n# Secrets live in the Worker environment, not in the repository.';
 	if (DIRECTORIES.includes(name)) return `cat: ${name}/: Is a directory (try 'cd ${name}')`;
 	if (!FILES.includes(name)) return `cat: ${file}: No such file or directory`;
@@ -318,6 +424,7 @@ function completions(): string[] {
 		'lang en',
 		'lang fr',
 		'kubectl get pods',
+		...(isRoot() ? [...ROOT_FILES.map((file) => `cat ${file}`), 'kubectl get secrets', 'kubectl get secret recruiter-note', 'make coffee', 'certificate', 'exit'] : []),
 		...pods.flatMap((pod) => [`kubectl logs ${pod.name}`, `kubectl describe pod ${pod.name}`, `kubectl delete pod ${pod.name}`]),
 	];
 }
@@ -344,7 +451,7 @@ const isEnglish = () => /^\/en(\/|$)/.test(location.pathname);
 const localized = (path: string) => (isEnglish() ? `/en${path}` : path);
 
 /** Returns the text to print, or null when the buffer must be cleared. */
-async function run(raw: string, shell: Shell): Promise<string | null> {
+async function run(raw: string, shell: Shell, elevated = isRoot()): Promise<string | null> {
 	const line = raw.trim();
 	const command = line.toLowerCase().replace(/\s+/g, ' ');
 	const [name, ...args] = command.split(' ');
@@ -357,29 +464,42 @@ async function run(raw: string, shell: Shell): Promise<string | null> {
 		return "-- INSERT --   (type ':q' to exit)";
 	}
 
-	if (name === 'sudo') {
-		return 'guest is not in the sudoers file. This incident will be reported.';
+	if (name === 'sudo' || name === 'su') {
+		if (!hasRoot()) {
+			return name === 'su' ? 'su: Authentication failure' : 'guest is not in the sudoers file. This incident will be reported.';
+		}
+		// A root shell: `su`, `sudo -i`, `sudo su`, or sudo on its own.
+		if (name === 'su' || !args.length || ['-i', '-s', 'su', 'bash', 'zsh'].includes(args[0])) {
+			if (isRoot()) return 'Already root.';
+			write(ROOT_KEY, '1');
+			return "Welcome, root. You earned it.\nType 'help' to see what changed, 'exit' to go back to guest.";
+		}
+		// Anything else runs once as root.
+		return run(line.replace(/^sudo\s+/i, ''), shell, true);
 	}
 
 	switch (name) {
 		case 'help':
-			return HELP;
+			return elevated ? HELP + ROOT_HELP : HELP;
 		case 'clear':
 			return null;
 		case 'whoami':
-			return 'guest - feel free to reach out at contact@noamroger.fr';
+			return elevated ? 'root - you found every flag. Feel free to reach out at contact@noamroger.fr' : 'guest - feel free to reach out at contact@noamroger.fr';
 		case 'kubectl':
 		case 'k':
-			return kubectl(args);
+			return kubectl(args, elevated);
+		case 'certificate':
+		case 'cert':
+			return hasRoot() ? certificate() : "No certificate yet. Type 'flags'.";
 
 		case 'ls': {
-			const entries = [...DIRECTORIES.map((directory) => `${directory}/`), ...FILES];
+			const entries = [...DIRECTORIES.map((directory) => `${directory}/`), ...(elevated ? [...FILES, ...ROOT_FILES].sort() : FILES)];
 			const all = args.some((arg) => /^-\w*a/.test(arg));
 			return (all ? ['.env', ...entries] : entries).join('  ');
 		}
 		case 'cat':
 			// The original spelling: file names are case-sensitive.
-			return cat(line.split(/\s+/)[1]);
+			return cat(line.replace(/^sudo\s+/i, '').split(/\s+/)[1], elevated);
 		case 'cd': {
 			const target = (args[0] ?? '~').replace(/^(\.\/|\/)/, '').replace(/\/$/, '');
 			if (['', '~', '.', '..'].includes(target)) return 'Already home.';
@@ -444,10 +564,12 @@ async function run(raw: string, shell: Shell): Promise<string | null> {
 			return 'No network from this sandbox. From a real terminal: curl https://www.noamroger.fr';
 		case 'coffee':
 		case 'brew':
-			return "418 I'm a teapot";
+			return elevated ? brew() : "418 I'm a teapot";
 		case 'make':
-			return args[0] === 'coffee' ? "make: *** [coffee] Error 418 (I'm a teapot)" : "make: *** No targets specified and no makefile found.  Stop.";
+			if (args[0] !== 'coffee') return 'make: *** No targets specified and no makefile found.  Stop.';
+			return elevated ? brew() : "make: *** [coffee] Error 418 (I'm a teapot)";
 		case 'rm':
+			if (elevated) return 'rm: even root does not get to delete a static site. It would be back on the next push anyway.';
 			return args.some((arg) => arg.startsWith('-') && arg.includes('r'))
 				? "rm: cannot remove '/': Read-only file system (it is a static site, but nice try)"
 				: 'rm: Read-only file system';
@@ -465,6 +587,11 @@ async function run(raw: string, shell: Shell): Promise<string | null> {
 			return 'Not in vim. For once.';
 		case 'exit':
 		case 'logout':
+			// Out of the root shell first, out of the window next.
+			if (isRoot()) {
+				write(ROOT_KEY, '0');
+				return 'logout\nBack to guest. sudo still works.';
+			}
 			shell.after(() => setWindow('closed'));
 			return 'logout';
 
@@ -478,6 +605,17 @@ async function run(raw: string, shell: Shell): Promise<string | null> {
 		default:
 			return `zsh: command not found: ${line}. Type 'help' for available commands.`;
 	}
+}
+
+/** Root finally fixes the coffee maker (for this visit). */
+function brew(): string {
+	const pod = pods[pods.length - 1];
+	if (pod.status === 'Running') return 'Coffee is already brewing.';
+	pod.status = 'Running';
+	pod.ready = '1/1';
+	pod.restarts = 0;
+	pod.born = Date.now();
+	return "Set COFFEE_MAKER_MODE=coffee, restarted the pod.\ncoffee-maker-api-0 is Running. It only took root.\n(The real /coffee endpoint is still a teapot. Some things cannot be fixed.)";
 }
 
 // --- The window (red, yellow and green lights) -------------------------------
@@ -526,11 +664,17 @@ function initTerminal(): void {
 		return line;
 	};
 
+	const promptLabel = form.querySelector<HTMLElement>('label');
+	const syncPrompt = () => {
+		if (promptLabel) promptLabel.textContent = isRoot() ? ROOT_PROMPT : PROMPT;
+	};
+	syncPrompt();
+
 	const echo = (text: string) => {
 		const line = print('terminal-echo', '');
 		const prompt = document.createElement('span');
 		prompt.className = 't-prompt';
-		prompt.textContent = PROMPT;
+		prompt.textContent = isRoot() ? ROOT_PROMPT : PROMPT;
 		line.append(prompt, ` ${text}`);
 	};
 
@@ -572,6 +716,7 @@ function initTerminal(): void {
 			if (after) setTimeout(after, 350);
 		}
 
+		syncPrompt();
 		cursor = history.length;
 		scrollToEnd();
 	});
