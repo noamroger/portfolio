@@ -10,6 +10,7 @@ import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal
 import monoLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 import { contactEmail, getI18n, locales, localizedPath, siteOrigin, socialProfiles, stripLocale, techStack } from '../i18n';
 import { LANGUAGE_KEY, THEME_KEY } from '../i18n/preference';
+import '../styles/snow.css';
 
 interface Props {
 	title: string;
@@ -241,6 +242,8 @@ const graph = {
 
 			document.addEventListener('astro:page-load', initReveal);
 		</script>
+		{/* December snowfall: does nothing the rest of the year. */}
+		<script src="../scripts/snow.ts"></script>
 	</body>
 </html>
 

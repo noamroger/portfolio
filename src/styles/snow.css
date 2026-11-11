@@ -1,0 +1,79 @@
+/*
+ * December snowfall (src/scripts/snow.ts). Everything is styled here so the
+ * script never writes inline styles.
+ * Stacking: the sticky navbar is at z-index 100, the video player is a <dialog>
+ * in the top layer, so the snow sits just above the navbar and below dialogs.
+ */
+
+.snow-canvas {
+	position: fixed;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 101;
+	/* Read by the script as the flake colour. */
+	color: #ffffff;
+	opacity: 0;
+	transition: opacity 400ms ease;
+}
+
+/* Light theme: cold grey-blue flakes (white would vanish on the light background). */
+:root[data-theme='light'] .snow-canvas {
+	color: #9fb0cc;
+}
+
+@media (prefers-color-scheme: light) {
+	:root:not([data-theme]) .snow-canvas {
+		color: #9fb0cc;
+	}
+}
+
+.snow-canvas.is-on {
+	opacity: 1;
+}
+
+.snow-toggle {
+	position: fixed;
+	left: max(12px, env(safe-area-inset-left));
+	bottom: max(12px, env(safe-area-inset-bottom));
+	z-index: 102;
+	display: grid;
+	place-items: center;
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	border-radius: 3px;
+	color: var(--text-muted);
+	opacity: 0.55;
+	cursor: pointer;
+	transition: opacity 120ms, color 120ms;
+}
+
+.snow-toggle:hover,
+.snow-toggle:focus-visible {
+	opacity: 1;
+	color: var(--text);
+}
+
+.snow-toggle svg {
+	grid-area: 1 / 1;
+	width: 18px;
+	height: 18px;
+}
+
+/* Corner to corner across the 18px icon, 2px past each end. */
+.snow-toggle-slash {
+	grid-area: 1 / 1;
+	width: 1.75px;
+	height: calc(18px * 1.41421 + 4px);
+	background: currentColor;
+	border-radius: 1px;
+	transform: rotate(-45deg);
+}
+
+.snow-toggle[aria-pressed='true'] .snow-toggle-slash {
+	display: none;
+}
