@@ -7,8 +7,10 @@
 // - English pages need the English 404. `not_found_handling: "404-page"` looks
 //   for a 404.html file, and Astro emits the English one as /en/404/index.html,
 //   so every miss would otherwise get the French page.
+// - A few endpoints for visitors who come with curl (worker/ops.js).
 
 import { handleGitHubStats } from './github.js';
+import { EXTRA_HEADERS, handleOps } from './ops.js';
 import { isVideo, withRange } from './range.js';
 
 const CANONICAL_HOST = 'www.noamroger.fr';
@@ -23,6 +25,7 @@ function withSecurityHeaders(response) {
 	const secured = new Response(response.body, response);
 	secured.headers.set('Strict-Transport-Security', HSTS);
 	secured.headers.set('X-Content-Type-Options', 'nosniff');
+	for (const [name, value] of Object.entries(EXTRA_HEADERS)) secured.headers.set(name, value);
 	return secured;
 }
 
@@ -38,6 +41,9 @@ export default {
 		if (url.pathname === '/api/github') {
 			return withSecurityHeaders(await handleGitHubStats(request, env, ctx));
 		}
+
+		const ops = await handleOps(request, env, url);
+		if (ops) return withSecurityHeaders(ops);
 
 		if (isVideo(url.pathname)) {
 			// Ask for the whole file, always with GET: the slice is cut in

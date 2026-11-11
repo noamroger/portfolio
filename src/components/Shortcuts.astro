@@ -1,0 +1,176 @@
+---
+/**
+ * Site-wide keyboard shortcuts and their help window, opened with "?".
+ * Nothing on screen says they exist: they are there for whoever tries the
+ * keys other developer tools answer to.
+ *
+ * Shortcuts are ignored while typing in a field, with a modifier key held, and
+ * while another dialog is open (the video player has its own keys).
+ */
+import WindowBar from './WindowBar.astro';
+import { getI18n } from '../i18n';
+
+const { t, path } = getI18n(Astro.url.pathname);
+---
+
+<dialog class="shortcuts" data-shortcuts aria-label={t.shortcuts.title} data-home={path('/')} data-about={path('/about/')} data-projects={path('/projects/')} data-contact={path('/contact/')}>
+	<div class="card">
+		<WindowBar title="help --shortcuts">
+			<button type="button" class="shortcuts-close" data-shortcuts-close aria-label={t.shortcuts.close}><kbd aria-hidden="true">esc</kbd></button>
+		</WindowBar>
+		<dl>
+			{t.shortcuts.keys.map(([keys, label]) => (
+				<div>
+					<dt><kbd>{keys}</kbd></dt>
+					<dd>{label}</dd>
+				</div>
+			))}
+		</dl>
+	</div>
+</dialog>
+
+<script>
+	import { navigate } from 'astro:transitions/client';
+
+	const GO_KEYS: Record<string, string> = { h: 'home', a: 'about', p: 'projects', c: 'contact' };
+	// "g" arms the next key for a moment, like on GitHub.
+	const CHORD_MS = 1200;
+	let armedUntil = 0;
+
+	const dialog = () => document.querySelector<HTMLDialogElement>('[data-shortcuts]');
+
+	document.addEventListener('keydown', (event) => {
+		if (event.ctrlKey || event.metaKey || event.altKey || event.defaultPrevented) return;
+		const target = event.target as HTMLElement | null;
+		if (target?.closest('input, textarea, select, [contenteditable]')) return;
+
+		const help = dialog();
+		if (!help) return;
+		// Another dialog (the video player) owns the keyboard while it is open.
+		if (document.querySelector('dialog[open]:not([data-shortcuts])')) return;
+
+		const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+
+		if (key === '?') {
+			event.preventDefault();
+			if (help.open) help.close();
+			else help.showModal();
+			return;
+		}
+		if (help.open) return;
+
+		if (performance.now() < armedUntil && GO_KEYS[key]) {
+			armedUntil = 0;
+			const href = help.dataset[GO_KEYS[key]];
+			if (href && href !== location.pathname) {
+				event.preventDefault();
+				navigate(href);
+			}
+			return;
+		}
+		armedUntil = 0;
+
+		if (key === 'g') {
+			armedUntil = performance.now() + CHORD_MS;
+		} else if (key === 't') {
+			document.querySelector<HTMLElement>('[data-theme-toggle]')?.click();
+		} else if (key === '/') {
+			const input = document.querySelector<HTMLInputElement>('[data-terminal-input]');
+			if (!input) return;
+			event.preventDefault();
+			// Bring the window back if it was closed or minimised.
+			document.querySelector<HTMLElement>('[data-terminal-restart]:not([hidden] *)')?.click();
+			document.querySelector('[data-terminal-window]')?.classList.remove('is-min');
+			input.scrollIntoView({ block: 'center', behavior: 'smooth' });
+			input.focus({ preventScroll: true });
+		}
+	});
+
+	document.addEventListener('click', (event) => {
+		const target = event.target as Element;
+		const help = dialog();
+		if (!help?.open) return;
+		// The close button, or the backdrop (the dialog element itself).
+		if (target.closest('[data-shortcuts-close]') || target === help) help.close();
+	});
+
+	// A hidden tab reads like a suspended job in a shell.
+	let title = '';
+	document.addEventListener('visibilitychange', () => {
+		if (document.hidden) {
+			title = document.title;
+			document.title = '[1]+  Stopped   noamroger.fr';
+		} else if (title) {
+			document.title = title;
+			title = '';
+		}
+	});
+</script>
+
+<style>
+	.shortcuts {
+		width: min(520px, calc(100vw - 2rem));
+		max-height: calc(100dvh - 2rem);
+		margin: auto;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--text);
+		overflow: visible;
+	}
+
+	.shortcuts::backdrop {
+		background: rgba(0, 0, 0, 0.55);
+	}
+
+	.shortcuts .card {
+		overflow: hidden;
+		font-family: var(--font-mono);
+	}
+
+	.shortcuts-close {
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--text-muted);
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.shortcuts-close:hover {
+		color: var(--text);
+	}
+
+	.shortcuts dl {
+		display: grid;
+		gap: 0.55rem;
+		padding: 1.15rem 1.25rem 1.25rem;
+		font-size: 0.8rem;
+	}
+
+	.shortcuts dl > div {
+		display: flex;
+		align-items: baseline;
+		gap: 0.75rem;
+	}
+
+	.shortcuts dt {
+		flex: 0 0 7.5rem;
+	}
+
+	.shortcuts dd {
+		color: var(--text-secondary);
+		font-family: var(--font-sans);
+	}
+
+	.shortcuts kbd {
+		display: inline-block;
+		padding: 0.05rem 0.4rem;
+		border: 1px solid var(--border);
+		border-bottom-width: 2px;
+		border-radius: 4px;
+		color: var(--accent);
+		font-size: 0.72rem;
+		white-space: nowrap;
+	}
+</style>

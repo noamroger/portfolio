@@ -32,7 +32,25 @@ interface Flake {
 
 const inSeason = new Date().getMonth() === 11;
 
+/** Set by initSnow: forces the snow on or off, as the button would. */
+let force: ((on: boolean) => void) | null = null;
+
 if (inSeason) initSnow();
+
+/**
+ * Turns the snow on or off from elsewhere (the home page terminal), whatever
+ * the month: out of season the engine is started on demand. Returns false when
+ * there is no canvas to draw on.
+ */
+export function setSnow(on: boolean): boolean {
+	if (!force) {
+		if (!on) return true;
+		initSnow();
+	}
+	if (!force) return false;
+	force(on);
+	return true;
+}
 
 function initSnow() {
 	const root = document.documentElement;
@@ -218,6 +236,11 @@ function initSnow() {
 		writeChoice(wantsSnow() ? 'off' : 'on');
 		update();
 	});
+
+	force = (on) => {
+		writeChoice(on ? 'on' : 'off');
+		update();
+	};
 
 	window.addEventListener('resize', () => {
 		if (running) resize();

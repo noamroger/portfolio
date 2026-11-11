@@ -1,5 +1,6 @@
 ---
 import { getI18n } from '../i18n';
+import { commit, repository, shortCommit } from '../data/build';
 
 const { t } = getI18n(Astro.url.pathname);
 
@@ -12,7 +13,7 @@ const currentYear = new Date().getFullYear();
 			<p class="footer-name">Noam Roger</p>
 			<p>{t.footer.tagline}</p>
 			<p class="footer-gh" data-gh-block hidden><span class="status-dot" aria-hidden="true"></span><span data-gh={t.github.footer}></span></p>
-			<p class="footer-legal">&copy; {currentYear} · <a href="https://github.com/noamroger/portfolio" target="_blank" rel="noopener noreferrer">{t.footer.source}</a></p>
+			<p class="footer-legal">&copy; {currentYear} · <a href="https://github.com/noamroger/portfolio" target="_blank" rel="noopener noreferrer">{t.footer.source}</a>{commit && <Fragment> · <a class="footer-commit" href={`${repository}/commit/${commit}`} target="_blank" rel="noopener noreferrer" title={t.footer.commit}>{shortCommit}</a></Fragment>}</p>
 		</div>
 		<div class="footer-right">
 			<a href="https://github.com/noamroger" target="_blank" rel="me noopener noreferrer" aria-label="GitHub">
@@ -41,6 +42,10 @@ const currentYear = new Date().getFullYear();
 		margin-top: 0.6rem;
 		font-family: var(--font-mono);
 		font-size: 0.75rem !important;
+	}
+
+	.footer-commit {
+		font-family: var(--font-mono);
 	}
 
 	.footer {

@@ -35,11 +35,15 @@
 
 # Videos are same-origin files (media-src). form.noam.ovh receives the contact form. challenges.cloudflare.com serves the
 # Turnstile script and its iframe on the contact page.
+# X-Hiring and X-Flag are for whoever runs curl -I: keep in sync with
+# worker/ops.js.
 # HSTS: keep in sync with worker/index.js. No includeSubDomains, so a
 # subdomain still served over plain HTTP elsewhere keeps working.
 /*
   Strict-Transport-Security: max-age=31536000
   X-Content-Type-Options: nosniff
+  X-Hiring: Work-study wanted, DevOps / Cloud, September 2027 - contact@noamroger.fr
+  X-Flag: flag{curl_dash_i_is_a_reflex}
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self' https://form.noam.ovh; frame-src https://challenges.cloudflare.com; form-action 'self' https://form.noam.ovh; base-uri 'self'; frame-ancestors 'none'; object-src 'none'

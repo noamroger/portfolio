@@ -1,27 +1,15 @@
 import type { APIRoute } from 'astro';
-import { execSync } from 'node:child_process';
 import { contactEmail } from '../i18n';
+import { commitDate } from '../data/build';
 
 /**
  * Date of the last change to the site, as YYYY/MM/DD (the humanstxt.org
- * format). Every push to main triggers a build, so the date of the commit
- * being built is the real "last update". Falls back to the build date when
- * git is not available (a tarball, a build image without git).
+ * format): the date of the commit being built (see src/data/build.ts).
  */
 function lastUpdate(): string {
-	let date = new Date();
-	try {
-		const iso = execSync('git log -1 --format=%cI', {
-			encoding: 'utf8',
-			stdio: ['ignore', 'pipe', 'ignore'],
-		}).trim();
-		if (iso && !Number.isNaN(Date.parse(iso))) date = new Date(iso);
-	} catch {
-		// keep the build date
-	}
 	// en-CA formats as YYYY-MM-DD; Paris time so a late-evening commit is not
 	// dated the day before or after.
-	return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(date).replaceAll('-', '/');
+	return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(commitDate).replaceAll('-', '/');
 }
 
 /** https://humanstxt.org/ - who is behind the site, for the humans who look. */
@@ -36,6 +24,12 @@ Location: Le Mans, France
 
 /* THANKS */
 To everyone curious enough to read plaintext files in /
+
+/* HUNT */
+Three flags are hidden around this site, each one a reflex away.
+They look like flag{...} and are checked in the home page terminal: unlock flag{...}
+First hint: curl -sI https://www.noamroger.fr
+Lost? Type 'flags' in that terminal.
 
 /* SITE */
 Last update: ${lastUpdate()}

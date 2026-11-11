@@ -25,6 +25,7 @@ const en = {
 		rights: 'All rights reserved.',
 		tagline: 'Backend developer, DevOps-minded. Le Mans, France.',
 		source: 'Source code',
+		commit: 'The commit this page was built from',
 	},
 	stack: {
 		learning: 'learning',
@@ -73,6 +74,7 @@ const en = {
 				{ key: 'learning', label: 'Learning', value: 'Kubernetes' },
 			],
 			status: 'Looking for a work-study position for a DevOps / Cloud Master’s, September 2027',
+			restart: 'Restart the terminal',
 		},
 		focusTitle: 'What I do',
 		focusIntro: 'Writing code is half the job. The other half is making it run reliably.',
@@ -272,6 +274,22 @@ const en = {
 		title: 'Page not found',
 		message: 'This address does not match any page on the site. It may have been moved.',
 		back: 'Back to home',
+		trapTitle: 'Nice try.',
+		trapMessage: 'No WordPress, no .env and no admin panel here: the site is static and its code is public. I do like the reflex of checking, though.',
+	},
+	shortcuts: {
+		title: 'Keyboard shortcuts',
+		close: 'Close',
+		keys: [
+			['?', 'Show this help'],
+			['g then h', 'Go to home'],
+			['g then a', 'Go to about'],
+			['g then p', 'Go to projects'],
+			['g then c', 'Go to contact'],
+			['/', 'Type in the terminal'],
+			['t', 'Toggle the theme'],
+			['Esc', 'Close'],
+		],
 	},
 };
 

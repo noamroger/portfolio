@@ -27,6 +27,7 @@ const fr: Translations = {
 		rights: 'Tous droits réservés.',
 		tagline: 'Développeur backend orienté DevOps. Le Mans, France.',
 		source: 'Code source',
+		commit: 'Le commit à partir duquel cette page a été construite',
 	},
 	stack: {
 		learning: 'en apprentissage',
@@ -75,6 +76,7 @@ const fr: Translations = {
 				{ key: 'learning', label: 'En apprentissage', value: 'Kubernetes' },
 			],
 			status: 'En recherche d’alternance pour un Master DevOps / Cloud, rentrée 2027',
+			restart: 'Relancer le terminal',
 		},
 		focusTitle: 'Ce que je fais',
 		focusIntro: "Écrire le code, c'est la moitié du travail. L'autre moitié, c'est le faire tourner de façon fiable.",
@@ -274,6 +276,22 @@ const fr: Translations = {
 		title: 'Page introuvable',
 		message: "Cette adresse ne correspond à aucune page du site. Elle a peut-être été déplacée.",
 		back: "Retour à l'accueil",
+		trapTitle: 'Bien tenté.',
+		trapMessage: "Ni WordPress, ni .env, ni panneau d'administration ici : le site est statique et son code est public. Mais le réflexe de vérifier me plaît.",
+	},
+	shortcuts: {
+		title: 'Raccourcis clavier',
+		close: 'Fermer',
+		keys: [
+			['?', 'Afficher cette aide'],
+			['g puis h', "Aller à l'accueil"],
+			['g puis a', 'Aller à « À propos »'],
+			['g puis p', 'Aller aux projets'],
+			['g puis c', 'Aller au contact'],
+			['/', 'Écrire dans le terminal'],
+			['t', 'Changer de thème'],
+			['Échap', 'Fermer'],
+		],
 	},
 };
 

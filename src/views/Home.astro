@@ -8,6 +8,7 @@ import GitHubRecent from '../components/github/GitHubRecent.astro';
 import { getI18n } from '../i18n';
 import WindowBar from '../components/WindowBar.astro';
 import { projects } from '../data/projects';
+import { commitDate, shortCommit } from '../data/build';
 
 const { t, path } = getI18n(Astro.url.pathname);
 
@@ -37,9 +38,9 @@ const featured = projects.slice(0, 3).map((project) => ({
 					</div>
 				</div>
 
-				<aside class="card terminal" aria-labelledby="profile-title">
+				<aside class="card terminal" aria-labelledby="profile-title" data-terminal-window>
 					<WindowBar title="noam@roger: ~" />
-					<div class="terminal-body" data-terminal>
+					<div class="terminal-body" data-terminal data-deployed={commitDate.toISOString()} data-commit={shortCommit ?? ''}>
 						<p class="terminal-cmd" aria-hidden="true"><span class="t-prompt">$</span> <span class="typed">kubectl get developer noam-roger -o yaml</span></p>
 						<h2 class="sr-only" id="profile-title">{t.home.profile.title}</h2>
 						<dl class="yaml">
@@ -78,6 +79,11 @@ const featured = projects.slice(0, 3).map((project) => ({
 								<span class="cursor" aria-hidden="true"></span>
 							</span>
 						</form>
+					</div>
+					{/* Shown by the red light or `exit` (src/scripts/terminal.ts). */}
+					<div class="terminal-closed" data-terminal-closed hidden>
+						<p aria-hidden="true">[Process completed]</p>
+						<button type="button" class="terminal-restart" data-terminal-restart>{t.home.profile.restart}</button>
 					</div>
 				</aside>
 			</div>
@@ -319,6 +325,71 @@ const featured = projects.slice(0, 3).map((project) => ({
 	.terminal-output :global(.t-prompt) {
 		color: var(--accent);
 		font-weight: 600;
+	}
+
+	/* The lights of this window work: close, minimise, zoom. */
+	.terminal :global(.window-controls) {
+		cursor: pointer;
+	}
+
+	/* Collapsed rather than display: none, so the intro animation of the
+	   lines does not play again when the window comes back. */
+	.terminal.is-min .terminal-body,
+	.terminal.is-closed .terminal-body {
+		height: 0;
+		padding-block: 0;
+		overflow: hidden;
+		visibility: hidden;
+	}
+
+	.terminal.is-min :global(.window-bar) {
+		border-bottom-color: transparent;
+	}
+
+	.terminal-closed {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		padding: 1.15rem 1.25rem 1.25rem;
+		font-size: 0.78rem;
+		color: var(--text-muted);
+	}
+
+	.terminal-closed[hidden] {
+		display: none;
+	}
+
+	.terminal-restart {
+		padding: 0.3rem 0.7rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		background: transparent;
+		color: var(--accent);
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.terminal-restart:hover {
+		border-color: var(--accent);
+	}
+
+	/* Green light: the window takes the screen, Esc or green again restores it. */
+	.terminal.is-max {
+		position: fixed;
+		inset: 4vh 4vw;
+		z-index: 200;
+		display: flex;
+		flex-direction: column;
+		transform: none;
+		box-shadow: var(--shadow), 0 0 0 100vmax rgba(0, 0, 0, 0.55);
+	}
+
+	.terminal.is-max .terminal-body {
+		flex: 1;
+		max-height: none !important;
+		font-size: 0.9rem;
 	}
 
 	.t-prompt {

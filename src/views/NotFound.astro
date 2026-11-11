@@ -16,20 +16,57 @@ const { t, path } = getI18n(Astro.url.pathname);
 				<div class="error-content">
 					<div class="card error-term" aria-hidden="true">
 						<WindowBar title="bash" />
-						<pre><span class="t-prompt">$</span> cd <span data-missing-path>/page</span>
+						<pre data-error-term><span class="t-prompt">$</span> cd <span data-missing-path>/page</span>
 <span class="t-err">bash: cd: <span data-missing-path>/page</span>: No such file or directory</span>
 <span class="t-prompt">$</span> echo $?
 <span class="t-code">404</span>
 <span class="t-prompt">$</span> <span class="cursor"></span></pre>
 					</div>
-					<script is:inline data-astro-rerun>
-						document.querySelectorAll('[data-missing-path]').forEach((el) => { el.textContent = location.pathname; });
-					</script>
-					<h1 class="error-title">{t.notFound.title}</h1>
-					<p class="error-message">{t.notFound.message}</p>
+					<h1 class="error-title" data-trap={t.notFound.trapTitle}>{t.notFound.title}</h1>
+					<p class="error-message" data-trap={t.notFound.trapMessage}>{t.notFound.message}</p>
 					<div class="error-actions">
 						<a href={path('/')} class="btn btn-primary">{t.notFound.back}</a>
 					</div>
+					{/*
+						Addresses that only scanners and the curious ask for get their own
+						answer. Everything is written with textContent; the page stays a
+						plain 404 (same status, same markup) for everybody else.
+					*/}
+					<script is:inline data-astro-rerun>
+						(() => {
+							const path = location.pathname;
+							document.querySelectorAll('[data-missing-path]').forEach((el) => { el.textContent = path; });
+
+							const p = path.toLowerCase().replace(/^\/en(?=\/)/, '');
+							const traps = [
+								[/^\/\.env/, 'cat .env', 'cat: .env: Permission denied', 'Secrets live in the Worker environment, not in a file.'],
+								[/^\/\.git(\/|$)/, 'git clone https://github.com/noamroger/portfolio', "Cloning into 'portfolio'... done.", 'The repository is public: no need to dig for it.'],
+								[/^\/(wp-|wordpress|xmlrpc\.php)/, 'systemctl status wordpress', 'Unit wordpress.service could not be found.', 'No PHP here: static files behind a Cloudflare Worker.'],
+								[/^\/(phpmyadmin|pma|adminer|mysql)/, 'ss -ltn | grep 3306', '(nothing is listening)', 'There is no database behind this site.'],
+								[/^\/(admin|administrator|login|dashboard|cpanel)(\/|$)/, 'sudo -i', 'guest is not in the sudoers file. This incident will be reported.', 'There is no back office: the site is rebuilt on every push.'],
+								[/^\/(etc\/passwd|\.ssh|\.aws|id_rsa|\.htaccess|\.htpasswd|config\.php|backup|\.ds_store|server-status)/, 'cat ' + path, 'cat: ' + path + ': Permission denied', 'Nice try.'],
+							];
+							const trap = traps.find(([pattern]) => pattern.test(p));
+							const term = document.querySelector('[data-error-term]');
+							if (!trap || !term) return;
+
+							const span = (className, text) => {
+								const el = document.createElement('span');
+								el.className = className;
+								el.textContent = text;
+								return el;
+							};
+							term.replaceChildren(
+								span('t-prompt', '$'), ' ' + trap[1] + '\n',
+								span('t-err', trap[2]), '\n',
+								span('t-prompt', '$'), ' echo $?\n',
+								span('t-code', '404'), '\n',
+								span('t-comment', '# ' + trap[3]), '\n',
+								span('t-prompt', '$'), ' ', span('cursor', ''),
+							);
+							document.querySelectorAll('[data-trap]').forEach((el) => { el.textContent = el.dataset.trap; });
+						})();
+					</script>
 				</div>
 			</div>
 		</section>
@@ -69,16 +106,24 @@ const { t, path } = getI18n(Astro.url.pathname);
 		word-break: break-all;
 	}
 
-	.t-prompt {
+	/* The :global twins style the lines the inline script writes. */
+	.t-prompt,
+	.error-term :global(.t-prompt) {
 		color: var(--accent);
 		font-weight: 600;
 	}
 
-	.t-err {
+	.t-err,
+	.error-term :global(.t-err) {
 		color: var(--danger);
 	}
 
-	.t-code {
+	.error-term :global(.t-comment) {
+		color: var(--text-muted);
+	}
+
+	.t-code,
+	.error-term :global(.t-code) {
 		color: var(--syntax-string);
 		font-weight: 600;
 	}

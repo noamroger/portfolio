@@ -4,6 +4,7 @@ import '@fontsource-variable/inter';
 import '@fontsource-variable/jetbrains-mono';
 import { contactEmail, getI18n, locales, localizedPath, siteOrigin, socialProfiles, stripLocale, techStack } from '../i18n';
 import { LANGUAGE_KEY, THEME_KEY } from '../i18n/preference';
+import Shortcuts from '../components/Shortcuts.astro';
 import '../styles/snow.css';
 
 interface Props {
@@ -119,12 +120,23 @@ const graph = {
 		...schema,
 	],
 };
+// A word for whoever reads the source, kept in the built page on purpose.
+const sourceNote = `<!--
+  Bonjour / hello, view-source reader.
+
+  The readable version of this page lives at https://github.com/noamroger/portfolio
+  Plain-text files worth a look: /humans.txt, /robots.txt, /.well-known/security.txt
+  The home page terminal knows more commands than 'help' admits.
+
+  flag{view_source_never_dies}
+-->`;
 ---
 
 <!doctype html>
 <html lang={t.htmlLang}>
 	<head>
 		<meta charset="utf-8" />
+		<Fragment set:html={sourceNote} />
 		{/* Before anything paints: a visitor who chose a language gets it straight away. */}
 		<script is:inline define:vars={{ key: LANGUAGE_KEY }}>
 			try {
@@ -210,6 +222,7 @@ const graph = {
 	<body>
 		<a href="#main" class="skip-link">{t.a11y.skipToContent}</a>
 		<slot />
+		<Shortcuts />
 		<script>
 			const selector = '.page-header > .container, .section-head, .focus-item, .featured-card, .stack-row, .cta, .project-card, .timeline li, .approach li, .side-card, .contact-info, .contact-form-wrapper';
 
