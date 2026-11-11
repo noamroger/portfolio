@@ -48,7 +48,6 @@ const links = [
 			</button>
 			<a
 				class="tool lang-switch"
-				data-lang-switch={otherLocale}
 				data-astro-prefetch="false"
 				href={otherHref}
 				hreflang={otherLocale}
@@ -63,7 +62,7 @@ const links = [
 </header>
 
 <script>
-	import { LANGUAGE_KEY, THEME_KEY } from '../i18n/preference';
+	import { THEME_KEY } from '../i18n/preference';
 
 	const syncToggleLabel = () => {
 		const button = document.querySelector<HTMLElement>('[data-theme-toggle]');
@@ -91,14 +90,6 @@ const links = [
 			}
 			syncToggleLabel();
 			return;
-		}
-
-		const link = target.closest<HTMLElement>('[data-lang-switch]');
-		if (!link) return;
-		try {
-			localStorage.setItem(LANGUAGE_KEY, link.dataset.langSwitch ?? '');
-		} catch {
-			// Storage can be blocked: the switch still works for this visit.
 		}
 	});
 </script>

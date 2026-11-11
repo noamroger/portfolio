@@ -63,7 +63,7 @@ const fr: EggPage = {
 				['exit, logout', 'Ferme la fenêtre du terminal.'],
 				['history, pwd, echo, date, uname, man, ping, whoami', 'Réponses courtes.'],
 				['ruinthefun', 'Le lien vers cette page.'],
-				['reset, reset confirm', 'Efface ce que le site garde dans le navigateur : thème, langue, neige, flags, certificat et accès root. reset explique, reset confirm exécute.'],
+				['reset, reset confirm', 'Efface ce que le site garde dans le navigateur : thème, neige, flags, certificat et accès root. reset explique, reset confirm exécute.'],
 			],
 		},
 		{
@@ -202,7 +202,7 @@ const en: EggPage = {
 				['exit, logout', 'Closes the terminal window.'],
 				['history, pwd, echo, date, uname, man, ping, whoami', 'Short answers.'],
 				['ruinthefun', 'The link to this page.'],
-				['reset, reset confirm', 'Erases what the site keeps in the browser: theme, language, snow, flags, certificate and root access. reset explains, reset confirm does it.'],
+				['reset, reset confirm', 'Erases what the site keeps in the browser: theme, snow, flags, certificate and root access. reset explains, reset confirm does it.'],
 			],
 		},
 		{

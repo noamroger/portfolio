@@ -494,7 +494,7 @@ async function run(raw: string, shell: Shell, elevated = isRoot()): Promise<stri
 			if (args[0] !== 'confirm') {
 				return [
 					'This erases what the site keeps in this browser:',
-					'  - theme, language and snow preferences',
+					'  - theme and snow preferences',
 					'  - unlocked flags, certificate and root access',
 					'  - the coffee maker restart counter',
 					"Nothing is stored anywhere else. Type 'reset confirm' to go ahead.",
@@ -564,7 +564,6 @@ async function run(raw: string, shell: Shell, elevated = isRoot()): Promise<stri
 			const wanted = args[0];
 			if (wanted !== 'fr' && wanted !== 'en') return 'usage: lang <fr|en>';
 			if ((isEnglish() ? 'en' : 'fr') === wanted) return `Already in ${wanted === 'en' ? 'English' : 'French'}.`;
-			write(LANGUAGE_KEY, wanted);
 			shell.after(() => navigate(wanted === 'en' ? '/en/' : '/'));
 			return `Switching to ${wanted === 'en' ? 'English' : 'French'} ...`;
 		}

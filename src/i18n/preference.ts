@@ -1,4 +1,8 @@
-/** localStorage key holding the language chosen with the navbar switch. */
+/**
+ * localStorage key that used to hold the language chosen with the navbar
+ * switch. The address alone decides the language now (French at /, English
+ * under /en): the key is only kept so `reset` can erase old values.
+ */
 export const LANGUAGE_KEY = 'lang';
 /** localStorage key holding the colour theme chosen with the navbar toggle. */
 export const THEME_KEY = 'theme';

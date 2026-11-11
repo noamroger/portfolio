@@ -3,7 +3,7 @@ import { ClientRouter } from 'astro:transitions';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/jetbrains-mono';
 import { contactEmail, getI18n, locales, localizedPath, siteOrigin, socialProfiles, stripLocale, techStack } from '../i18n';
-import { LANGUAGE_KEY, THEME_KEY } from '../i18n/preference';
+import { THEME_KEY } from '../i18n/preference';
 import Shortcuts from '../components/Shortcuts.astro';
 import '../styles/snow.css';
 
@@ -149,22 +149,6 @@ const sourceNote =
 	<head>
 		<meta charset="utf-8" />
 		<Fragment set:html={sourceNote} />
-		{/*
-			Before anything paints: a visitor who chose English with the navbar switch
-			gets it on the unprefixed addresses too. The other way round is left
-			alone on purpose: whoever opens an /en address asked for English, whatever
-			was chosen earlier.
-		*/}
-		<script is:inline define:vars={{ key: LANGUAGE_KEY }}>
-			try {
-				const wanted = localStorage.getItem(key);
-				const { pathname, search, hash } = location;
-				const isEnglish = /^\/en(\/|$)/.test(pathname);
-				if (wanted === 'en' && !isEnglish) location.replace(`/en${pathname}${search}${hash}`);
-			} catch {
-				// Storage can be blocked: stay on the requested page.
-			}
-		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 
