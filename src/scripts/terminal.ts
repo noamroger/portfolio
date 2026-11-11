@@ -14,7 +14,7 @@
  * every astro:page-load.
  */
 import { navigate } from 'astro:transitions/client';
-import { COFFEE_KEY, FLAGS_DONE_KEY, FLAGS_KEY, FLAGS_START_KEY, LANGUAGE_KEY, ROOT_KEY } from '../i18n/preference';
+import { COFFEE_KEY, FLAGS_DONE_KEY, FLAGS_KEY, FLAGS_START_KEY, LANGUAGE_KEY, ROOT_KEY, SNOW_KEY, THEME_KEY } from '../i18n/preference';
 import { setSnow } from './snow';
 
 const PROMPT = 'guest@noamroger.fr:~$';
@@ -31,6 +31,7 @@ const HELP = `Available commands:
   whoami                  Print current session context
   clear                   Clear terminal buffer
   ruinthefun              Give up and read the answers
+  reset                   Forget everything this site stored
 
 Not everything is listed here.`;
 
@@ -416,6 +417,7 @@ function completions(): string[] {
 		'whoami',
 		'clear',
 		'ruinthefun',
+		'reset',
 		'ls',
 		'cat humans.txt',
 		'cat robots.txt',
@@ -488,6 +490,27 @@ async function run(raw: string, shell: Shell, elevated = isRoot()): Promise<stri
 			return elevated ? HELP + ROOT_HELP : HELP;
 		case 'clear':
 			return null;
+		case 'reset': {
+			if (args[0] !== 'confirm') {
+				return [
+					'This erases what the site keeps in this browser:',
+					'  - theme, language and snow preferences',
+					'  - unlocked flags, certificate and root access',
+					'  - the coffee maker restart counter',
+					"Nothing is stored anywhere else. Type 'reset confirm' to go ahead.",
+				].join('\n');
+			}
+			for (const key of [THEME_KEY, LANGUAGE_KEY, SNOW_KEY, COFFEE_KEY, FLAGS_KEY, FLAGS_START_KEY, FLAGS_DONE_KEY, ROOT_KEY]) {
+				try {
+					localStorage.removeItem(key);
+				} catch {
+					// Storage blocked: there was nothing to erase.
+				}
+			}
+			// A full reload: the page starts again from its defaults.
+			shell.after(() => location.reload());
+			return 'Everything erased. Reloading ...';
+		}
 		case 'ruinthefun':
 			shell.link(localized('/ruinthefun/'));
 			return 'List of easter eggs for those who do not like to play:';
