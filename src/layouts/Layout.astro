@@ -234,6 +234,8 @@ const graph = {
 
 			document.addEventListener('astro:page-load', initReveal);
 		</script>
+		{/* A word for whoever opens the DevTools. A module runs once per visit, not on every navigation. */}
+		<script src="../scripts/devtools-hello.ts"></script>
 		{/* December snowfall: does nothing the rest of the year. */}
 		<script src="../scripts/snow.ts"></script>
 	</body>
