@@ -101,6 +101,7 @@ const fr: EggPage = {
 				['g puis h, a, p, c', 'Accueil, à propos, projets, contact.'],
 				['/', 'Met le curseur dans le terminal de l’accueil.'],
 				['t', 'Change le thème.'],
+				['l', 'Change de langue.'],
 			],
 		},
 		{
@@ -240,6 +241,7 @@ const en: EggPage = {
 				['g then h, a, p, c', 'Home, about, projects, contact.'],
 				['/', 'Puts the cursor in the home page terminal.'],
 				['t', 'Toggles the theme.'],
+				['l', 'Switches the language.'],
 			],
 		},
 		{

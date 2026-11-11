@@ -74,6 +74,10 @@ const { t, path } = getI18n(Astro.url.pathname);
 			armedUntil = performance.now() + CHORD_MS;
 		} else if (key === 't') {
 			document.querySelector<HTMLElement>('[data-theme-toggle]')?.click();
+		} else if (key === 'l') {
+			// The same page in the other language, as the navbar switch does.
+			const other = document.querySelector<HTMLAnchorElement>('.lang-switch');
+			if (other) navigate(other.getAttribute('href') ?? '/');
 		} else if (key === '/') {
 			const input = document.querySelector<HTMLInputElement>('[data-terminal-input]');
 			if (!input) return;

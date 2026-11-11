@@ -288,6 +288,7 @@ const en = {
 			['g then c', 'Go to contact'],
 			['/', 'Type in the terminal'],
 			['t', 'Toggle the theme'],
+			['l', 'Switch the language'],
 			['Esc', 'Close'],
 		],
 	},

@@ -290,6 +290,7 @@ const fr: Translations = {
 			['g puis c', 'Aller au contact'],
 			['/', 'Écrire dans le terminal'],
 			['t', 'Changer de thème'],
+			['l', 'Changer de langue'],
 			['Échap', 'Fermer'],
 		],
 	},
