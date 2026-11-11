@@ -1,14 +1,5 @@
 import type { APIRoute } from 'astro';
+import { robots, plain } from '../data/plaintext';
 
-export const GET: APIRoute = ({ site }) =>
-	new Response(
-		`# Cette page ne t'est pas destinée, essaie plutôt /humans.txt
-# This page isn't meant for you, try /humans.txt instead
-
-User-agent: *
-Allow: /
-
-Sitemap: ${new URL('sitemap-index.xml', site)}
-`,
-		{ headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
-	);
+/** French version, served at the usual address. See src/data/plaintext.ts. */
+export const GET: APIRoute = () => plain(robots('fr'));

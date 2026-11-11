@@ -120,13 +120,25 @@ const graph = {
 		...schema,
 	],
 };
-// A word for whoever reads the source, kept in the built page on purpose.
-const sourceNote = `<!--
-  Bonjour / hello, view-source reader.
+// A word for whoever reads the source, kept in the built page on purpose and
+// written in the language of the page.
+const sourceNote =
+	locale === 'en'
+		? `<!--
+  Hello, view-source reader.
 
   The readable version of this page lives at https://github.com/noamroger/portfolio
   Plain-text files worth a look: /humans.txt, /robots.txt, /.well-known/security.txt
   The home page terminal knows more commands than 'help' admits.
+
+  flag{view_source_never_dies}
+-->`
+		: `<!--
+  Bonjour à toi qui lis le code source.
+
+  La version lisible de cette page est sur https://github.com/noamroger/portfolio
+  Des fichiers texte à aller voir : /humans.txt, /robots.txt, /.well-known/security.txt
+  Le terminal de la page d'accueil connaît plus de commandes que 'help' ne l'avoue.
 
   flag{view_source_never_dies}
 -->`;
@@ -137,14 +149,18 @@ const sourceNote = `<!--
 	<head>
 		<meta charset="utf-8" />
 		<Fragment set:html={sourceNote} />
-		{/* Before anything paints: a visitor who chose a language gets it straight away. */}
+		{/*
+			Before anything paints: a visitor who chose English with the navbar switch
+			gets it on the unprefixed addresses too. The other way round is left
+			alone on purpose: whoever opens an /en address asked for English, whatever
+			was chosen earlier.
+		*/}
 		<script is:inline define:vars={{ key: LANGUAGE_KEY }}>
 			try {
 				const wanted = localStorage.getItem(key);
 				const { pathname, search, hash } = location;
 				const isEnglish = /^\/en(\/|$)/.test(pathname);
 				if (wanted === 'en' && !isEnglish) location.replace(`/en${pathname}${search}${hash}`);
-				if (wanted === 'fr' && isEnglish) location.replace(`${pathname.replace(/^\/en/, '') || '/'}${search}${hash}`);
 			} catch {
 				// Storage can be blocked: stay on the requested page.
 			}

@@ -247,7 +247,7 @@ const en: EggPage = {
 				['Tab in the background', 'The title becomes “[1]+ Stopped noamroger.fr”.'],
 				['Footer', 'The SHA of the commit that is live, linked to the commit on GitHub.'],
 				['View source', 'A comment at the top of every page, with a flag.'],
-				['DevTools console', 'A greeting (in French), then noam.help(), noam.contact(), noam.stack(), noam.source() and noam.hunt().'],
+				['DevTools console', 'A greeting, then noam.help(), noam.contact(), noam.stack(), noam.source() and noam.hunt().'],
 				['Window lights', 'Their glyphs show up on hover, as on macOS.'],
 				['December', 'It snows, with a button to turn it off.'],
 			],

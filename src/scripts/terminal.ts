@@ -394,7 +394,8 @@ async function cat(file: string | undefined, elevated: boolean): Promise<string>
 	if (DIRECTORIES.includes(name)) return `cat: ${name}/: Is a directory (try 'cd ${name}')`;
 	if (!FILES.includes(name)) return `cat: ${file}: No such file or directory`;
 	try {
-		const response = await fetch(`/${name}`);
+		// The English twin of the file: this terminal only speaks English.
+		const response = await fetch(`/en/${name}`);
 		if (!response.ok) throw new Error(String(response.status));
 		return (await response.text()).trimEnd();
 	} catch {

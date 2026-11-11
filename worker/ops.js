@@ -3,6 +3,9 @@
 // - /healthz, /version, /metrics: what a service usually exposes. The commit
 //   comes from /version.json, written at build time (src/pages/version.json.ts).
 // - /.well-known/security.txt: answered with the file built at /security.txt.
+// - /robots.txt, /humans.txt, security.txt and /coffee follow the language of
+//   the visitor: these addresses cannot carry it, so Accept-Language decides
+//   between the French file and its English twin under /en/.
 // - /coffee: 418, the pod of the home page terminal answering for real.
 // - `curl noamroger.fr`: command-line clients get the home page as plain text
 //   (src/data/cli.ts) instead of HTML they would have to read through.
@@ -17,6 +20,31 @@ const CLI_AGENT = /^(curl|wget|httpie)\//i;
 const TEXT = { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' };
 
 const text = (body, status = 200, headers = {}) => new Response(body, { status, headers: { ...TEXT, ...headers } });
+
+/**
+ * 'en' when the visitor prefers English over French, 'fr' otherwise (the
+ * default language of the site, and what a client sending no header gets).
+ */
+function preferredLocale(request) {
+	const wanted = (request.headers.get('Accept-Language') ?? '')
+		.split(',')
+		.map((part) => {
+			const [tag, ...params] = part.trim().toLowerCase().split(';');
+			const q = params.map((param) => param.trim()).find((param) => param.startsWith('q='));
+			return { lang: tag.split('-')[0], q: q ? Number(q.slice(2)) || 0 : 1 };
+		})
+		.filter((entry) => entry.lang === 'fr' || entry.lang === 'en')
+		.sort((a, b) => b.q - a.q);
+	return wanted[0]?.lang ?? 'fr';
+}
+
+/** One of the plain-text files, in the language of the visitor. */
+async function localizedFile(request, env, url, file) {
+	const locale = preferredLocale(request);
+	const response = await env.ASSETS.fetch(new URL(locale === 'en' ? `/en${file}` : file, url));
+	if (!response.ok) return null;
+	return text(response.body, 200, { 'Cache-Control': 'public, max-age=3600', 'Content-Language': locale, Vary: 'Accept-Language' });
+}
 
 async function version(env, url) {
 	try {
@@ -65,22 +93,31 @@ export async function handleOps(request, env, url) {
 			return text(metrics(await version(env, url), request.cf?.colo), 200, {
 				'Content-Type': 'text/plain; version=0.0.4; charset=utf-8',
 			});
-		case '/.well-known/security.txt': {
+		case '/.well-known/security.txt':
 			// The canonical address (RFC 9116), served from the file built at /security.txt.
-			const file = await env.ASSETS.fetch(new URL('/security.txt', url));
-			return file.ok ? text(file.body, 200, { 'Cache-Control': 'public, max-age=3600' }) : null;
-		}
-		case '/coffee':
+			return localizedFile(request, env, url, '/security.txt');
+		case '/robots.txt':
+		case '/humans.txt':
+			return localizedFile(request, env, url, path);
+		case '/coffee': {
+			const english = preferredLocale(request) === 'en';
 			return text(
 				`418 I'm a teapot
 
-coffee-maker-api-0 cannot brew coffee: it is, and has always been, a teapot.
-See RFC 2324, section 2.3.2.
+${
+	english
+		? `coffee-maker-api-0 cannot brew coffee: it is, and has always been, a teapot.
+See RFC 2324, section 2.3.2.`
+		: `coffee-maker-api-0 ne peut pas faire de café : c'est, et ça a toujours été, une théière.
+Voir la RFC 2324, section 2.3.2.`
+}
 
 flag{rfc_2324_compliant}
 `,
 				418,
+				{ 'Content-Language': english ? 'en' : 'fr', Vary: 'Accept-Language' },
 			);
+		}
 	}
 
 	// curl sends "Accept: */*": asking for text/html explicitly gets the page.
