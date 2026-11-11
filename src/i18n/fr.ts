@@ -8,7 +8,7 @@ const fr: Translations = {
 		jobTitle: 'Développeur backend orienté DevOps',
 		ogLocale: 'fr_FR',
 		ogLocaleAlternate: 'en_US',
-		ogImageAlt: 'Noam Roger, développeur backend - logo du site',
+		ogImageAlt: 'Noam Roger, développeur backend orienté DevOps, en recherche d\'alternance pour un Master DevOps / Cloud à la rentrée 2027',
 	},
 	a11y: {
 		skipToContent: 'Aller au contenu',

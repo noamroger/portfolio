@@ -6,7 +6,7 @@ const en = {
 		jobTitle: 'Backend developer, DevOps-minded',
 		ogLocale: 'en_US',
 		ogLocaleAlternate: 'fr_FR',
-		ogImageAlt: 'Noam Roger, backend developer - site logo',
+		ogImageAlt: 'Noam Roger, backend developer moving into DevOps, looking for a work-study position for a DevOps / Cloud Master\'s degree starting in 2027',
 	},
 	a11y: {
 		skipToContent: 'Skip to content',
