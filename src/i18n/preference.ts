@@ -17,3 +17,5 @@ export const ROOT_KEY = 'root';
 /** localStorage keys: when the first and the last flag were unlocked, in ms. */
 export const FLAGS_START_KEY = 'flags-start';
 export const FLAGS_DONE_KEY = 'flags-done';
+/** localStorage key: "off" when the visitor turned the keyboard shortcuts off in the terminal. */
+export const SHORTCUTS_KEY = 'shortcuts';

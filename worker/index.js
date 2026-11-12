@@ -46,6 +46,9 @@ export default {
 		if (ops) return withSecurityHeaders(ops);
 
 		if (isVideo(url.pathname)) {
+			if (request.method !== 'GET' && request.method !== 'HEAD') {
+				return withSecurityHeaders(new Response(null, { status: 405, headers: { Allow: 'GET, HEAD' } }));
+			}
 			// Ask for the whole file, always with GET: the slice is cut in
 			// withRange, which needs the length (a HEAD answer has none).
 			const headers = new Headers(request.headers);
@@ -60,10 +63,11 @@ export default {
 		if (response.status === 404 && (url.pathname === '/en' || url.pathname.startsWith('/en/'))) {
 			const englishNotFound = await env.ASSETS.fetch(new URL('/en/404/', url));
 			if (englishNotFound.ok) {
-				return new Response(englishNotFound.body, {
-					status: 404,
-					headers: englishNotFound.headers,
-				});
+				// The /en* rule of public/_headers would let browsers keep this
+				// 404 for a day: a missing page must be asked for again.
+				const headers = new Headers(englishNotFound.headers);
+				headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
+				return new Response(englishNotFound.body, { status: 404, headers });
 			}
 		}
 

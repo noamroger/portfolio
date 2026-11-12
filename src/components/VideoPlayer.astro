@@ -217,7 +217,9 @@ const posterImage = await getImage({ src: poster, width: 1280, format: 'webp' })
 			clearTimeout(idleTimer);
 			if (!video.paused && help.hidden) {
 				idleTimer = window.setTimeout(() => {
-					if (!video.paused && !root.matches(':has(.vp-controls:hover, .vp-controls :focus-visible)')) root.classList.add('is-idle');
+					// No :has() here: browsers without it throw on the selector.
+					const busy = root.querySelector('.vp-controls:hover, .vp-controls :focus-visible');
+					if (!video.paused && !busy) root.classList.add('is-idle');
 				}, IDLE_MS);
 			}
 		};

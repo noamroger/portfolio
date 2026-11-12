@@ -52,7 +52,7 @@ const links = [
 				href={otherHref}
 				hreflang={otherLocale}
 				rel="alternate"
-				aria-label={t.nav.switchLanguage}
+				aria-label={`${otherLocale.toUpperCase()} - ${t.nav.switchLanguage}`}
 				title={t.nav.switchLanguage}
 			>
 				<span lang={otherLocale}>{otherLocale.toUpperCase()}</span>
@@ -99,6 +99,8 @@ const links = [
 		position: sticky;
 		top: 0;
 		z-index: 100;
+		/* Solid fallback for browsers without color-mix (before 2023). */
+		background: var(--bg);
 		background: color-mix(in srgb, var(--bg) 85%, transparent);
 		backdrop-filter: saturate(160%) blur(10px);
 		-webkit-backdrop-filter: saturate(160%) blur(10px);

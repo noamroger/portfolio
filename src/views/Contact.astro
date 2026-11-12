@@ -189,9 +189,25 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 									window.addEventListener('turnstile-ready', renderWidget, { once: true });
 								};
 
+								let requestWidget = () => {};
+								// The token lands in a hidden input once the challenge passes. On
+								// a slow connection the visitor can submit before that: wait for
+								// it a little rather than send a request that will be refused.
+								const TOKEN_WAIT_MS = 12000;
+								const waitForToken = async () => {
+									if (!container) return true;
+									requestWidget();
+									const hasToken = () => Boolean(form.querySelector('[name="cf-turnstile-response"]')?.value);
+									const deadline = Date.now() + TOKEN_WAIT_MS;
+									while (!hasToken() && Date.now() < deadline) {
+										await new Promise((resolve) => setTimeout(resolve, 200));
+									}
+									return hasToken();
+								};
+
 								if (container) {
 									let requested = false;
-									const requestWidget = () => {
+									requestWidget = () => {
 										if (requested) return;
 										requested = true;
 										loadWidget();
@@ -220,6 +236,9 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 									button.disabled = true;
 
 									try {
+										// Turnstile blocked or unreachable: the failure message points
+										// to the e-mail address.
+										if (!(await waitForToken())) throw new Error('no token');
 										const response = await fetch(form.action, {
 											method: 'POST',
 											headers: { 'Content-Type': 'application/json' },
@@ -231,7 +250,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 											showStatus(form.dataset.success, 'success');
 											form.reset();
 										} else {
-											showStatus(form.dataset.error + data.message, 'error');
+											showStatus(data?.message ? form.dataset.error + data.message : form.dataset.failure, 'error');
 										}
 									} catch {
 										showStatus(form.dataset.failure, 'error');
@@ -364,6 +383,14 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 		font-size: 0.95rem;
 		width: 100%;
 		transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	}
+
+	/* iOS zooms the page when a focused field is under 16px. */
+	@media (pointer: coarse) {
+		.form-group input,
+		.form-group textarea {
+			font-size: 16px;
+		}
 	}
 
 	.form-group textarea {

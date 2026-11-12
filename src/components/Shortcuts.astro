@@ -5,7 +5,8 @@
  * keys other developer tools answer to.
  *
  * Shortcuts are ignored while typing in a field, with a modifier key held, and
- * while another dialog is open (the video player has its own keys).
+ * while another dialog is open (the video player has its own keys). They can
+ * be turned off for good with `shortcuts off` in the home page terminal.
  */
 import WindowBar from './WindowBar.astro';
 import { getI18n } from '../i18n';
@@ -31,6 +32,16 @@ const { t, path } = getI18n(Astro.url.pathname);
 
 <script>
 	import { navigate } from 'astro:transitions/client';
+	import { SHORTCUTS_KEY } from '../i18n/preference';
+
+	/** Turned off by the visitor (`shortcuts off` in the terminal). */
+	const disabled = () => {
+		try {
+			return localStorage.getItem(SHORTCUTS_KEY) === 'off';
+		} catch {
+			return false;
+		}
+	};
 
 	const GO_KEYS: Record<string, string> = { h: 'home', a: 'about', p: 'projects', c: 'contact' };
 	// "g" arms the next key for a moment, like on GitHub.
@@ -46,6 +57,8 @@ const { t, path } = getI18n(Astro.url.pathname);
 
 		const help = dialog();
 		if (!help) return;
+		// An open help window still closes with the key that opened it.
+		if (disabled() && !help.open) return;
 		// Another dialog (the video player) owns the keyboard while it is open.
 		if (document.querySelector('dialog[open]:not([data-shortcuts])')) return;
 

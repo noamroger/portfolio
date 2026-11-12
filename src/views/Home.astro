@@ -43,19 +43,22 @@ const featured = projects.slice(0, 3).map((project) => ({
 					<div class="terminal-body" data-terminal data-deployed={commitDate.toISOString()} data-commit={shortCommit ?? ''}>
 						<p class="terminal-cmd" aria-hidden="true"><span class="t-prompt">$</span> <span class="typed">kubectl get developer noam-roger -o yaml</span></p>
 						<h2 class="sr-only" id="profile-title">{t.home.profile.title}</h2>
-						<dl class="yaml">
+						<div class="yaml">
 							<div style="--i: 0" class="yaml-line" aria-hidden="true"><span class="t-key">kind</span>: <span class="t-kw">Developer</span></div>
 							<div style="--i: 1" class="yaml-line" aria-hidden="true"><span class="t-key">metadata</span>:</div>
 							<div style="--i: 2" class="yaml-line yaml-indent" aria-hidden="true"><span class="t-key">name</span>: <span class="t-str">noam-roger</span></div>
 							<div style="--i: 3" class="yaml-line" aria-hidden="true"><span class="t-key">spec</span>:</div>
+							{/* Only the real rows form the list: the decorative lines stay outside it. */}
+							<dl class="yaml-rows">
 							{t.home.profile.rows.map((row, i) => (
 								<div class="yaml-line yaml-indent" style={`--i: ${i + 4}`}>
 									<dt><span class="t-key" aria-hidden="true">{row.key}</span><span class="sr-only">{row.label}</span><span aria-hidden="true">: </span></dt>
 									<dd><span class="t-str">{row.value}</span> <span class="t-comment" aria-hidden="true"># {row.label}</span></dd>
 								</div>
 							))}
+							</dl>
 							<div style="--i: 9" class="yaml-line" aria-hidden="true"><span class="t-key">status</span>:</div>
-						</dl>
+						</div>
 						<p class="terminal-status" style="--i: 10">
 							<span class="status-dot" aria-hidden="true"></span>
 							{t.home.profile.status}
@@ -429,6 +432,10 @@ const featured = projects.slice(0, 3).map((project) => ({
 	.yaml-line dt,
 	.yaml-line dd {
 		display: inline;
+	}
+
+	.yaml-rows {
+		margin: 0;
 	}
 
 	.yaml-indent {

@@ -52,6 +52,7 @@ const fr: EggPage = {
 				['theme dark, theme light', 'Change le thème.'],
 				['lang fr, lang en', 'Change la langue.'],
 				['snow on, snow off', 'Fait neiger, même hors décembre.'],
+				['shortcuts on, shortcuts off', 'Active ou coupe les raccourcis clavier du site. Le choix est gardé dans le navigateur.'],
 				['neofetch', 'Fiche du site : hébergement, commit, temps depuis le dernier déploiement, thème.'],
 				['git log', 'Le commit en ligne et un lien vers l’historique.'],
 				['vim, vi, nvim', 'On reste coincé en -- INSERT -- jusqu’à :q, :q!, :wq ou Ctrl+C.'],
@@ -63,7 +64,7 @@ const fr: EggPage = {
 				['exit, logout', 'Ferme la fenêtre du terminal.'],
 				['history, pwd, echo, date, uname, man, ping, whoami', 'Réponses courtes.'],
 				['ruinthefun', 'Le lien vers cette page.'],
-				['reset, reset confirm', 'Efface ce que le site garde dans le navigateur : thème, neige, flags, certificat et accès root. reset explique, reset confirm exécute.'],
+				['reset, reset confirm', 'Efface ce que le site garde dans le navigateur : thème, neige, raccourcis, flags, certificat et accès root. reset explique, reset confirm exécute.'],
 			],
 		},
 		{
@@ -102,6 +103,7 @@ const fr: EggPage = {
 				['/', 'Met le curseur dans le terminal de l’accueil.'],
 				['t', 'Change le thème.'],
 				['l', 'Change de langue.'],
+				['shortcuts off (terminal)', 'Coupe tous ces raccourcis. shortcuts on les rétablit.'],
 			],
 		},
 		{
@@ -193,6 +195,7 @@ const en: EggPage = {
 				['theme dark, theme light', 'Switches the theme.'],
 				['lang fr, lang en', 'Switches the language.'],
 				['snow on, snow off', 'Makes it snow, even outside December.'],
+				['shortcuts on, shortcuts off', 'Turns the keyboard shortcuts of the site on or off. The choice is kept in the browser.'],
 				['neofetch', 'A card about the site: hosting, commit, time since the last deployment, theme.'],
 				['git log', 'The commit that is live and a link to the history.'],
 				['vim, vi, nvim', 'You are stuck in -- INSERT -- until :q, :q!, :wq or Ctrl+C.'],
@@ -204,7 +207,7 @@ const en: EggPage = {
 				['exit, logout', 'Closes the terminal window.'],
 				['history, pwd, echo, date, uname, man, ping, whoami', 'Short answers.'],
 				['ruinthefun', 'The link to this page.'],
-				['reset, reset confirm', 'Erases what the site keeps in the browser: theme, snow, flags, certificate and root access. reset explains, reset confirm does it.'],
+				['reset, reset confirm', 'Erases what the site keeps in the browser: theme, snow, shortcuts, flags, certificate and root access. reset explains, reset confirm does it.'],
 			],
 		},
 		{
@@ -243,6 +246,7 @@ const en: EggPage = {
 				['/', 'Puts the cursor in the home page terminal.'],
 				['t', 'Toggles the theme.'],
 				['l', 'Switches the language.'],
+				['shortcuts off (terminal)', 'Turns all of these off. shortcuts on brings them back.'],
 			],
 		},
 		{

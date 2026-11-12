@@ -14,7 +14,7 @@
  * every astro:page-load.
  */
 import { navigate } from 'astro:transitions/client';
-import { COFFEE_KEY, FLAGS_DONE_KEY, FLAGS_KEY, FLAGS_START_KEY, LANGUAGE_KEY, ROOT_KEY, SNOW_KEY, THEME_KEY } from '../i18n/preference';
+import { COFFEE_KEY, FLAGS_DONE_KEY, FLAGS_KEY, FLAGS_START_KEY, LANGUAGE_KEY, ROOT_KEY, SHORTCUTS_KEY, SNOW_KEY, THEME_KEY } from '../i18n/preference';
 import { setSnow } from './snow';
 
 const PROMPT = 'guest@noamroger.fr:~$';
@@ -28,6 +28,7 @@ const HELP = `Available commands:
   cd <page>               Go to about, projects or contact
   theme <dark|light>      Switch the colour theme
   lang <fr|en>            Switch the language
+  shortcuts <on|off>      Keyboard shortcuts of the site (? lists them)
   whoami                  Print current session context
   clear                   Clear terminal buffer
   ruinthefun              Give up and read the answers
@@ -428,6 +429,8 @@ function completions(): string[] {
 		'theme light',
 		'lang en',
 		'lang fr',
+		'shortcuts on',
+		'shortcuts off',
 		'kubectl get pods',
 		...(isRoot() ? [...ROOT_FILES.map((file) => `cat ${file}`), 'kubectl get secrets', 'kubectl get secret recruiter-note', 'make coffee', 'certificate', 'exit'] : []),
 		...pods.flatMap((pod) => [`kubectl logs ${pod.name}`, `kubectl describe pod ${pod.name}`, `kubectl delete pod ${pod.name}`]),
@@ -494,13 +497,13 @@ async function run(raw: string, shell: Shell, elevated = isRoot()): Promise<stri
 			if (args[0] !== 'confirm') {
 				return [
 					'This erases what the site keeps in this browser:',
-					'  - theme and snow preferences',
+					'  - theme, snow and shortcut preferences',
 					'  - unlocked flags, certificate and root access',
 					'  - the coffee maker restart counter',
 					"Nothing is stored anywhere else. Type 'reset confirm' to go ahead.",
 				].join('\n');
 			}
-			for (const key of [THEME_KEY, LANGUAGE_KEY, SNOW_KEY, COFFEE_KEY, FLAGS_KEY, FLAGS_START_KEY, FLAGS_DONE_KEY, ROOT_KEY]) {
+			for (const key of [THEME_KEY, LANGUAGE_KEY, SNOW_KEY, SHORTCUTS_KEY, COFFEE_KEY, FLAGS_KEY, FLAGS_START_KEY, FLAGS_DONE_KEY, ROOT_KEY]) {
 				try {
 					localStorage.removeItem(key);
 				} catch {
@@ -566,6 +569,18 @@ async function run(raw: string, shell: Shell, elevated = isRoot()): Promise<stri
 			if ((isEnglish() ? 'en' : 'fr') === wanted) return `Already in ${wanted === 'en' ? 'English' : 'French'}.`;
 			shell.after(() => navigate(wanted === 'en' ? '/en/' : '/'));
 			return `Switching to ${wanted === 'en' ? 'English' : 'French'} ...`;
+		}
+		case 'shortcuts': {
+			// Single-key shortcuts can get in the way (voice input, for one):
+			// src/components/Shortcuts.astro reads this choice on every key.
+			const wanted = args[0];
+			const off = read(SHORTCUTS_KEY) === 'off';
+			if (wanted !== 'on' && wanted !== 'off') {
+				return `Keyboard shortcuts are ${off ? 'off' : "on (press '?' outside this prompt to list them)"}.\nusage: shortcuts <on|off>`;
+			}
+			if ((wanted === 'off') === off) return `Already ${wanted}.`;
+			write(SHORTCUTS_KEY, wanted);
+			return wanted === 'on' ? "Keyboard shortcuts on. Press '?' outside this prompt to list them." : "Keyboard shortcuts off. 'shortcuts on' brings them back.";
 		}
 		case 'snow': {
 			const wanted = args[0];
