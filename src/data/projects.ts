@@ -15,8 +15,9 @@ export const projects = [
 		demo: null,
 	},
 	{
-		key: 'romaybot',
-		github: 'https://github.com/noamroger/romaybot',
+		key: 'portfolio',
+		github: 'https://github.com/noamroger/portfolio',
+		// The visitor is already on the demo: its button is a joke, see Projects.astro.
 		demo: null,
 	},
 	{

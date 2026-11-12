@@ -115,7 +115,7 @@ const fr: Translations = {
 		subtitle: 'Étudiant en L3 Informatique au Mans, je code depuis 2019.',
 		journeyTitle: 'Parcours',
 		journey: [
-			"J'ai commencé à programmer seul en 2019, avec des bots Discord en Node.js. L'un d'eux, Gaulia Musique, a été ajouté à plus de 800 serveurs. Sont venus ensuite des projets plus structurés : des API, des bases de données, et une commande rémunérée pour Romaybot, qui réunissait un bot Twitch, un bot Discord et un site web.",
+			"J'ai commencé à programmer seul en 2019, avec des bots Discord en Node.js. L'un d'eux, Gaulia Musique, a été ajouté à plus de 800 serveurs. Sont venus ensuite des projets plus structurés, autour d'API et de bases de données.",
 			"Je suis aujourd'hui en L3 Informatique au Mans, où je travaille aussi la programmation système en C. En parallèle, je me suis intéressé à ce qui se passe après le code : comment un service est empaqueté, déployé et maintenu en marche. Je conteneurise mes projets avec Docker, j'automatise leurs déploiements, je fais tourner mes machines sous Linux et Proxmox, et j'apprends Kubernetes.",
 			"Prochaine étape : un Master spécialisé en ingénierie DevOps / Cloud, en alternance à partir de la rentrée 2027.",
 		],
@@ -184,12 +184,13 @@ const fr: Translations = {
 	projects: {
 		metaTitle: 'Projets | API, bots Discord et C - Noam Roger',
 		metaDescription:
-			"Une sélection des projets de Noam Roger : homelab Proxmox, agent IA, bots Discord et Twitch, base de serveur TypeScript, jeu multijoueur en C.",
+			"Une sélection des projets de Noam Roger : homelab Proxmox, agent IA, ce portfolio, bot Discord, base de serveur TypeScript, jeu multijoueur en C.",
 		eyebrow: 'Projets',
 		heading: "Ce que j'ai construit, et dans quel contexte.",
 		subtitle: "De mon homelab aux hackathons de 24 heures, en passant par des bots qui ont tourné en production.",
 		codeLink: 'Code',
 		demoLink: 'Démo',
+		selfDemoMessage: "C'était vraiment nécessaire ? Vous êtes littéralement dessus...",
 		items: {
 			homelab: {
 				context: 'Projet personnel · en cours',
@@ -207,13 +208,13 @@ const fr: Translations = {
 					"Un réceptionniste d'hôtel propulsé par l'IA, développé en 24 heures aux 24 Heures du Code 2025 (CCI du Mans). Mon premier agent construit avec LangChain.",
 				tech: ['Node.js', 'LangChain', 'LLM', 'API'],
 			},
-			romaybot: {
-				context: 'Commande client',
-				imageAlt: 'Romaybot : fiche de carte à collectionner du bot Twitch et Discord',
-				title: 'Romaybot',
+			portfolio: {
+				context: 'Projet personnel · 2026',
+				imageAlt: "Page d'accueil de ce portfolio, avec son terminal interactif",
+				title: 'Ce portfolio',
 				description:
-					'Un système de cartes à collectionner (parodie de Pokémon), livré dans le cadre d’une commande rémunérée : un bot Twitch, un bot Discord et un site web qui partagent la même base MySQL.',
-				tech: ['Node.js', 'Discord.js', 'Twitch', 'MySQL'],
+					"Le site que vous êtes en train de lire : des pages statiques générées avec Astro, en français et en anglais, servies par un Cloudflare Worker et redéployées à chaque push. J'y ai caché quelques easter eggs pour les curieux, à vous de les trouver.",
+				tech: ['Astro', 'TypeScript', 'Cloudflare Workers'],
 			},
 			codenames: {
 				context: 'Projet universitaire',

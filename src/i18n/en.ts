@@ -113,7 +113,7 @@ const en = {
 		subtitle: 'Computer science student in Le Mans, writing code since 2019.',
 		journeyTitle: 'Background',
 		journey: [
-			'I started programming on my own in 2019 with Discord bots in Node.js. One of them, Gaulia Musique, was added to more than 800 servers. Then came more structured projects: APIs, databases, and a paid commission for Romaybot, which combined a Twitch bot, a Discord bot and a website.',
+			'I started programming on my own in 2019 with Discord bots in Node.js. One of them, Gaulia Musique, was added to more than 800 servers. Then came more structured projects, built around APIs and databases.',
 			'I am now in my third year of a computer science degree in Le Mans, where I also work on systems programming in C. Alongside, I took an interest in what happens after the code: how a service is packaged, deployed and kept running. I containerise my projects with Docker, automate their deployments, run my machines on Linux and Proxmox, and I am learning Kubernetes.',
 			'Next step: a Master’s specialised in DevOps / Cloud engineering, as a work-study student from September 2027.',
 		],
@@ -182,12 +182,13 @@ const en = {
 	projects: {
 		metaTitle: 'Projects | APIs, Discord bots and C - Noam Roger',
 		metaDescription:
-			"A selection of Noam Roger's projects: Proxmox homelab, AI agent, Discord and Twitch bots, TypeScript server base, multiplayer game in C.",
+			"A selection of Noam Roger's projects: Proxmox homelab, AI agent, this portfolio, Discord bot, TypeScript server base, multiplayer game in C.",
 		eyebrow: 'Projects',
 		heading: 'What I have built, and in what context.',
 		subtitle: 'From my homelab to 24-hour hackathons, by way of bots that ran in production.',
 		codeLink: 'Code',
 		demoLink: 'Demo',
+		selfDemoMessage: 'Was that really necessary? You are literally on it...',
 		items: {
 			homelab: {
 				context: 'Personal project · ongoing',
@@ -205,13 +206,13 @@ const en = {
 					'An AI-powered hotel receptionist, built in 24 hours at the 24 Heures du Code 2025 (CCI Le Mans). My first agent built with LangChain.',
 				tech: ['Node.js', 'LangChain', 'LLM', 'API'],
 			},
-			romaybot: {
-				context: 'Client commission',
-				imageAlt: 'Romaybot: collectible card from the Twitch and Discord bot',
-				title: 'Romaybot',
+			portfolio: {
+				context: 'Personal project · 2026',
+				imageAlt: 'Home page of this portfolio, with its interactive terminal',
+				title: 'This portfolio',
 				description:
-					'A collectible card system (a Pokémon parody), delivered as a paid commission: a Twitch bot, a Discord bot and a website sharing the same MySQL database.',
-				tech: ['Node.js', 'Discord.js', 'Twitch', 'MySQL'],
+					'The site you are reading right now: static pages generated with Astro, in French and English, served by a Cloudflare Worker and redeployed on every push. I hid a few easter eggs in it for the curious, yours to find.',
+				tech: ['Astro', 'TypeScript', 'Cloudflare Workers'],
 			},
 			codenames: {
 				context: 'University project',

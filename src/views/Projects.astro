@@ -11,7 +11,7 @@ import californyan from '../assets/projects/californyan.webp';
 import codenames from '../assets/projects/codenames.webp';
 import gaulia from '../assets/projects/gaulia.webp';
 import homelab from '../assets/projects/homelab.webp';
-import romaybot from '../assets/projects/romaybot.webp';
+import portfolio from '../assets/projects/portfolio.webp';
 import webserver from '../assets/projects/webserver.webp';
 import codenamesDemo from '../assets/projects/codenames-demo.mp4';
 import codenamesDemoPoster from '../assets/projects/codenames-demo-poster.webp';
@@ -25,7 +25,7 @@ const cardWidths = [380, 560, 760, 1024];
 const images: Record<ProjectKey, ImageMetadata> = {
 	homelab,
 	californyan,
-	romaybot,
+	portfolio,
 	codenames,
 	webserverTs: webserver,
 	gaulia,
@@ -37,11 +37,15 @@ const videos: Partial<Record<ProjectKey, { src: string; poster: ImageMetadata; l
 	codenames: { src: codenamesDemo, poster: codenamesDemoPoster, label: `~/${t.projects.eyebrow.toLowerCase()}/codenames-c/demo.mp4` },
 };
 
+// The card of this very site: its demo button only teases the visitor.
+const selfKey: ProjectKey = 'portfolio';
+
 const projects = projectLinks.map((project) => ({
 	...t.projects.items[project.key],
 	...project,
 	image: images[project.key],
 	video: videos[project.key],
+	self: project.key === selfKey,
 }));
 const origin = siteOrigin;
 
@@ -112,7 +116,7 @@ const projectList = [
 										<span class="tag">{tech}</span>
 									))}
 								</div>
-								{(project.github || project.demo || project.video) && (
+								{(project.github || project.demo || project.video || project.self) && (
 									<div class="project-links">
 										{project.github && (
 											<a href={project.github} class="project-link" target="_blank" rel="noopener noreferrer">
@@ -137,6 +141,19 @@ const projectList = [
 												</svg>
 												{t.projects.demoLink}
 											</a>
+										)}
+										{project.self && (
+											<button type="button" class="project-link" data-self-demo>
+												<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+													<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+													<polyline points="15 3 21 3 21 9"></polyline>
+													<line x1="10" y1="14" x2="21" y2="3"></line>
+												</svg>
+												{t.projects.demoLink}
+											</button>
+										)}
+										{project.self && (
+											<p class="self-demo-message" role="status" data-self-demo-message data-message={t.projects.selfDemoMessage} hidden></p>
 										)}
 										{project.demo && (
 											<a href={project.demo} class="project-link" target="_blank" rel="noopener noreferrer">
@@ -171,6 +188,32 @@ const projectList = [
 
 <script>
 	import '../scripts/github-stats';
+
+	// Kept in memory only: client-side navigation keeps the module (and the
+	// joke) alive, a full reload starts over.
+	let used = false;
+	const MESSAGE_MS = 4500;
+
+	document.addEventListener('astro:page-load', () => {
+		const button = document.querySelector<HTMLButtonElement>('[data-self-demo]');
+		const message = document.querySelector<HTMLElement>('[data-self-demo-message]');
+		if (!button || !message) return;
+		if (used) {
+			button.disabled = true;
+			return;
+		}
+		button.addEventListener('click', () => {
+			if (used) return;
+			used = true;
+			message.textContent = message.dataset.message ?? '';
+			message.hidden = false;
+			setTimeout(() => {
+				message.hidden = true;
+				message.textContent = '';
+				button.disabled = true;
+			}, MESSAGE_MS);
+		});
+	});
 </script>
 
 <style>
@@ -283,6 +326,55 @@ const projectList = [
 		color: var(--text);
 		border-color: var(--border-strong);
 		background: var(--bg-subtle);
+	}
+
+	button.project-link {
+		font-family: inherit;
+		background: none;
+		cursor: pointer;
+	}
+
+	button.project-link:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+		color: var(--text-secondary);
+		border-color: var(--border);
+		background: none;
+	}
+
+	/* The joke pops up just above the buttons, over the tags, so the card keeps its height. */
+	.project-links {
+		position: relative;
+	}
+
+	.self-demo-message {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: calc(100% + 0.6rem);
+		margin: 0;
+		padding: 0.6rem 0.8rem;
+		border: 1px solid var(--accent);
+		border-radius: var(--radius-sm);
+		background: var(--bg-elevated);
+		box-shadow: 3px 3px 0 color-mix(in srgb, var(--accent) 45%, transparent);
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		color: var(--text);
+		animation: self-demo-in 0.18s ease-out;
+	}
+
+	@keyframes self-demo-in {
+		from {
+			opacity: 0;
+			transform: translateY(4px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.self-demo-message {
+			animation: none;
+		}
 	}
 
 	@media (max-width: 820px) {
