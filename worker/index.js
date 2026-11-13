@@ -8,10 +8,15 @@
 //   for a 404.html file, and Astro emits the English one as /en/404/index.html,
 //   so every miss would otherwise get the French page.
 // - A few endpoints for visitors who come with curl (worker/ops.js).
+// - Anonymous visit statistics: the pages report their views to /api/hit
+//   (worker/stats.js), a cron purges them, and admin.noamroger.fr shows them
+//   behind a password (worker/admin.js).
 
+import { ADMIN_HOST, handleAdmin } from './admin.js';
 import { handleGitHubStats } from './github.js';
 import { EXTRA_HEADERS, handleOps } from './ops.js';
 import { isVideo, withRange } from './range.js';
+import { handleHit, purge, STATS_PATH } from './stats.js';
 
 const CANONICAL_HOST = 'www.noamroger.fr';
 const APEX_HOST = 'noamroger.fr';
@@ -33,6 +38,9 @@ export default {
 	async fetch(request, env, ctx) {
 		const url = new URL(request.url);
 
+		// The dashboard has its own host and its own, stricter, headers.
+		if (url.hostname === ADMIN_HOST) return handleAdmin(request, env, url);
+
 		if (url.hostname === APEX_HOST) {
 			url.hostname = CANONICAL_HOST;
 			return withSecurityHeaders(Response.redirect(url.toString(), 301));
@@ -40,6 +48,12 @@ export default {
 
 		if (url.pathname === '/api/github') {
 			return withSecurityHeaders(await handleGitHubStats(request, env, ctx));
+		}
+
+		if (url.pathname === STATS_PATH) {
+			// Only the real site counts, not a preview on workers.dev.
+			const counted = url.hostname === CANONICAL_HOST ? env : { ...env, STATS: undefined };
+			return withSecurityHeaders(await handleHit(request, counted, ctx, url));
 		}
 
 		const ops = await handleOps(request, env, url);
@@ -72,5 +86,10 @@ export default {
 		}
 
 		return response;
+	},
+
+	// Cron triggers of wrangler.jsonc: the 90-day purge of the statistics.
+	async scheduled(controller, env, ctx) {
+		ctx.waitUntil(purge(env));
 	},
 };

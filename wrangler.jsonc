@@ -18,8 +18,26 @@
 	// ones): delete those first.
 	"routes": [
 		{ "pattern": "noamroger.fr", "custom_domain": true },
-		{ "pattern": "www.noamroger.fr", "custom_domain": true }
+		{ "pattern": "www.noamroger.fr", "custom_domain": true },
+		// The private dashboard of the visit statistics (worker/admin.js).
+		{ "pattern": "admin.noamroger.fr", "custom_domain": true }
 	],
+	// Anonymous visit statistics (worker/stats.js). The schema is in
+	// migrations/: `npx wrangler d1 migrations apply portfolio-stats --remote`.
+	"d1_databases": [
+		{
+			"binding": "STATS",
+			"database_name": "portfolio-stats",
+			"database_id": "d3a3fd02-a6de-4eec-a29f-dcaff93ccf5b",
+			"migrations_dir": "migrations"
+		}
+	],
+	// Purge of the statistics older than 90 days and of the salt of the day
+	// before, just after midnight in Paris (22:05 UTC in summer, 23:05 in
+	// winter: running at both hours covers the two).
+	"triggers": { "crons": ["5 22,23 * * *"] },
+	// The dashboard also needs the ADMIN_PASSWORD secret, set by hand:
+	// `npx wrangler secret put ADMIN_PASSWORD`. Without it, it stays closed.
 	// Turnstile site key (public). These are runtime vars, so the Astro build
 	// can't see them on its own: astro.config.mjs reads this value and inlines
 	// it into the contact page. A PUBLIC_TURNSTILE_SITE_KEY build variable wins.

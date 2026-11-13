@@ -145,3 +145,41 @@ nom ni lien ne sortent du Worker. Sans token, la route répond 503 et
 Une erreur (token absent, GitHub en panne) est mise en cache 60 secondes pour
 ne pas épuiser le quota du token ; sa cause n'apparaît que dans les logs du
 Worker, la réponse publique reste `{"error":"unavailable"}`.
+
+## Statistiques de visite
+
+Mesure d'audience maison, anonyme et sans cookie. Rien n'est stocké dans le
+navigateur des visiteurs.
+
+- **Collecte** : `src/scripts/stats.ts` envoie le chemin de chaque page
+  réellement affichée à `/api/hit` (les pages étant préchargées et mises en
+  cache, les requêtes vues par le Worker ne reflètent pas les visites).
+  `worker/stats.js` enregistre dans D1 (binding `STATS`, base
+  `portfolio-stats`) : chemin, date, pays donné par Cloudflare, type
+  d'appareil, domaine référent et une empreinte de visiteur.
+- **Anonymat** : ni l'adresse IP ni le user agent ne sont enregistrés. Ils ne
+  servent qu'à calculer l'empreinte `hash(sel du jour + IP + user agent)`. Le
+  sel est aléatoire, change chaque jour et est supprimé à la fin de la journée :
+  un visiteur n'est pas reconnu d'un jour à l'autre, et une empreinte passée ne
+  peut plus être rapprochée d'une adresse.
+- **Exclusions** : robots connus (user agent), requêtes qui ne viennent pas des
+  pages du site, previews `*.workers.dev`, et les navigateurs où l'on s'est
+  connecté au tableau de bord (cookie `stats_ignore`, posé à la connexion, le
+  seul cookie du système et il ne concerne que l'administrateur).
+- **Rétention** : 90 jours. Un cron (`triggers` dans `wrangler.jsonc`) purge
+  chaque nuit ce qui est plus ancien.
+- **Tableau de bord** : `worker/admin.js`, sur `https://admin.noamroger.fr`,
+  rendu côté serveur et sans aucun script. Il est protégé par le secret
+  `ADMIN_PASSWORD` du Worker (`npx wrangler secret put ADMIN_PASSWORD`, ou
+  Settings > Variables and Secrets). Sans ce secret il reste fermé (503). Cinq
+  mots de passe faux en un quart d'heure bloquent les essais suivants.
+- **Schéma** : `migrations/0001_stats.sql`, appliqué avec
+  `npx wrangler d1 migrations apply portfolio-stats --remote`.
+
+En local :
+
+```bash
+npx wrangler d1 migrations apply portfolio-stats --local
+npx wrangler dev --host www.noamroger.fr                                  # le site
+npx wrangler dev --host admin.noamroger.fr --var ADMIN_PASSWORD:test      # le tableau de bord
+```

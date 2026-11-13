@@ -34,6 +34,11 @@ They look like flag{...} and are checked in the home page terminal: unlock flag{
 First hint: curl -sI https://www.noamroger.fr
 Lost? Type 'flags' in that terminal.
 
+/* PRIVACY */
+Home-made visit statistics, without any cookie: they store nothing in your browser.
+The data is anonymous (page, day, country, kind of device, referring site): your IP address is never recorded.
+Everything is deleted after 90 days.
+
 /* SITE */
 Last update: ${lastUpdate()}
 Standards: HTML5, CSS3
@@ -57,6 +62,11 @@ Trois flags sont cachés sur ce site, chacun à un réflexe de distance.
 Ils ressemblent à flag{...} et se valident dans le terminal de la page d'accueil : unlock flag{...}
 Premier indice : curl -sI https://www.noamroger.fr
 Perdu ? Tape 'flags' dans ce terminal.
+
+/* VIE PRIVÉE */
+Statistiques de visite maison, sans aucun cookie : elles ne stockent rien dans ton navigateur.
+Les données sont anonymes (page, jour, pays, type d'appareil, site d'origine) : ton adresse IP n'est jamais enregistrée.
+Tout est effacé au bout de 90 jours.
 
 /* SITE */
 Dernière mise à jour : ${lastUpdate()}
