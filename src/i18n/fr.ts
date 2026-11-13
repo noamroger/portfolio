@@ -54,7 +54,7 @@ const fr: Translations = {
 		languagesTitle: 'Langages sur GitHub',
 		languagesNote: 'Part du code, tous dépôts confondus.',
 		footer: 'Dernier push sur GitHub {when}',
-		source: 'Données GitHub, actualisées toutes les heures.',
+		source: 'Données GitHub, actualisées toutes les 5 minutes.',
 	},
 	home: {
 		metaTitle: 'Noam Roger | Développeur backend orienté DevOps, Le Mans',
