@@ -19,6 +19,28 @@ const THEME_COOKIE = 'theme';
 const SESSION_SECONDS = 30 * 86_400;
 const PERIODS = [1, 7, 30, 90];
 
+// One dashboard for both sites. A view of www.noamroger.dev is stored with the
+// /en prefix of the build (worker/stats.js), which is all that tells the two
+// apart: `where` is the SQL for it, never built from what the visitor sends.
+const ENGLISH_PATH = "(path = '/en' OR path LIKE '/en/%')";
+const SITES = {
+	all: { label: 'tous', where: '1 = 1' },
+	fr: { label: '.fr', name: 'www.noamroger.fr', where: `NOT ${ENGLISH_PATH}` },
+	dev: { label: '.dev', name: 'www.noamroger.dev', where: ENGLISH_PATH },
+};
+const siteOfQuery = (value) => (Object.hasOwn(SITES, value) ? value : 'all');
+/** The address of the dashboard for a period and a site, defaults left out. */
+const dashboardUrl = (period, site) => {
+	const query = [period === 30 ? '' : `days=${period}`, site === 'all' ? '' : `site=${site}`].filter(Boolean).join('&amp;');
+	return query ? `/?${query}` : '/';
+};
+/** A stored path as its site shows it: /en/about is /about on .dev. */
+const shownPath = (path, site) => {
+	const english = path === '/en' || path.startsWith('/en/');
+	const bare = english ? path.slice(3) || '/' : path;
+	return site === 'all' ? `${english ? '.dev' : '.fr'}${bare}` : bare;
+};
+
 // Password guessing: tries allowed per visitor and in total, per window.
 const LOGIN_WINDOW_SECONDS = 15 * 60;
 const MAX_FAILURES_PER_VISITOR = 5;
@@ -264,22 +286,25 @@ ${rows.length ? `<ol>${items}</ol>` : `<p class="empty">${escapeHtml(empty)}</p>
 </section>`;
 }
 
-async function dashboard(env, view, period) {
+async function dashboard(env, view, period, site) {
 	const db = env.STATS;
 	const today = parisDay();
 	const from = daysAgo(period - 1);
-	const real = 'day >= ?1 AND not_found = 0';
+	const scope = `day >= ?1 AND ${SITES[site].where}`;
+	const real = `${scope} AND not_found = 0`;
 
-	const [totals, perDay, pages, sources, countries, devices, missing, stored] = (
+	const [totals, perDay, pages, sources, countries, devices, missing, stored, perSite] = (
 		await db.batch([
-			db.prepare(`SELECT COUNT(*) AS views, COUNT(DISTINCT visitor) AS visitors, COALESCE(SUM(entry), 0) AS visits, COALESCE(SUM(path = '/en' OR path LIKE '/en/%'), 0) AS english FROM views WHERE ${real}`).bind(from),
+			db.prepare(`SELECT COUNT(*) AS views, COUNT(DISTINCT visitor) AS visitors, COALESCE(SUM(entry), 0) AS visits, COALESCE(SUM(${ENGLISH_PATH}), 0) AS english FROM views WHERE ${real}`).bind(from),
 			db.prepare(`SELECT day, COUNT(*) AS views, COUNT(DISTINCT visitor) AS visitors FROM views WHERE ${real} GROUP BY day`).bind(from),
 			db.prepare(`SELECT path AS label, COUNT(*) AS value FROM views WHERE ${real} GROUP BY path ORDER BY value DESC, label LIMIT 12`).bind(from),
 			db.prepare(`SELECT COALESCE(referrer, '') AS label, COUNT(*) AS value FROM views WHERE ${real} AND entry = 1 GROUP BY label ORDER BY value DESC, label LIMIT 12`).bind(from),
 			db.prepare(`SELECT COALESCE(country, '') AS label, COUNT(DISTINCT visitor) AS value FROM views WHERE ${real} GROUP BY label ORDER BY value DESC, label LIMIT 12`).bind(from),
 			db.prepare(`SELECT device AS label, COUNT(DISTINCT visitor) AS value FROM views WHERE ${real} GROUP BY device ORDER BY value DESC`).bind(from),
-			db.prepare('SELECT path AS label, COUNT(*) AS value FROM views WHERE day >= ?1 AND not_found = 1 GROUP BY path ORDER BY value DESC, label LIMIT 12').bind(from),
+			db.prepare(`SELECT path AS label, COUNT(*) AS value FROM views WHERE ${scope} AND not_found = 1 GROUP BY path ORDER BY value DESC, label LIMIT 12`).bind(from),
 			db.prepare('SELECT COUNT(*) AS total, MIN(day) AS oldest FROM views'),
+			// Both sites side by side, whatever the filter.
+			db.prepare(`SELECT ${ENGLISH_PATH} AS english, COUNT(*) AS views, COUNT(DISTINCT visitor) AS visitors, COALESCE(SUM(entry), 0) AS visits FROM views WHERE day >= ?1 AND not_found = 0 GROUP BY english`).bind(from),
 		])
 	).map((result) => result.results);
 
@@ -295,16 +320,25 @@ async function dashboard(env, view, period) {
 		['Vues', fmt(views), period === 1 ? "aujourd'hui" : `sur ${period} jours`],
 		['Visiteurs uniques', fmt(visitors), 'comptés par jour'],
 		['Pages par visiteur', visitors ? (views / visitors).toFixed(1).replace('.', ',') : '0', `${fmt(visits)} visites`],
-		period === 1 ? ['Version anglaise', views ? `${Math.round((english / views) * 100)} %` : '0 %', 'des vues'] : ["Aujourd'hui", fmt(todayRow.views), `${fmt(todayRow.visitors)} visiteurs`],
+		period === 1 && site === 'all' ? ['Site anglais (.dev)', views ? `${Math.round((english / views) * 100)} %` : '0 %', 'des vues'] : ["Aujourd'hui", fmt(todayRow.views), `${fmt(todayRow.visitors)} visiteurs`],
 	];
 
-	const periodLinks = PERIODS.map((value) => `<a href="/?days=${value}"${value === period ? ' aria-current="page"' : ''}>${value === 1 ? '24h' : `${value}d`}</a>`).join('');
+	const siteRows = ['fr', 'dev'].map((key) => {
+		const row = perSite.find((entry) => Boolean(entry.english) === (key === 'dev')) ?? { views: 0, visitors: 0, visits: 0 };
+		return `<tr><th scope="row"><a href="${dashboardUrl(period, key)}"${key === site ? ' aria-current="page"' : ''}>${SITES[key].name}</a></th><td>${fmt(row.views)}</td><td>${fmt(row.visitors)}</td><td>${fmt(row.visits)}</td></tr>`;
+	});
+	const siteLinks = Object.entries(SITES)
+		.map(([key, { label }]) => `<a href="${dashboardUrl(period, key)}"${key === site ? ' aria-current="page"' : ''}>${label}</a>`)
+		.join('');
+	const path = (rows) => rows.map((row) => ({ ...row, label: shownPath(row.label, site) }));
+
+	const periodLinks = PERIODS.map((value) => `<a href="${dashboardUrl(value, site)}"${value === period ? ' aria-current="page"' : ''}>${value === 1 ? '24h' : `${value}d`}</a>`).join('');
 	const other = view.theme === 'light' ? 'dark' : 'light';
 
 	const body = `<header class="top">
 <a class="brand" href="/"><span class="brand-prompt" aria-hidden="true">~/</span>noam<span class="brand-dot">.</span>roger<span class="brand-prompt">/stats</span></a>
 <nav class="tools" aria-label="Outils">
-<a href="/theme?to=${other}&amp;days=${period}">${other === 'light' ? 'Thème clair' : 'Thème sombre'}</a>
+<a href="/theme?to=${other}&amp;days=${period}&amp;site=${site}">${other === 'light' ? 'Thème clair' : 'Thème sombre'}</a>
 <a href="https://www.noamroger.fr/">Voir le site</a>
 <form method="post" action="/logout"><button type="submit">Déconnexion</button></form>
 </nav>
@@ -313,17 +347,24 @@ ${shell(`<h1 class="sr-only">Statistiques de visite du portfolio</h1>
 <section class="card">
 ${WINDOW_BAR('stats — admin@noamroger.fr')}
 <div class="term">
-<p class="cmd"><span class="t-prompt">admin@noamroger.fr:~$</span> stats --since <span class="periods" role="navigation" aria-label="Période">${periodLinks}</span></p>
+<p class="cmd"><span class="t-prompt">admin@noamroger.fr:~$</span> stats --since <span class="periods" role="navigation" aria-label="Période">${periodLinks}</span> --site <span class="periods" role="navigation" aria-label="Site">${siteLinks}</span></p>
 <dl class="tiles">${tiles.map(([label, value, hint]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd><dd class="hint">${escapeHtml(hint)}</dd></div>`).join('')}</dl>
 ${period > 1 ? chart(days) : ''}
 </div>
 </section>
 <div class="panels">
-${panel('pages.log', 'Vues par page', pages)}
+<section class="card panel wide">
+${WINDOW_BAR('sites.log')}
+<div class="panel-body">
+<p class="unit">Les deux sites sur la période</p>
+<table class="sites"><thead><tr><th scope="col">Site</th><th scope="col">Vues</th><th scope="col">Visiteurs</th><th scope="col">Visites</th></tr></thead><tbody>${siteRows.join('')}</tbody></table>
+</div>
+</section>
+${panel('pages.log', site === 'all' ? 'Vues par page, les deux sites' : `Vues par page, ${SITES[site].name}`, path(pages))}
 ${panel('sources.log', "Visites par site d'origine", sources.map((row) => ({ ...row, label: row.label || 'Direct ou inconnu' })))}
 ${panel('pays.log', 'Visiteurs par pays', countries.map((row) => ({ ...row, label: countryName(row.label) })))}
 ${panel('appareils.log', "Visiteurs par type d'appareil", devices.map((row) => ({ ...row, label: DEVICES[row.label] ?? row.label })))}
-${panel('404.log', 'Pages introuvables demandées', missing, 'Aucune page introuvable sur la période.')}
+${panel('404.log', 'Pages introuvables demandées', path(missing), 'Aucune page introuvable sur la période.')}
 <section class="card panel">
 ${WINDOW_BAR('README')}
 <div class="panel-body readme">
@@ -400,7 +441,7 @@ async function route(request, env, url) {
 	if (read && pathname === '/theme') {
 		const theme = url.searchParams.get('to') === 'light' ? 'light' : 'dark';
 		const days = Number(url.searchParams.get('days'));
-		return redirect(PERIODS.includes(days) ? `/?days=${days}` : '/', [`${THEME_COOKIE}=${theme}; Path=/; Max-Age=31536000; Secure; HttpOnly; SameSite=Lax`]);
+		return redirect(dashboardUrl(PERIODS.includes(days) ? days : 30, siteOfQuery(url.searchParams.get('site'))).replaceAll('&amp;', '&'), [`${THEME_COOKIE}=${theme}; Path=/; Max-Age=31536000; Secure; HttpOnly; SameSite=Lax`]);
 	}
 
 	if (request.method === 'POST' && (pathname === '/login' || pathname === '/logout')) {
@@ -421,7 +462,7 @@ async function route(request, env, url) {
 
 	const days = Number(url.searchParams.get('days'));
 	try {
-		return await dashboard(env, view, PERIODS.includes(days) ? days : 30);
+		return await dashboard(env, view, PERIODS.includes(days) ? days : 30, siteOfQuery(url.searchParams.get('site')));
 	} catch (error) {
 		console.error('admin: dashboard failed', error);
 		return errorPage(view, 'La base ne répond pas comme prévu. Le détail est dans les logs du Worker.');
@@ -492,6 +533,12 @@ a:hover{color:var(--accent-strong)}
 details{margin-top:1rem;font-size:.78rem}
 summary{cursor:pointer;color:var(--text-secondary);width:max-content;max-width:100%}
 summary:hover{color:var(--accent)}
+table.sites{max-width:34rem;margin-top:0}
+.sites th,.sites td{padding:.3rem .35rem}
+.sites th:first-child{padding-left:0}
+.wide{grid-column:1/-1}
+.sites a{color:var(--text);text-decoration:none}
+.sites a:hover,.sites a[aria-current]{color:var(--accent)}
 table{width:100%;max-width:26rem;margin-top:.6rem;border-collapse:collapse;font-variant-numeric:tabular-nums}
 th,td{padding:.3rem .5rem;border-bottom:1px solid var(--border);text-align:right;font-weight:400}
 th:first-child{text-align:left}

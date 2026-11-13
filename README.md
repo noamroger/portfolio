@@ -197,7 +197,9 @@ navigateur des visiteurs.
 - **Rétention** : 90 jours. Un cron (`triggers` dans `wrangler.jsonc`) purge
   chaque nuit ce qui est plus ancien.
 - **Tableau de bord** : `worker/admin.js`, sur `https://admin.noamroger.fr`,
-  rendu côté serveur et sans aucun script. Il est protégé par le secret
+  rendu côté serveur et sans aucun script. Le filtre `--site` (`?site=fr` ou
+  `?site=dev`) limite tous les chiffres à un site, et `sites.log` compare les
+  deux sur la période. Il est protégé par le secret
   `ADMIN_PASSWORD` du Worker (`npx wrangler secret put ADMIN_PASSWORD`, ou
   Settings > Variables and Secrets). Sans ce secret il reste fermé (503). Cinq
   mots de passe faux en un quart d'heure bloquent les essais suivants.
