@@ -3,9 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import WindowBar from '../components/WindowBar.astro';
-import { contactEmail, getI18n } from '../i18n';
+import { getI18n } from '../i18n';
 
-const { t, locale } = getI18n(Astro.url.pathname);
+const { t, locale, contactEmail } = getI18n(Astro.url.pathname);
 
 // Public Turnstile site key, inlined at build time from wrangler.jsonc `vars`
 // (see astro.config.mjs). Without it the widget is left out and the form works

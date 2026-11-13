@@ -10,8 +10,10 @@ import { parse } from 'jsonc-parser';
 const wranglerVars = parse(readFileSync(new URL('./wrangler.jsonc', import.meta.url), 'utf8')).vars ?? {};
 const turnstileSiteKey = process.env.PUBLIC_TURNSTILE_SITE_KEY ?? wranglerVars.PUBLIC_TURNSTILE_SITE_KEY ?? '';
 
-// Keep in sync with `siteOrigin` in src/i18n/index.ts
+// French lives on noamroger.fr, English on noamroger.dev: keep in sync with
+// `siteOrigins` in src/i18n/index.ts.
 const site = 'https://www.noamroger.fr';
+const englishSite = 'https://noamroger.dev';
 
 // https://astro.build/config
 export default defineConfig({
@@ -46,15 +48,17 @@ export default defineConfig({
 	integrations: [
 		sitemap({
 			// /ruinthefun spoils every easter egg: reachable, but not advertised.
-			filter: (page) => !page.includes('/404') && !page.includes('/ruinthefun'),
+			// The English pages are built under /en but served by noamroger.dev,
+			// which has its own sitemap (src/pages/en/sitemap-index.xml.ts).
+			filter: (page) => !page.includes('/404') && !page.includes('/ruinthefun') && !new URL(page).pathname.startsWith('/en/'),
 			// Declare the alternates by hand, mirroring the <link rel="alternate">
-			// tags in the page head. French has no prefix, English lives under /en.
+			// tags in the page head.
 			serialize(item) {
-				const french = new URL(item.url).pathname.replace(/^\/en(?=\/|$)/, '') || '/';
+				const path = new URL(item.url).pathname;
 				item.links = [
-					{ lang: 'fr', url: site + french },
-					{ lang: 'en', url: `${site}/en${french}` },
-					{ lang: 'x-default', url: site + french },
+					{ lang: 'fr', url: site + path },
+					{ lang: 'en', url: englishSite + path },
+					{ lang: 'x-default', url: site + path },
 				];
 				return item;
 			},

@@ -123,7 +123,7 @@ const fr: EggPage = {
 			file: 'curl.md',
 			title: 'Depuis un terminal',
 			rows: [
-				['curl https://www.noamroger.fr', 'Mon profil en texte coloré au lieu du HTML. /en pour l’anglais.'],
+				['curl https://www.noamroger.fr', 'Mon profil en texte coloré au lieu du HTML. noamroger.dev pour l’anglais.'],
 				['curl -sI https://www.noamroger.fr', 'Les en-têtes X-Hiring et X-Flag.'],
 				['curl https://www.noamroger.fr/healthz', 'ok'],
 				['curl https://www.noamroger.fr/version', 'Le commit en ligne et ses dates, en JSON.'],
@@ -170,7 +170,7 @@ const fr: EggPage = {
 
 const en: EggPage = {
 	metaTitle: 'List of easter eggs | Noam Roger',
-	metaDescription: 'Every easter egg of noamroger.fr, for those who do not like to play.',
+	metaDescription: 'Every easter egg of noamroger.dev, for those who do not like to play.',
 	eyebrow: 'ruinthefun',
 	heading: 'List of easter eggs for those who do not like to play.',
 	subtitle: 'Everything hidden on this site, flags included. Last warning: finding them yourself is more fun.',
@@ -253,7 +253,7 @@ const en: EggPage = {
 			file: 'details.md',
 			title: 'Details in the pages',
 			rows: [
-				['Tab in the background', 'The title becomes “[1]+ Stopped noamroger.fr”.'],
+				['Tab in the background', 'The title becomes “[1]+ Stopped noamroger.dev”.'],
 				['Footer', 'The SHA of the commit that is live, linked to the commit on GitHub.'],
 				['View source', 'A comment at the top of every page, with a flag.'],
 				['DevTools console', 'A greeting, then noam.help(), noam.contact(), noam.stack(), noam.source() and noam.hunt().'],
@@ -266,12 +266,12 @@ const en: EggPage = {
 			file: 'curl.md',
 			title: 'From a terminal',
 			rows: [
-				['curl https://www.noamroger.fr/en', 'My profile as coloured text instead of HTML.'],
-				['curl -sI https://www.noamroger.fr', 'The X-Hiring and X-Flag headers.'],
-				['curl https://www.noamroger.fr/healthz', 'ok'],
-				['curl https://www.noamroger.fr/version', 'The commit that is live and its dates, as JSON.'],
-				['curl https://www.noamroger.fr/metrics', 'Metrics in the Prometheus format.'],
-				['curl -i https://www.noamroger.fr/coffee', '418 I’m a teapot, with a flag.'],
+				['curl https://noamroger.dev', 'My profile as coloured text instead of HTML.'],
+				['curl -sI https://noamroger.dev', 'The X-Hiring and X-Flag headers.'],
+				['curl https://noamroger.dev/healthz', 'ok'],
+				['curl https://noamroger.dev/version', 'The commit that is live and its dates, as JSON.'],
+				['curl https://noamroger.dev/metrics', 'Metrics in the Prometheus format.'],
+				['curl -i https://noamroger.dev/coffee', '418 I’m a teapot, with a flag.'],
 				['/robots.txt', 'Points to /humans.txt.'],
 				['/humans.txt', 'Announces the flag hunt and gives the first hint.'],
 				['/.well-known/security.txt', 'How to report a security issue.'],
@@ -294,7 +294,7 @@ const en: EggPage = {
 			title: 'The reward: a root shell',
 			intro: 'Once the three flags are found, the terminal prints a “Certified curious” certificate and sudo starts working.',
 			rows: [
-				['sudo -i, sudo su, su', 'Opens a root shell: the prompt becomes root@noamroger.fr:~#.'],
+				['sudo -i, sudo su, su', 'Opens a root shell: the prompt becomes root@noamroger.dev:~#.'],
 				['sudo <command>', 'Runs a single command as root.'],
 				['ls', 'Three more files: certificate.txt, cv.txt and private-key.pem.'],
 				['cat private-key.pem', 'An RSA private key whose content is 4.'],

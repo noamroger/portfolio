@@ -6,6 +6,11 @@
 // the requests the Worker sees do not match what a visitor actually opens.
 // src/scripts/stats.ts posts one line per page really displayed instead.
 //
+// Both domains report here. The English pages keep the /en prefix of the
+// build in the recorded path (noamroger.dev/about is stored as /en/about), so
+// the two languages stay apart and the views from before the split still add
+// up.
+//
 // What is kept for a view: path, time, country (from Cloudflare), kind of
 // device, host name of the referring site, and a visitor hash.
 // What is not: the IP address and the user agent. Both only go through the
@@ -15,7 +20,11 @@
 //
 // Nothing is stored in the browser of a visitor: no cookie, no localStorage.
 
+import { ENGLISH_PREFIX, isOwnDomain } from './hosts.js';
+
 export const STATS_PATH = '/api/hit';
+/** Opening this address in a browser stops counting it: see handleIgnore. */
+export const IGNORE_PATH = '/api/hit/ignore';
 export const RETENTION_DAYS = 90;
 /** Set on the owner's browsers by the dashboard login: their views are skipped. */
 export const IGNORE_COOKIE = 'stats_ignore';
@@ -72,7 +81,7 @@ function referrerOf(value) {
 		if (!['http:', 'https:', 'android-app:'].includes(protocol)) return null;
 		const host = hostname.toLowerCase().replace(/^www\./, '');
 		if (!/^[a-z0-9.-]{1,100}$/.test(host)) return null;
-		if (host === 'noamroger.fr' || host.endsWith('.noamroger.fr')) return null;
+		if (isOwnDomain(host)) return null;
 		return host;
 	} catch {
 		return null;
@@ -93,7 +102,7 @@ async function record(request, env, url, hit, path) {
 
 	// The path comes from the browser: ask the assets whether it exists rather
 	// than trusting it.
-	const asset = await env.ASSETS.fetch(new Request(new URL(hit.p, url), { method: 'HEAD' }));
+	const asset = await env.ASSETS.fetch(new Request(new URL(path, url), { method: 'HEAD' }));
 	const notFound = asset.status === 404 ? 1 : 0;
 	const entry = hit.e ? 1 : 0;
 
@@ -115,15 +124,18 @@ async function record(request, env, url, hit, path) {
 	]);
 }
 
-/** POST /api/hit: always answers 204, the view is written after the answer. */
-export async function handleHit(request, env, ctx, url) {
+/**
+ * POST /api/hit: always answers 204, the view is written after the answer.
+ * `site` is the one of hosts.js: null on a preview, which does not count.
+ */
+export async function handleHit(request, env, ctx, url, site) {
 	if (request.method !== 'POST') return new Response(null, { status: 405, headers: { Allow: 'POST' } });
 	const done = new Response(null, { status: 204, headers: { 'Cache-Control': 'no-store' } });
 
-	if (!env.STATS) return done;
+	if (!env.STATS || !site) return done;
 	// Browsers say where a request comes from: only the pages of the site count.
-	const site = request.headers.get('Sec-Fetch-Site');
-	if (site && site !== 'same-origin') return done;
+	const from = request.headers.get('Sec-Fetch-Site');
+	if (from && from !== 'same-origin') return done;
 	if (Number(request.headers.get('Content-Length') ?? 0) > 2048) return done;
 	if (hasCookie(request, IGNORE_COOKIE)) return done;
 	const agent = request.headers.get('User-Agent') ?? '';
@@ -136,11 +148,29 @@ export async function handleHit(request, env, ctx, url) {
 	} catch {
 		return done;
 	}
-	const path = pathOf(hit?.p);
-	if (!path) return done;
+	const shown = pathOf(hit?.p);
+	if (!shown) return done;
+	// Stored as the build names it: /en/about for noamroger.dev/about.
+	const path = site.locale === 'en' ? ENGLISH_PREFIX + (shown === '/' ? '' : shown) : shown;
 
 	ctx.waitUntil(record(request, env, url, hit, path).catch((error) => console.error('stats: view not recorded', error)));
 	return done;
+}
+
+/**
+ * GET /api/hit/ignore: the owner's way out of the count on a domain the
+ * dashboard cookie does not reach (it is set for noamroger.fr only). Anyone
+ * may use it: all it does is leave the visits of that browser out.
+ */
+export function handleIgnore(request) {
+	if (request.method !== 'GET') return new Response(null, { status: 405, headers: { Allow: 'GET' } });
+	return new Response('This browser is no longer counted in the visit statistics.\n', {
+		headers: {
+			'Content-Type': 'text/plain; charset=utf-8',
+			'Cache-Control': 'no-store',
+			'Set-Cookie': `${IGNORE_COOKIE}=1; Path=/; Max-Age=31536000; Secure; HttpOnly; SameSite=Lax`,
+		},
+	});
 }
 
 /** Cron (wrangler.jsonc): nothing older than RETENTION_DAYS survives. */

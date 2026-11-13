@@ -21,6 +21,8 @@
 /
   Cache-Control: public, max-age=60, stale-while-revalidate=86400
 
+# The English pages: built under /en, served at the root of noamroger.dev
+# (worker/site.js). These rules follow the path of the file, not of the address.
 /en*
   Cache-Control: public, max-age=60, stale-while-revalidate=86400
 

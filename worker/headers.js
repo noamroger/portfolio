@@ -8,15 +8,25 @@
 const HSTS = 'max-age=31536000';
 
 /** For whoever runs curl -I. Keep in sync with public/_headers. */
-const EXTRA_HEADERS = {
-	'X-Hiring': 'Work-study wanted, DevOps / Cloud, September 2027 - contact@noamroger.fr',
-	'X-Flag': 'flag{curl_dash_i_is_a_reflex}',
-};
+const hiring = (site) => `Work-study wanted, DevOps / Cloud, September 2027 - ${site.email}`;
+const FLAG = 'flag{curl_dash_i_is_a_reflex}';
 
-export function withSecurityHeaders(response) {
+/** `site` (hosts.js) gives the contact address of the domain that answers. */
+export function withSecurityHeaders(response, site) {
 	const secured = new Response(response.body, response);
 	secured.headers.set('Strict-Transport-Security', HSTS);
 	secured.headers.set('X-Content-Type-Options', 'nosniff');
-	for (const [name, value] of Object.entries(EXTRA_HEADERS)) secured.headers.set(name, value);
+	secured.headers.set('X-Hiring', hiring(site));
+	secured.headers.set('X-Flag', FLAG);
 	return secured;
+}
+
+/**
+ * public/_headers is one file for both domains and carries the French
+ * address: an asset served on another domain gets its own.
+ */
+export function withSiteHeaders(response, site) {
+	const headers = new Headers(response.headers);
+	headers.set('X-Hiring', hiring(site));
+	return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }

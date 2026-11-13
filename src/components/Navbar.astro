@@ -1,14 +1,14 @@
 ---
-import { getI18n, locales, localizedPath, stripLocale } from '../i18n';
+import { getI18n, locales, stripLocale, switchHref } from '../i18n';
 
 const { locale, t, path } = getI18n(Astro.url.pathname);
 const pathname = stripLocale(Astro.url.pathname).replace(/\/$/, "");
 const currentPage = pathname === "" ? "/" : pathname;
 
-// The other language lives at the same path, under /en for English. From the
-// 404 page there is nothing to match over there, so point at the home page.
+// The other language lives at the same path on its own domain. From the 404
+// page there is nothing to match over there, so point at the home page.
 const otherLocale = locales.find((code) => code !== locale)!;
-const otherHref = localizedPath(currentPage === '/404' ? '/' : Astro.url.pathname, otherLocale);
+const otherHref = switchHref(currentPage === '/404' ? '/' : Astro.url.pathname, otherLocale);
 
 const links = [
 	{ href: '/', key: '/', label: t.nav.home },

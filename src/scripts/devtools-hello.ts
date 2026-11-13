@@ -22,7 +22,7 @@ const en: typeof fr = {
 	intro: 'You will not find secrets or stray tokens here, but the reflex of opening the console is nice to see. Enjoy the visit!',
 	next: 'What next: ',
 	help: ['noam.contact()   how to reach me', 'noam.stack()     what I use', 'noam.source()    the code of this site', 'noam.hunt()      three flags are hidden on the site'],
-	contact: "contact@noamroger.fr - work-study, DevOps / Cloud Master's, September 2027.",
+	contact: "contact@noamroger.dev - work-study, DevOps / Cloud Master's, September 2027.",
 	stack: { Backend: 'Node.js, TypeScript, C', DevOps: 'Docker, Linux, CI/CD', Learning: 'Kubernetes', 'This site': 'Astro, Cloudflare Workers' },
 	hunt: 'It starts in /humans.txt. Flags are checked in the home page terminal: unlock flag{...}',
 };
@@ -58,7 +58,7 @@ const noam = {
 	},
 	contact() {
 		say(t().contact);
-		return 'contact@noamroger.fr';
+		return t().contact.split(' ')[0];
 	},
 	stack() {
 		console.table(t().stack);

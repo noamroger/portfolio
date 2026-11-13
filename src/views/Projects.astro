@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import VideoPlayer from '../components/VideoPlayer.astro';
 import { Image } from 'astro:assets';
-import { getI18n, siteOrigin } from '../i18n';
+import { getI18n, publicUrl } from '../i18n';
 import { projects as projectLinks, type ProjectKey } from '../data/projects';
 
 import californyan from '../assets/projects/californyan.webp';
@@ -16,7 +16,7 @@ import webserver from '../assets/projects/webserver.webp';
 import codenamesDemo from '../assets/projects/codenames-demo.mp4';
 import codenamesDemoPoster from '../assets/projects/codenames-demo-poster.webp';
 
-const { t } = getI18n(Astro.url.pathname);
+const { t, locale, origin } = getI18n(Astro.url.pathname);
 
 // Cards are 1 column below ~820px, 2 columns above, capped at ~552px each.
 const cardSizes = '(min-width: 1200px) 552px, (min-width: 820px) 50vw, 100vw';
@@ -47,14 +47,13 @@ const projects = projectLinks.map((project) => ({
 	video: videos[project.key],
 	self: project.key === selfKey,
 }));
-const origin = siteOrigin;
 
 // Cards with a public repository map onto SoftwareSourceCode; the others
 // (the homelab) are plain CreativeWork.
 const projectList = [
 	{
 		'@type': 'ItemList',
-		'@id': `${origin}${Astro.url.pathname}#list`,
+		'@id': `${publicUrl(Astro.url.pathname, locale)}#list`,
 		numberOfItems: projects.length,
 		itemListElement: projects.map((project, i) => ({
 			'@type': 'ListItem',

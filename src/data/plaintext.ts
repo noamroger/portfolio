@@ -1,11 +1,11 @@
 import { commitDate } from './build';
-import { contactEmail, siteOrigin, type Locale } from '../i18n';
+import { contactEmails, siteOrigins, type Locale } from '../i18n';
 
 /**
- * The plain-text files of the site, in both languages. French is served at
- * the usual address (/humans.txt, /robots.txt, /security.txt) and English
- * under /en/; the Worker picks one from the Accept-Language header of the
- * visitor (worker/ops.js), since these addresses cannot carry a language.
+ * The plain-text files of the site, in both languages. Both are served at
+ * the usual address (/humans.txt, /robots.txt, /security.txt): French on
+ * noamroger.fr, English on noamroger.dev, where the Worker answers with the
+ * twin built under /en/.
  */
 
 /** Date of the commit being built, as YYYY/MM/DD (the humanstxt.org format). */
@@ -20,8 +20,8 @@ export function humans(locale: Locale): string {
 	if (locale === 'en') {
 		return `/* TEAM */
 Developer: Noam Roger
-Site: https://noamroger.fr
-Contact: ${contactEmail}
+Site: https://noamroger.dev
+Contact: ${contactEmails[locale]}
 Role: Third-year computer science student / Looking for a work-study position, DevOps & Cloud Master's (September 2027)
 Location: Le Mans, France
 
@@ -31,7 +31,7 @@ To everyone curious enough to read plaintext files in /
 /* HUNT */
 Three flags are hidden around this site, each one a reflex away.
 They look like flag{...} and are checked in the home page terminal: unlock flag{...}
-First hint: curl -sI https://www.noamroger.fr
+First hint: curl -sI https://noamroger.dev
 Lost? Type 'flags' in that terminal.
 
 /* PRIVACY */
@@ -50,7 +50,7 @@ Reverse Proxy & CDN: Cloudflare
 	return `/* ÉQUIPE */
 Développeur : Noam Roger
 Site : https://noamroger.fr
-Contact : ${contactEmail}
+Contact : ${contactEmails[locale]}
 Rôle : Étudiant L3 Informatique / Recherche alternance Master DevOps & Cloud (Rentrée 2027)
 Lieu : Le Mans, France
 
@@ -84,7 +84,7 @@ export function robots(locale: Locale): string {
 User-agent: *
 Allow: /
 
-Sitemap: ${siteOrigin}/sitemap-index.xml
+Sitemap: ${siteOrigins[locale]}/sitemap-index.xml
 `;
 }
 
@@ -110,10 +110,10 @@ export function security(locale: Locale): string {
 
 	return `${head}
 
-Contact: mailto:${contactEmail}
+Contact: mailto:${contactEmails[locale]}
 Expires: ${expires.toISOString()}
 Preferred-Languages: fr, en
-Canonical: ${siteOrigin}/.well-known/security.txt
+Canonical: ${siteOrigins[locale]}/.well-known/security.txt
 
 ${scope}
 `;

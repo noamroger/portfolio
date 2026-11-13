@@ -10,7 +10,7 @@ import WindowBar from '../components/WindowBar.astro';
 import { projects } from '../data/projects';
 import { commitDate, shortCommit } from '../data/build';
 
-const { t, path } = getI18n(Astro.url.pathname);
+const { t, path, domain } = getI18n(Astro.url.pathname);
 
 // The three cards at the top of the Projects page, so the home page carries
 // real copy and links through to the full list.
@@ -65,7 +65,7 @@ const featured = projects.slice(0, 3).map((project) => ({
 						</p>
 						<div class="terminal-output" data-terminal-output aria-live="polite"></div>
 						<form class="terminal-cmd terminal-last" style="--i: 11" data-terminal-form>
-							<label class="t-prompt" for="terminal-input">guest@noamroger.fr:~$</label>
+							<label class="t-prompt" for="terminal-input">guest@{domain}:~$</label>
 							<span class="terminal-field">
 								<input
 									id="terminal-input"

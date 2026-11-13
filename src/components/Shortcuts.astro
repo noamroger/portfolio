@@ -32,6 +32,7 @@ const { t, path } = getI18n(Astro.url.pathname);
 
 <script>
 	import { navigate } from 'astro:transitions/client';
+	import { siteDomains } from '../i18n';
 	import { SHORTCUTS_KEY } from '../i18n/preference';
 
 	/** Turned off by the visitor (`shortcuts off` in the terminal). */
@@ -116,7 +117,7 @@ const { t, path } = getI18n(Astro.url.pathname);
 	document.addEventListener('visibilitychange', () => {
 		if (document.hidden) {
 			title = document.title;
-			document.title = '[1]+  Stopped   noamroger.fr';
+			document.title = `[1]+  Stopped   ${siteDomains[document.documentElement.lang === 'en' ? 'en' : 'fr']}`;
 		} else if (title) {
 			document.title = title;
 			title = '';

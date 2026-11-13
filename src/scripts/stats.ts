@@ -6,6 +6,8 @@
  * No cookie, nothing written in the browser, and nothing sent but the path
  * and, on arrival, the address of the site the visitor comes from.
  */
+import { siteOrigins } from '../i18n';
+
 let arrived = false;
 
 function report() {
@@ -15,7 +17,9 @@ function report() {
 	// The first page of a visit: a real navigation (not a reload, not the back
 	// button) that does not come from the site itself.
 	const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
-	const external = !document.referrer.startsWith(location.origin);
+	// Switching language changes domain: still the same visit.
+	const own = [location.origin, ...Object.values(siteOrigins)];
+	const external = !own.some((origin) => document.referrer.startsWith(`${origin}/`));
 	const entry = first && external && (navigation?.type ?? 'navigate') === 'navigate';
 
 	fetch('/api/hit', {

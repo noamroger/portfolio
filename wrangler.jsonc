@@ -13,12 +13,16 @@
 		"run_worker_first": true
 	},
 	// Wrangler attaches these hostnames to the Worker on each deploy and
-	// creates the matching DNS records. Deploying fails while noamroger.fr or
-	// www still has another A/AAAA/CNAME record (for example the old Netlify
-	// ones): delete those first.
+	// creates the matching DNS records. Both zones must be in this Cloudflare
+	// account, with no other A/AAAA/CNAME record left on these names, and no
+	// redirect rule on the zone: such a rule runs before the Worker.
+	// French is served on www.noamroger.fr, English on noamroger.dev: the
+	// Worker picks the language from the host name (worker/hosts.js).
 	"routes": [
 		{ "pattern": "noamroger.fr", "custom_domain": true },
 		{ "pattern": "www.noamroger.fr", "custom_domain": true },
+		{ "pattern": "noamroger.dev", "custom_domain": true },
+		{ "pattern": "www.noamroger.dev", "custom_domain": true },
 		// The private dashboard of the visit statistics (worker/admin.js).
 		{ "pattern": "admin.noamroger.fr", "custom_domain": true }
 	],

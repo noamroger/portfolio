@@ -5,9 +5,10 @@ https://www.noamroger.fr.
 
 ## Bilinguisme
 
-Le site vit sur un seul domaine. Le français est à la racine et l'anglais sous
-`/en` : `/about/` et `/en/about/` sont la même page, générée au build dans les
-deux langues. Les deux versions restent donc indexables.
+Chaque langue a son domaine : le français sur `www.noamroger.fr`, l'anglais sur
+`noamroger.dev`, aux mêmes chemins. Les pages sont générées au build dans les
+deux langues (l'anglais dans `dist/en/`) et servies par le même Worker, voir
+« Deux domaines ».
 
 - Tous les textes vivent dans `src/i18n/en.ts` et `src/i18n/fr.ts`.
   `en.ts` fait foi : son type `Translations` contraint `fr.ts`, donc oublier une
@@ -22,7 +23,8 @@ deux langues. Les deux versions restent donc indexables.
   `localStorage["lang"]`. Un script placé en tête de `Layout.astro` applique ce
   choix avant l'affichage, y compris à la visite suivante. Sans choix enregistré,
   la langue suit simplement l'URL.
-- `contact@noamroger.fr` est l'adresse de contact dans les deux langues.
+- L'adresse de contact suit le domaine : `contact@noamroger.fr` en français,
+  `contact@noamroger.dev` en anglais.
 - `Layout.astro` pose `<html lang>`, la `<meta name="description">`, le
   `<link rel="canonical">` de la page et les `hreflang` croisés. La page 404 est
   en `noindex` et sans canonical.
@@ -103,7 +105,8 @@ npm run dev
 ```
 
 Le français est sur `http://localhost:4321/`, l'anglais sur
-`http://localhost:4321/en/`.
+`http://localhost:4321/en/` (en développement seulement : en production
+l'anglais a son propre domaine, voir « Deux domaines »).
 
 ## Déploiement Cloudflare Workers
 
@@ -114,13 +117,14 @@ Astro génère `dist/`, que Cloudflare sert directement.
   Builds. Chaque push sur `main` lance `npm run build` puis
   `npx wrangler deploy`. Les autres branches produisent une version de preview
   sur `*.workers.dev` sans toucher à la production.
-- **Domaines** : `routes` dans `wrangler.jsonc` rattache `noamroger.fr` et
-  `www.noamroger.fr` au Worker et crée leurs enregistrements DNS. Le déploiement
-  échoue si un de ces noms a encore un autre enregistrement A, AAAA ou CNAME.
-- **`worker/index.js`** redirige `noamroger.fr` vers `www.noamroger.fr` (301)
-  et sert la 404 anglaise sous `/en/`, puisque Astro l'émet en
-  `/en/404/index.html` et que la gestion des 404 des assets ne cherche que des
-  fichiers `404.html`.
+- **Domaines** : `routes` dans `wrangler.jsonc` rattache `noamroger.fr`,
+  `www.noamroger.fr`, `noamroger.dev` et `www.noamroger.dev` au Worker et crée
+  leurs enregistrements DNS. Les deux zones doivent être dans le compte
+  Cloudflare, sans règle de redirection (elle passerait avant le Worker).
+- **`worker/`** : `index.js` aiguille les requêtes, `hosts.js` connaît les
+  domaines et leurs redirections, `site.js` sert le build, `headers.js` pose les
+  en-têtes des réponses fabriquées par le Worker, `ops.js` répond aux visiteurs
+  en ligne de commande, `stats.js` et `admin.js` gèrent les statistiques.
 - **En-têtes** : `public/_headers`, voir « SEO et performance ».
 
 Déployer à la main ou tester le Worker en local :
@@ -130,8 +134,27 @@ npm run deploy          # build + wrangler deploy (demande un login Cloudflare)
 npm run preview:worker  # build + wrangler dev
 ```
 
-`noamroger.dev` est destiné à rediriger vers `noamroger.fr`, en envoyant chaque
-chemin vers sa version sous `/en`.
+### Deux domaines
+
+Un seul Worker et un seul build servent les deux langues : le français sur
+`https://www.noamroger.fr`, l'anglais sur `https://noamroger.dev`. Le Worker
+choisit selon le nom d'hôte (`worker/hosts.js`).
+
+- Astro émet toujours les pages anglaises sous `dist/en/`. Sur `noamroger.dev`,
+  `worker/site.js` sert ce dossier à la racine (`/about/` lit `dist/en/about/`)
+  et retombe sur les fichiers communs (`/_astro/`, images, `/fonts.json`).
+  `/en` n'apparaît donc dans aucune adresse ni aucun lien.
+- Les anciennes adresses `noamroger.fr/en/…` sont redirigées en 301 vers
+  `noamroger.dev/…`, tout comme `noamroger.fr` vers `www` et
+  `www.noamroger.dev` vers `noamroger.dev`, en un seul saut.
+- Origines, domaines et adresses de contact par langue sont dans
+  `src/i18n/index.ts` (`siteOrigins`, `contactEmails`), à garder alignés avec
+  `worker/hosts.js`. Canonical, hreflang, sélecteur de langue, `robots.txt`,
+  `security.txt`, `llms.txt` et sitemap en découlent. Le sitemap anglais est
+  écrit par `src/pages/en/sitemap-index.xml.ts`.
+- Sur un autre hôte (preview `*.workers.dev`), l'anglais reste sous `/en/`, mais
+  ses liens internes n'ont pas de préfixe : pour le parcourir en local, lancer
+  `npx wrangler dev --host noamroger.dev`.
 
 ## Statistiques GitHub
 
@@ -162,10 +185,15 @@ navigateur des visiteurs.
   sel est aléatoire, change chaque jour et est supprimé à la fin de la journée :
   un visiteur n'est pas reconnu d'un jour à l'autre, et une empreinte passée ne
   peut plus être rapprochée d'une adresse.
+- **Deux domaines** : les vues de `noamroger.dev` sont enregistrées avec le
+  préfixe `/en` (`noamroger.dev/about` devient `/en/about`), ce qui sépare les
+  langues et prolonge l'historique d'avant le changement de domaine.
 - **Exclusions** : robots connus (user agent), requêtes qui ne viennent pas des
   pages du site, previews `*.workers.dev`, et les navigateurs où l'on s'est
   connecté au tableau de bord (cookie `stats_ignore`, posé à la connexion, le
-  seul cookie du système et il ne concerne que l'administrateur).
+  seul cookie du système et il ne concerne que l'administrateur). Ce cookie ne
+  vaut que pour `noamroger.fr` : ouvrir une fois
+  `https://noamroger.dev/api/hit/ignore` le pose aussi pour le site anglais.
 - **Rétention** : 90 jours. Un cron (`triggers` dans `wrangler.jsonc`) purge
   chaque nuit ce qui est plus ancien.
 - **Tableau de bord** : `worker/admin.js`, sur `https://admin.noamroger.fr`,
@@ -180,6 +208,7 @@ En local :
 
 ```bash
 npx wrangler d1 migrations apply portfolio-stats --local
-npx wrangler dev --host www.noamroger.fr                                  # le site
+npx wrangler dev --host www.noamroger.fr                                  # le site français
+npx wrangler dev --host noamroger.dev --port 8788                         # le site anglais
 npx wrangler dev --host admin.noamroger.fr --var ADMIN_PASSWORD:test      # le tableau de bord
 ```

@@ -2,7 +2,7 @@
 import { ClientRouter } from 'astro:transitions';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/jetbrains-mono';
-import { contactEmail, getI18n, locales, localizedPath, siteOrigin, socialProfiles, stripLocale, techStack } from '../i18n';
+import { getI18n, locales, publicUrl, socialProfiles, stripLocale, techStack } from '../i18n';
 import { THEME_KEY } from '../i18n/preference';
 import Shortcuts from '../components/Shortcuts.astro';
 import '../styles/snow.css';
@@ -17,7 +17,7 @@ interface Props {
 	schema?: Record<string, unknown>[];
 }
 
-const { t, locale } = getI18n(Astro.url.pathname);
+const { t, locale, origin, contactEmail } = getI18n(Astro.url.pathname);
 
 const {
 	title,
@@ -28,8 +28,9 @@ const {
 } = Astro.props;
 
 const path = Astro.url.pathname;
-const origin = siteOrigin;
-const canonical = origin + path;
+// The address the visitor sees: English pages are built under /en but served
+// at the root of their own domain.
+const canonical = publicUrl(path, locale);
 const fullTitle = title;
 const ogImage = `${origin}/og-image.png`;
 
@@ -60,7 +61,7 @@ const breadcrumb = crumbLabel
 			'@type': 'BreadcrumbList',
 			'@id': `${canonical}#breadcrumb`,
 			itemListElement: [
-				{ '@type': 'ListItem', position: 1, name: t.nav.home, item: origin + localizedPath('/', locale) },
+				{ '@type': 'ListItem', position: 1, name: t.nav.home, item: `${origin}/` },
 				{ '@type': 'ListItem', position: 2, name: crumbLabel, item: canonical },
 			],
 		}
@@ -207,9 +208,9 @@ const sourceNote =
 				<link rel="canonical" href={canonical} />
 				<link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
 				{locales.map((code) => (
-					<link rel="alternate" hreflang={code} href={origin + localizedPath(path, code)} />
+					<link rel="alternate" hreflang={code} href={publicUrl(path, code)} />
 				))}
-				<link rel="alternate" hreflang="x-default" href={origin + localizedPath(path, 'fr')} />
+				<link rel="alternate" hreflang="x-default" href={publicUrl(path, 'fr')} />
 			</Fragment>
 		)}
 

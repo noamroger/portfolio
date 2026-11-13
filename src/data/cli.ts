@@ -1,9 +1,10 @@
 import { projects } from './projects';
-import { contactEmail, getI18n, siteOrigin, stackGroups, type Locale } from '../i18n';
+import { contactEmails, getI18n, siteOrigins, stackGroups, type Locale } from '../i18n';
 
 /**
  * The home page as plain text with ANSI colours: what `curl noamroger.fr`
- * prints (the Worker swaps it in for command-line clients, worker/ops.js).
+ * prints, or `curl noamroger.dev` in English (the Worker swaps it in for
+ * command-line clients, worker/ops.js).
  * Built from the same dictionaries as the pages, so it cannot drift.
  */
 const ESC = '\x1b[';
@@ -34,7 +35,8 @@ function wrap(text: string, indent = ''): string {
 
 export function cliPage(locale: Locale): string {
 	const { t } = getI18n(locale === 'en' ? '/en/' : '/');
-	const other = locale === 'en' ? `${siteOrigin}/` : `${siteOrigin}/en/`;
+	const origin = siteOrigins[locale];
+	const other = `${siteOrigins[locale === 'en' ? 'fr' : 'en']}/`;
 	const labelWidth = Math.max(...t.home.profile.rows.map((row) => row.label.length));
 	const groupWidth = Math.max(...stackGroups.map((group) => t.stack.groups[group.key].length));
 
@@ -63,13 +65,13 @@ export function cliPage(locale: Locale): string {
 		}),
 		'',
 		bold(t.nav.contact),
-		`  ${contactEmail}`,
+		`  ${contactEmails[locale]}`,
 		'  https://github.com/noamroger',
 		'  https://linkedin.com/in/noamroger',
 		'',
 		dim(`# ${locale === 'en' ? 'En français' : 'In English'}: curl ${other}`),
-		dim(`# ${locale === 'en' ? 'The HTML page' : 'La page HTML'}: curl -H 'Accept: text/html' ${siteOrigin}${locale === 'en' ? '/en/' : '/'}`),
-		dim(`# ${locale === 'en' ? 'Still curious?' : 'Encore curieux ?'} curl ${siteOrigin}/humans.txt`),
+		dim(`# ${locale === 'en' ? 'The HTML page' : 'La page HTML'}: curl -H 'Accept: text/html' ${origin}/`),
+		dim(`# ${locale === 'en' ? 'Still curious?' : 'Encore curieux ?'} curl ${origin}/humans.txt`),
 		'',
 		'',
 	].join('\n');

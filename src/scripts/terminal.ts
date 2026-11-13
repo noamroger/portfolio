@@ -14,11 +14,13 @@
  * every astro:page-load.
  */
 import { navigate } from 'astro:transitions/client';
+import { linkPath, siteDomains } from '../i18n';
 import { COFFEE_KEY, FLAGS_DONE_KEY, FLAGS_KEY, FLAGS_START_KEY, LANGUAGE_KEY, ROOT_KEY, SHORTCUTS_KEY, SNOW_KEY, THEME_KEY } from '../i18n/preference';
 import { setSnow } from './snow';
 
-const PROMPT = 'guest@noamroger.fr:~$';
-const ROOT_PROMPT = 'root@noamroger.fr:~#';
+// The prompt carries the domain of the page: noamroger.fr or noamroger.dev.
+const domain = () => siteDomains[isEnglish() ? 'en' : 'fr'];
+const promptText = () => (isRoot() ? `root@${domain()}:~#` : `guest@${domain()}:~$`);
 
 const HELP = `Available commands:
   kubectl get pods        Inspect running cluster pods
@@ -396,8 +398,10 @@ async function cat(file: string | undefined, elevated: boolean): Promise<string>
 	if (DIRECTORIES.includes(name)) return `cat: ${name}/: Is a directory (try 'cd ${name}')`;
 	if (!FILES.includes(name)) return `cat: ${file}: No such file or directory`;
 	try {
-		// The English twin of the file: this terminal only speaks English.
-		const response = await fetch(`/en/${name}`);
+		// The English version of the file: this terminal only speaks English.
+		// On the French domain the Worker hands it over with ?lang=en
+		// (worker/ops.js); `astro dev` has no Worker and reads the built twin.
+		const response = await fetch(import.meta.env.DEV ? `/en/${name}` : `/${name}?lang=en`);
 		if (!response.ok) throw new Error(String(response.status));
 		return (await response.text()).trimEnd();
 	} catch {
@@ -457,8 +461,8 @@ interface Shell {
 	link(href: string): void;
 }
 
-const isEnglish = () => /^\/en(\/|$)/.test(location.pathname);
-const localized = (path: string) => (isEnglish() ? `/en${path}` : path);
+const isEnglish = () => document.documentElement.lang === 'en';
+const localized = (path: string) => linkPath(path, isEnglish() ? 'en' : 'fr');
 
 /** Returns the text to print, or null when the buffer must be cleared. */
 async function run(raw: string, shell: Shell, elevated = isRoot()): Promise<string | null> {
@@ -548,7 +552,7 @@ async function run(raw: string, shell: Shell, elevated = isRoot()): Promise<stri
 		case 'date':
 			return new Date().toString();
 		case 'uname':
-			return args.length ? 'Linux noamroger.fr 6.12.0 x86_64 GNU/Linux (allegedly)' : 'Linux';
+			return args.length ? `Linux ${domain()} 6.12.0 x86_64 GNU/Linux (allegedly)` : 'Linux';
 		case 'history':
 			return history.map((entry, i) => `${String(i + 1).padStart(4)}  ${entry}`).join('\n');
 		case 'man':
@@ -567,7 +571,8 @@ async function run(raw: string, shell: Shell, elevated = isRoot()): Promise<stri
 			const wanted = args[0];
 			if (wanted !== 'fr' && wanted !== 'en') return 'usage: lang <fr|en>';
 			if ((isEnglish() ? 'en' : 'fr') === wanted) return `Already in ${wanted === 'en' ? 'English' : 'French'}.`;
-			shell.after(() => navigate(wanted === 'en' ? '/en/' : '/'));
+			// Each language has its own domain: go where the navbar switch goes.
+			shell.after(() => navigate(document.querySelector<HTMLAnchorElement>('.lang-switch')?.href ?? '/'));
 			return `Switching to ${wanted === 'en' ? 'English' : 'French'} ...`;
 		}
 		case 'shortcuts': {
@@ -591,7 +596,7 @@ async function run(raw: string, shell: Shell, elevated = isRoot()): Promise<stri
 
 		case 'neofetch':
 			return [
-				'guest@noamroger.fr',
+				`guest@${domain()}`,
 				'------------------',
 				'OS:       Astro (static build)',
 				'Host:     Cloudflare Workers',
@@ -711,7 +716,7 @@ function initTerminal(): void {
 
 	const promptLabel = form.querySelector<HTMLElement>('label');
 	const syncPrompt = () => {
-		if (promptLabel) promptLabel.textContent = isRoot() ? ROOT_PROMPT : PROMPT;
+		if (promptLabel) promptLabel.textContent = promptText();
 	};
 	syncPrompt();
 
@@ -719,7 +724,7 @@ function initTerminal(): void {
 		const line = print('terminal-echo', '');
 		const prompt = document.createElement('span');
 		prompt.className = 't-prompt';
-		prompt.textContent = isRoot() ? ROOT_PROMPT : PROMPT;
+		prompt.textContent = promptText();
 		line.append(prompt, ` ${text}`);
 	};
 
