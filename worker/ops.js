@@ -10,12 +10,6 @@
 // - `curl noamroger.fr`: command-line clients get the home page as plain text
 //   (src/data/cli.ts) instead of HTML they would have to read through.
 
-/** Sent with every response. Keep in sync with public/_headers. */
-export const EXTRA_HEADERS = {
-	'X-Hiring': 'Work-study wanted, DevOps / Cloud, September 2027 - contact@noamroger.fr',
-	'X-Flag': 'flag{curl_dash_i_is_a_reflex}',
-};
-
 const CLI_AGENT = /^(curl|wget|httpie)\//i;
 const TEXT = { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' };
 

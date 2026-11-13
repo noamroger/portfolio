@@ -39,8 +39,8 @@
 # Videos are same-origin files (media-src). form.noam.ovh receives the contact form. challenges.cloudflare.com serves the
 # Turnstile script and its iframe on the contact page.
 # X-Hiring and X-Flag are for whoever runs curl -I: keep in sync with
-# worker/ops.js.
-# HSTS: keep in sync with worker/index.js. No includeSubDomains, so a
+# worker/headers.js.
+# HSTS: keep in sync with worker/headers.js. No includeSubDomains, so a
 # subdomain still served over plain HTTP elsewhere keeps working.
 /*
   Strict-Transport-Security: max-age=31536000

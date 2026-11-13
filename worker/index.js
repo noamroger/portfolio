@@ -1,38 +1,24 @@
-// Serves the static Astro build from ./dist (see wrangler.jsonc).
+// Entry point of the Worker: decides who answers a request, nothing more.
 //
-// What static assets can't do on their own:
-// - noamroger.fr must redirect to www.noamroger.fr, the canonical origin
-//   declared in astro.config.mjs (Netlify used to do this as primary domain).
-// - Videos need byte ranges, which static assets don't serve (worker/range.js).
-// - English pages need the English 404. `not_found_handling: "404-page"` looks
-//   for a 404.html file, and Astro emits the English one as /en/404/index.html,
-//   so every miss would otherwise get the French page.
-// - A few endpoints for visitors who come with curl (worker/ops.js).
-// - Anonymous visit statistics: the pages report their views to /api/hit
-//   (worker/stats.js), a cron purges them, and admin.noamroger.fr shows them
-//   behind a password (worker/admin.js).
+// - admin.noamroger.fr: the private dashboard of the statistics (admin.js).
+// - noamroger.fr: redirected to www.noamroger.fr, the canonical origin
+//   declared in astro.config.mjs.
+// - /api/github: neutral GitHub totals for the pages (github.js).
+// - /api/hit: anonymous visit statistics, reported by the pages (stats.js).
+// - A few endpoints for visitors who come with curl (ops.js).
+// - Everything else: the static Astro build (site.js).
+//
+// A cron purges the old statistics (wrangler.jsonc `triggers`).
 
 import { ADMIN_HOST, handleAdmin } from './admin.js';
 import { handleGitHubStats } from './github.js';
-import { EXTRA_HEADERS, handleOps } from './ops.js';
-import { isVideo, withRange } from './range.js';
+import { withSecurityHeaders } from './headers.js';
+import { handleOps } from './ops.js';
+import { serveSite } from './site.js';
 import { handleHit, purge, STATS_PATH } from './stats.js';
 
 const CANONICAL_HOST = 'www.noamroger.fr';
 const APEX_HOST = 'noamroger.fr';
-
-// public/_headers only reaches the responses that come from the assets
-// binding. The ones built here (redirect, API) get the essentials by hand.
-// Keep HSTS in sync with public/_headers.
-const HSTS = 'max-age=31536000';
-
-function withSecurityHeaders(response) {
-	const secured = new Response(response.body, response);
-	secured.headers.set('Strict-Transport-Security', HSTS);
-	secured.headers.set('X-Content-Type-Options', 'nosniff');
-	for (const [name, value] of Object.entries(EXTRA_HEADERS)) secured.headers.set(name, value);
-	return secured;
-}
 
 export default {
 	async fetch(request, env, ctx) {
@@ -59,36 +45,9 @@ export default {
 		const ops = await handleOps(request, env, url);
 		if (ops) return withSecurityHeaders(ops);
 
-		if (isVideo(url.pathname)) {
-			if (request.method !== 'GET' && request.method !== 'HEAD') {
-				return withSecurityHeaders(new Response(null, { status: 405, headers: { Allow: 'GET, HEAD' } }));
-			}
-			// Ask for the whole file, always with GET: the slice is cut in
-			// withRange, which needs the length (a HEAD answer has none).
-			const headers = new Headers(request.headers);
-			headers.delete('Range');
-			headers.delete('If-Range');
-			const assetRequest = new Request(request.url, { method: 'GET', headers });
-			return withRange(request, await env.ASSETS.fetch(assetRequest));
-		}
-
-		const response = await env.ASSETS.fetch(request);
-
-		if (response.status === 404 && (url.pathname === '/en' || url.pathname.startsWith('/en/'))) {
-			const englishNotFound = await env.ASSETS.fetch(new URL('/en/404/', url));
-			if (englishNotFound.ok) {
-				// The /en* rule of public/_headers would let browsers keep this
-				// 404 for a day: a missing page must be asked for again.
-				const headers = new Headers(englishNotFound.headers);
-				headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
-				return new Response(englishNotFound.body, { status: 404, headers });
-			}
-		}
-
-		return response;
+		return serveSite(request, env, url);
 	},
 
-	// Cron triggers of wrangler.jsonc: the 90-day purge of the statistics.
 	async scheduled(controller, env, ctx) {
 		ctx.waitUntil(purge(env));
 	},
