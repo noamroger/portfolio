@@ -1,6 +1,6 @@
 // One domain per language, the same build behind both.
 //
-// - www.noamroger.fr serves French, noamroger.dev serves English. Keep the
+// - www.noamroger.fr serves French, www.noamroger.dev serves English. Keep the
 //   hosts and addresses in sync with `siteOrigins` in src/i18n/index.ts.
 // - The build emits the English pages under /en (dist/en/…): on noamroger.dev
 //   the root is mapped onto that folder (site.js), so /en never shows.
@@ -9,17 +9,17 @@
 
 const SITES = {
 	'www.noamroger.fr': { locale: 'fr', host: 'www.noamroger.fr', email: 'contact@noamroger.fr' },
-	'noamroger.dev': { locale: 'en', host: 'noamroger.dev', email: 'contact@noamroger.dev' },
+	'www.noamroger.dev': { locale: 'en', host: 'www.noamroger.dev', email: 'contact@noamroger.dev' },
 };
 
-/** The bare or www twin of each canonical host, redirected to it. */
+/** The bare twin of each canonical host, redirected to it: both sites live on www. */
 const ALIASES = {
 	'noamroger.fr': 'www.noamroger.fr',
-	'www.noamroger.dev': 'noamroger.dev',
+	'noamroger.dev': 'www.noamroger.dev',
 };
 
 const FRENCH = SITES['www.noamroger.fr'];
-const ENGLISH = SITES['noamroger.dev'];
+const ENGLISH = SITES['www.noamroger.dev'];
 
 /** Where the build keeps the English twin of a path. */
 export const ENGLISH_PREFIX = '/en';
@@ -33,9 +33,9 @@ export const isOwnDomain = (host) => ['noamroger.fr', 'noamroger.dev'].some((dom
 
 /**
  * The address a request must be sent to instead, in a single hop, or null.
- * - noamroger.fr and www.noamroger.dev go to their canonical host.
- * - The former English addresses, noamroger.fr/en/…, go to noamroger.dev/….
- * - noamroger.dev/en/… loses its prefix.
+ * - noamroger.fr and noamroger.dev go to their www host.
+ * - The former English addresses, noamroger.fr/en/…, go to www.noamroger.dev/….
+ * - www.noamroger.dev/en/… loses its prefix.
  */
 export function redirectOf(url) {
 	const host = ALIASES[url.hostname] ?? url.hostname;

@@ -13,7 +13,7 @@ const turnstileSiteKey = process.env.PUBLIC_TURNSTILE_SITE_KEY ?? wranglerVars.P
 // French lives on noamroger.fr, English on noamroger.dev: keep in sync with
 // `siteOrigins` in src/i18n/index.ts.
 const site = 'https://www.noamroger.fr';
-const englishSite = 'https://noamroger.dev';
+const englishSite = 'https://www.noamroger.dev';
 
 // https://astro.build/config
 export default defineConfig({

@@ -16,7 +16,7 @@
 	// creates the matching DNS records. Both zones must be in this Cloudflare
 	// account, with no other A/AAAA/CNAME record left on these names, and no
 	// redirect rule on the zone: such a rule runs before the Worker.
-	// French is served on www.noamroger.fr, English on noamroger.dev: the
+	// French is served on www.noamroger.fr, English on www.noamroger.dev: the
 	// Worker picks the language from the host name (worker/hosts.js).
 	"routes": [
 		{ "pattern": "noamroger.fr", "custom_domain": true },

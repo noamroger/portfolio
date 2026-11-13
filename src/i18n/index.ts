@@ -16,7 +16,7 @@ const dictionaries: Record<Locale, Translations> = { en, fr };
 export const defaultLocale: Locale = 'fr';
 export const siteOrigins: Record<Locale, string> = {
 	fr: 'https://www.noamroger.fr',
-	en: 'https://noamroger.dev',
+	en: 'https://www.noamroger.dev',
 };
 /** The bare domain of each language, for what is displayed (prompts, titles). */
 export const siteDomains: Record<Locale, string> = { fr: 'noamroger.fr', en: 'noamroger.dev' };

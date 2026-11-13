@@ -6,7 +6,7 @@ https://www.noamroger.fr.
 ## Bilinguisme
 
 Chaque langue a son domaine : le français sur `www.noamroger.fr`, l'anglais sur
-`noamroger.dev`, aux mêmes chemins. Les pages sont générées au build dans les
+`www.noamroger.dev`, aux mêmes chemins. Les pages sont générées au build dans les
 deux langues (l'anglais dans `dist/en/`) et servies par le même Worker, voir
 « Deux domaines ».
 
@@ -137,7 +137,7 @@ npm run preview:worker  # build + wrangler dev
 ### Deux domaines
 
 Un seul Worker et un seul build servent les deux langues : le français sur
-`https://www.noamroger.fr`, l'anglais sur `https://noamroger.dev`. Le Worker
+`https://www.noamroger.fr`, l'anglais sur `https://www.noamroger.dev`. Le Worker
 choisit selon le nom d'hôte (`worker/hosts.js`).
 
 - Astro émet toujours les pages anglaises sous `dist/en/`. Sur `noamroger.dev`,
@@ -145,8 +145,8 @@ choisit selon le nom d'hôte (`worker/hosts.js`).
   et retombe sur les fichiers communs (`/_astro/`, images, `/fonts.json`).
   `/en` n'apparaît donc dans aucune adresse ni aucun lien.
 - Les anciennes adresses `noamroger.fr/en/…` sont redirigées en 301 vers
-  `noamroger.dev/…`, tout comme `noamroger.fr` vers `www` et
-  `www.noamroger.dev` vers `noamroger.dev`, en un seul saut.
+  `www.noamroger.dev/…`, tout comme `noamroger.fr` et `noamroger.dev` vers leur
+  `www`, en un seul saut.
 - Origines, domaines et adresses de contact par langue sont dans
   `src/i18n/index.ts` (`siteOrigins`, `contactEmails`), à garder alignés avec
   `worker/hosts.js`. Canonical, hreflang, sélecteur de langue, `robots.txt`,
@@ -154,7 +154,7 @@ choisit selon le nom d'hôte (`worker/hosts.js`).
   écrit par `src/pages/en/sitemap-index.xml.ts`.
 - Sur un autre hôte (preview `*.workers.dev`), l'anglais reste sous `/en/`, mais
   ses liens internes n'ont pas de préfixe : pour le parcourir en local, lancer
-  `npx wrangler dev --host noamroger.dev`.
+  `npx wrangler dev --host www.noamroger.dev`.
 
 ## Statistiques GitHub
 
@@ -193,7 +193,7 @@ navigateur des visiteurs.
   connecté au tableau de bord (cookie `stats_ignore`, posé à la connexion, le
   seul cookie du système et il ne concerne que l'administrateur). Ce cookie ne
   vaut que pour `noamroger.fr` : ouvrir une fois
-  `https://noamroger.dev/api/hit/ignore` le pose aussi pour le site anglais.
+  `https://www.noamroger.dev/api/hit/ignore` le pose aussi pour le site anglais.
 - **Rétention** : 90 jours. Un cron (`triggers` dans `wrangler.jsonc`) purge
   chaque nuit ce qui est plus ancien.
 - **Tableau de bord** : `worker/admin.js`, sur `https://admin.noamroger.fr`,
@@ -209,6 +209,6 @@ En local :
 ```bash
 npx wrangler d1 migrations apply portfolio-stats --local
 npx wrangler dev --host www.noamroger.fr                                  # le site français
-npx wrangler dev --host noamroger.dev --port 8788                         # le site anglais
+npx wrangler dev --host www.noamroger.dev --port 8788                     # le site anglais
 npx wrangler dev --host admin.noamroger.fr --var ADMIN_PASSWORD:test      # le tableau de bord
 ```

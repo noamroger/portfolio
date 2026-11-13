@@ -20,7 +20,7 @@ export function humans(locale: Locale): string {
 	if (locale === 'en') {
 		return `/* TEAM */
 Developer: Noam Roger
-Site: https://noamroger.dev
+Site: https://www.noamroger.dev
 Contact: ${contactEmails[locale]}
 Role: Third-year computer science student / Looking for a work-study position, DevOps & Cloud Master's (September 2027)
 Location: Le Mans, France
@@ -31,7 +31,7 @@ To everyone curious enough to read plaintext files in /
 /* HUNT */
 Three flags are hidden around this site, each one a reflex away.
 They look like flag{...} and are checked in the home page terminal: unlock flag{...}
-First hint: curl -sI https://noamroger.dev
+First hint: curl -sI https://www.noamroger.dev
 Lost? Type 'flags' in that terminal.
 
 /* PRIVACY */
