@@ -225,16 +225,46 @@ const featured = projects.slice(0, 3).map((project) => ({
 		gap: 0.75rem;
 	}
 
+	/* The window leans a little and straightens under the pointer. Only its
+	   frame is rotated (the ::before below): rotated text cannot sit on the
+	   pixel grid, so it would be blurry at rest and snap sharp on hover. The
+	   content itself is never transformed. */
 	.terminal {
-		overflow: hidden;
+		--bar-height: 2.75rem;
+		--bar-rule: var(--border);
+		--frame-shadow: var(--shadow), 0 24px 48px -24px rgba(0, 0, 0, 0.35);
+		position: relative;
+		isolation: isolate;
 		font-family: var(--font-mono);
-		box-shadow: var(--shadow), 0 24px 48px -24px rgba(0, 0, 0, 0.35);
+		background: none;
+		border-color: transparent;
+		box-shadow: none;
+	}
+
+	.terminal::before {
+		content: '';
+		position: absolute;
+		inset: -1px;
+		z-index: -1;
+		/* The rule under the title bar is drawn here so it leans with the frame. */
+		background:
+			linear-gradient(var(--bar-rule) 0 0) 0 calc(var(--bar-height) - 1px) / 100% 1px no-repeat,
+			var(--bg-elevated);
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		box-shadow: var(--frame-shadow);
 		transform: rotate(0.6deg);
 		transition: transform 0.3s ease;
 	}
 
-	.terminal:hover {
-		transform: rotate(0deg);
+	.terminal:hover::before {
+		transform: none;
+	}
+
+	.terminal :global(.window-bar) {
+		box-sizing: border-box;
+		height: var(--bar-height);
+		border-bottom-color: transparent;
 	}
 
 	.terminal-body {
@@ -350,8 +380,8 @@ const featured = projects.slice(0, 3).map((project) => ({
 		visibility: hidden;
 	}
 
-	.terminal.is-min :global(.window-bar) {
-		border-bottom-color: transparent;
+	.terminal.is-min {
+		--bar-rule: transparent;
 	}
 
 	.terminal-closed {
@@ -390,8 +420,11 @@ const featured = projects.slice(0, 3).map((project) => ({
 		z-index: 200;
 		display: flex;
 		flex-direction: column;
+		--frame-shadow: var(--shadow), 0 0 0 100vmax rgba(0, 0, 0, 0.55);
+	}
+
+	.terminal.is-max::before {
 		transform: none;
-		box-shadow: var(--shadow), 0 0 0 100vmax rgba(0, 0, 0, 0.55);
 	}
 
 	.terminal.is-max .terminal-body {
@@ -663,7 +696,7 @@ const featured = projects.slice(0, 3).map((project) => ({
 			flex: 1;
 		}
 
-		.terminal {
+		.terminal::before {
 			transform: none;
 		}
 
