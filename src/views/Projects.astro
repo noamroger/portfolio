@@ -7,12 +7,12 @@ import { Image } from 'astro:assets';
 import { getI18n, publicUrl } from '../i18n';
 import { projects as projectLinks, type ProjectKey } from '../data/projects';
 
+import burrow from '../assets/projects/burrow.webp';
 import californyan from '../assets/projects/californyan.webp';
 import codenames from '../assets/projects/codenames.webp';
 import gaulia from '../assets/projects/gaulia.webp';
 import homelab from '../assets/projects/homelab.webp';
 import portfolio from '../assets/projects/portfolio.webp';
-import webserver from '../assets/projects/webserver.webp';
 import codenamesDemo from '../assets/projects/codenames-demo.mp4';
 import codenamesDemoPoster from '../assets/projects/codenames-demo-poster.webp';
 
@@ -27,7 +27,7 @@ const images: Record<ProjectKey, ImageMetadata> = {
 	californyan,
 	portfolio,
 	codenames,
-	webserverTs: webserver,
+	burrow,
 	gaulia,
 };
 

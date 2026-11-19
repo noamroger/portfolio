@@ -182,7 +182,7 @@ const en = {
 	projects: {
 		metaTitle: 'Projects | APIs, Discord bots and C - Noam Roger',
 		metaDescription:
-			"A selection of Noam Roger's projects: Proxmox homelab, AI agent, this portfolio, Discord bot, TypeScript server base, multiplayer game in C.",
+			"A selection of Noam Roger's projects: Proxmox homelab, AI agent, this portfolio, Discord bot, Burrow (Cloudflare Tunnel), multiplayer game in C.",
 		eyebrow: 'Projects',
 		heading: 'Discord bots, two hackathons and a homelab.',
 		subtitle: 'Gaulia Musique ran on more than 800 Discord servers. The rest came from university, the 24 Heures du Code or my evenings.',
@@ -222,13 +222,13 @@ const en = {
 					'A networked multiplayer adaptation of the board game Codenames, written in C with sockets, as a team of four.',
 				tech: ['C', 'Sockets', 'Networking', 'Linux'],
 			},
-			webserverTs: {
-				context: 'In progress · 2026',
-				imageAlt: 'TypeScript web server base with separate frontend and backend',
-				title: 'TypeScript web server base',
+			burrow: {
+				context: 'Personal project · 2026',
+				imageAlt: 'Burrow interface: list of services published through Cloudflare Tunnel, with their DNS status and uptime',
+				title: 'Burrow',
 				description:
-					'A web server base with separate frontend and backend, both in TypeScript. I start every new project from it.',
-				tech: ['TypeScript', 'Node.js', 'Express', 'React'],
+					'A web UI to put homelab services online through Cloudflare Tunnel without opening a port, a bit like Nginx Proxy Manager. You type a subdomain and an internal address: Burrow adds the route to the tunnel, creates the DNS record and checks that the service answers. It ships as a single Docker image on GHCR and Docker Hub.',
+				tech: ['TypeScript', 'React', 'Fastify', 'Docker', 'Cloudflare Tunnel'],
 			},
 			gaulia: {
 				context: 'Personal project · archived',

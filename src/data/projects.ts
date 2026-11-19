@@ -10,8 +10,8 @@ export const projects = [
 		demo: null,
 	},
 	{
-		key: 'californyan',
-		github: 'https://github.com/noamroger/llm-hotel-24h',
+		key: 'burrow',
+		github: 'https://github.com/noamroger/burrow',
 		demo: null,
 	},
 	{
@@ -27,8 +27,8 @@ export const projects = [
 		demo: null,
 	},
 	{
-		key: 'webserverTs',
-		github: 'https://github.com/noamroger/webserver-ts',
+		key: 'californyan',
+		github: 'https://github.com/noamroger/llm-hotel-24h',
 		demo: null,
 	},
 	{

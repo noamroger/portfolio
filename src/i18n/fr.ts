@@ -184,7 +184,7 @@ const fr: Translations = {
 	projects: {
 		metaTitle: 'Projets | API, bots Discord et C - Noam Roger',
 		metaDescription:
-			"Une sélection des projets de Noam Roger : homelab Proxmox, agent IA, ce portfolio, bot Discord, base de serveur TypeScript, jeu multijoueur en C.",
+			"Une sélection des projets de Noam Roger : homelab Proxmox, agent IA, ce portfolio, bot Discord, Burrow (Cloudflare Tunnel), jeu multijoueur en C.",
 		eyebrow: 'Projets',
 		heading: 'Des bots Discord, deux hackathons et un homelab.',
 		subtitle: "Gaulia Musique a tourné sur plus de 800 serveurs Discord. Le reste vient des cours, des 24 Heures du Code ou de mes soirées.",
@@ -224,13 +224,13 @@ const fr: Translations = {
 					'Une adaptation multijoueur en réseau du jeu de société Codenames, écrite en C avec des sockets, en équipe de quatre.',
 				tech: ['C', 'Sockets', 'Réseau', 'Linux'],
 			},
-			webserverTs: {
-				context: 'En cours · 2026',
-				imageAlt: 'Base de serveur web TypeScript avec frontend et backend séparés',
-				title: 'Base de serveur web TypeScript',
+			burrow: {
+				context: 'Projet personnel · 2026',
+				imageAlt: "Interface de Burrow : liste des services publiés via Cloudflare Tunnel, avec leur statut DNS et leur disponibilité",
+				title: 'Burrow',
 				description:
-					'Une base de serveur web avec frontend et backend séparés, tous deux en TypeScript. Je repars de là pour chaque nouveau projet.',
-				tech: ['TypeScript', 'Node.js', 'Express', 'React'],
+					"Une interface web pour mettre en ligne les services d'un homelab via Cloudflare Tunnel, sans ouvrir de port, un peu comme Nginx Proxy Manager. On saisit un sous-domaine et une adresse interne : Burrow ajoute la route au tunnel, crée l'enregistrement DNS et vérifie que le service répond. Il tient dans une seule image Docker, publiée sur GHCR et Docker Hub.",
+				tech: ['TypeScript', 'React', 'Fastify', 'Docker', 'Cloudflare Tunnel'],
 			},
 			gaulia: {
 				context: 'Projet personnel · archivé',
