@@ -100,15 +100,17 @@ const featured = projects.slice(0, 3).map((project) => ({
 				<div class="section-head">
 					<div>
 						<h2>{t.home.focusTitle}</h2>
-						<p>{t.home.focusIntro}</p>
+						{t.home.focusIntro && <p>{t.home.focusIntro}</p>}
 					</div>
 				</div>
 				<div class="focus-grid">
 					{t.home.focus.map((item, i) => (
 						<article class="focus-item">
-							<span class="focus-index">{String(i + 1).padStart(2, '0')}</span>
-							<h3>{item.title}</h3>
-							<p>{item.description}</p>
+							<span class="focus-index" aria-hidden="true">{['~/api', '~/docker', '~/infra'][i]}</span>
+							<div>
+								<h3>{item.title}</h3>
+								<p>{item.description}</p>
+							</div>
 						</article>
 					))}
 				</div>
@@ -146,7 +148,7 @@ const featured = projects.slice(0, 3).map((project) => ({
 				<div class="section-head">
 					<div>
 						<h2>{t.home.stackTitle}</h2>
-						<p>{t.home.stackIntro}</p>
+						{t.home.stackIntro && <p>{t.home.stackIntro}</p>}
 					</div>
 				</div>
 				<StackList />
@@ -518,21 +520,20 @@ const featured = projects.slice(0, 3).map((project) => ({
 	}
 
 	.focus-grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
 		border-top: 1px solid var(--border);
 	}
 
 	.focus-item {
-		padding: 1.75rem 2rem 0.5rem 0;
-	}
-
-	.focus-item + .focus-item {
-		padding-left: 2rem;
-		border-left: 1px solid var(--border);
+		display: grid;
+		grid-template-columns: 11rem 1fr;
+		gap: 2rem;
+		padding: 1.5rem 0;
+		border-bottom: 1px solid var(--border);
 	}
 
 	.focus-item h3 {
+		font-size: 1.1rem;
+		margin-bottom: 0.4rem;
 		transition: color 0.15s ease;
 	}
 
@@ -541,21 +542,16 @@ const featured = projects.slice(0, 3).map((project) => ({
 	}
 
 	.focus-index {
-		display: block;
 		font-family: var(--font-mono);
-		font-size: 0.8rem;
+		font-size: 0.85rem;
 		color: var(--accent);
-		margin-bottom: 1rem;
-	}
-
-	.focus-item h3 {
-		font-size: 1.1rem;
-		margin-bottom: 0.6rem;
+		padding-top: 0.2rem;
 	}
 
 	.focus-item p {
 		color: var(--text-secondary);
 		font-size: 0.95rem;
+		max-width: 68ch;
 	}
 
 	.featured-grid {
@@ -617,7 +613,12 @@ const featured = projects.slice(0, 3).map((project) => ({
 		justify-content: space-between;
 		align-items: center;
 		gap: 2rem;
-		padding: 2rem 2.25rem;
+		padding: 0.25rem 0 0.25rem 1.5rem;
+		background: none;
+		border: none;
+		border-left: 2px solid var(--accent);
+		border-radius: 0;
+		box-shadow: none;
 	}
 
 	.cta h2 {
@@ -640,19 +641,13 @@ const featured = projects.slice(0, 3).map((project) => ({
 			gap: 3rem;
 		}
 
-		.featured-grid,
-		.focus-grid {
+		.featured-grid {
 			grid-template-columns: 1fr;
 		}
 
-		.focus-item,
-		.focus-item + .focus-item {
-			padding: 1.5rem 0;
-			border-left: none;
-		}
-
-		.focus-item + .focus-item {
-			border-top: 1px solid var(--border);
+		.focus-item {
+			grid-template-columns: 1fr;
+			gap: 0.5rem;
 		}
 	}
 
@@ -672,7 +667,7 @@ const featured = projects.slice(0, 3).map((project) => ({
 		.cta {
 			flex-direction: column;
 			align-items: flex-start;
-			padding: 1.5rem;
+			padding: 0.25rem 0 0.25rem 1.25rem;
 		}
 	}
 </style>

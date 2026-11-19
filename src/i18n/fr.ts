@@ -61,7 +61,7 @@ const fr: Translations = {
 		metaDescription:
 			"Noam Roger, étudiant en L3 Informatique au Mans, développeur autodidacte depuis 2019, venu du backend et orienté DevOps. En recherche d'alternance en Master DevOps / Cloud pour la rentrée 2027.",
 		eyebrow: 'Développeur backend · orienté DevOps',
-		title: 'Du code backend à son déploiement, de bout en bout.',
+		title: "J'écris des API en Node.js, puis je les déploie moi-même.",
 		description:
 			"Étudiant en L3 Informatique au Mans, je développe en autodidacte depuis 2019. Je viens du backend (Node.js, TypeScript, C) et je m'oriente aujourd'hui vers le DevOps : je conteneurise mes projets avec Docker, j'automatise leurs déploiements et j'apprends Kubernetes.",
 		ctaProjects: 'Voir mes projets',
@@ -79,7 +79,7 @@ const fr: Translations = {
 			restart: 'Relancer le terminal',
 		},
 		focusTitle: 'Ce que je fais',
-		focusIntro: "Écrire le code, c'est la moitié du travail. L'autre moitié, c'est le faire tourner de façon fiable.",
+		focusIntro: '',
 		focus: [
 			{
 				title: 'Développement backend',
@@ -97,13 +97,13 @@ const fr: Translations = {
 					"Linux au quotidien, machines virtuelles sous Proxmox, programmation C jusqu'aux sockets et au réseau. Prochaine étape : l'orchestration avec Kubernetes.",
 			},
 		],
-		featuredTitle: 'Projets sélectionnés',
-		featuredIntro: 'Trois projets représentatifs, de l’infrastructure au code.',
+		featuredTitle: 'Quelques projets',
+		featuredIntro: 'Mon homelab, un hackathon et ce site. Les autres sont sur la page Projets.',
 		featuredCta: 'Tous les projets',
 		stackTitle: 'Stack technique',
-		stackIntro: "Ce que j'utilise au quotidien, regroupé par usage.",
-		ctaTitle: 'Vous cherchez un alternant pour la rentrée 2027 ?',
-		ctaText: "Je vise un Master spécialisé en ingénierie DevOps / Cloud et je cherche une entreprise pour l'alternance.",
+		stackIntro: '',
+		ctaTitle: 'Alternance, rentrée 2027',
+		ctaText: "Je postule en Master DevOps / Cloud et il me manque l'entreprise. Si votre équipe fait tourner de l'infra, écrivez-moi.",
 		ctaButton: 'Me contacter',
 	},
 	about: {
@@ -111,8 +111,8 @@ const fr: Translations = {
 		metaDescription:
 			"Le parcours de Noam Roger : étudiant en L3 Informatique au Mans, développeur autodidacte depuis 2019, venu du backend et orienté DevOps / Cloud.",
 		eyebrow: 'À propos',
-		heading: 'Venu du backend, orienté DevOps.',
-		subtitle: 'Étudiant en L3 Informatique au Mans, je code depuis 2019.',
+		heading: 'Je code depuis 2019, en autodidacte.',
+		subtitle: "Aujourd'hui en L3 Informatique au Mans, je passe du backend au DevOps.",
 		journeyTitle: 'Parcours',
 		journey: [
 			"J'ai commencé à programmer seul en 2019, avec des bots Discord en Node.js. L'un d'eux, Gaulia Musique, a été ajouté à plus de 800 serveurs. Sont venus ensuite des projets plus structurés, autour d'API et de bases de données.",
@@ -122,14 +122,14 @@ const fr: Translations = {
 		approachTitle: 'Ma façon de travailler',
 		approach: [
 			'Un service doit pouvoir se redéployer de zéro, sans étape manuelle oubliée.',
-			'Du code lisible plutôt que malin : le prochain à le relire, c’est souvent moi.',
-			"Automatiser ce qui se répète, documenter ce qui ne s'automatise pas.",
+			'J’écris pour être relu, et le prochain à relire mon code, c’est souvent moi.',
+			"Une tâche que je refais à la main finit en script. Celles qui résistent, je les note.",
 			"Comprendre un outil avant d'en empiler un autre : Docker avant Kubernetes.",
 		],
 		timelineTitle: 'Repères',
 		timeline: [
 			{ date: 'Aujourd’hui', title: 'Apprentissage de Kubernetes', text: 'Deployments, services, ingress : passer de Docker seul à l’orchestration.' },
-			{ date: '2025', title: '24 Heures du Code, CCI du Mans', text: "Californyan, un réceptionniste d'hôtel propulsé par l'IA." },
+			{ date: '2025', title: '24 Heures du Code, CCI du Mans', text: "Californyan, un agent LangChain qui joue le réceptionniste d'hôtel." },
 			{ date: '2024', title: '24 Heures du Code, Laval', text: "Une base de serveur web Node.js, réutilisée pendant un an dans mes projets." },
 			{ date: '2019', title: 'Premières lignes de code', text: 'En autodidacte, avec des bots Discord en Node.js.' },
 		],
@@ -186,8 +186,8 @@ const fr: Translations = {
 		metaDescription:
 			"Une sélection des projets de Noam Roger : homelab Proxmox, agent IA, ce portfolio, bot Discord, base de serveur TypeScript, jeu multijoueur en C.",
 		eyebrow: 'Projets',
-		heading: "Ce que j'ai construit, et dans quel contexte.",
-		subtitle: "De mon homelab aux hackathons de 24 heures, en passant par des bots qui ont tourné en production.",
+		heading: 'Des bots Discord, deux hackathons et un homelab.',
+		subtitle: "Gaulia Musique a tourné sur plus de 800 serveurs Discord. Le reste vient des cours, des 24 Heures du Code ou de mes soirées.",
 		codeLink: 'Code',
 		demoLink: 'Démo',
 		selfDemoMessage: "C'était vraiment nécessaire ? Vous êtes littéralement dessus...",
@@ -197,15 +197,15 @@ const fr: Translations = {
 				imageAlt: "Interface web de Proxmox VE : résumé d'un nœud avec ses conteneurs et machines virtuelles",
 				title: 'Homelab',
 				description:
-					"Mon infrastructure personnelle sous Proxmox : des services conteneurisés avec Docker et déployés automatiquement, exposés derrière un reverse proxy, et des machines reliées entre elles par un réseau VPN mesh. Mon terrain d'entraînement pour le DevOps.",
+					"Mon infrastructure personnelle sous Proxmox : des services conteneurisés avec Docker et déployés automatiquement, exposés derrière un reverse proxy, et des machines reliées entre elles par un réseau VPN mesh. C'est là que je fais mes essais DevOps.",
 				tech: ['Proxmox', 'Docker', 'Reverse proxy', 'VPN mesh', 'Linux'],
 			},
 			californyan: {
 				context: 'Hackathon · 2025',
-				imageAlt: "Interface de Californyan : un réceptionniste d'hôtel propulsé par l'IA répondant à un client",
+				imageAlt: "Interface de Californyan : l'agent réceptionniste répond à un client de l'hôtel",
 				title: 'Californyan',
 				description:
-					"Un réceptionniste d'hôtel propulsé par l'IA, développé en 24 heures aux 24 Heures du Code 2025 (CCI du Mans). Mon premier agent construit avec LangChain.",
+					"Un réceptionniste d'hôtel joué par un LLM, codé en 24 heures aux 24 Heures du Code 2025 (CCI du Mans). C'était mon premier agent LangChain.",
 				tech: ['Node.js', 'LangChain', 'LLM', 'API'],
 			},
 			portfolio: {
@@ -229,7 +229,7 @@ const fr: Translations = {
 				imageAlt: 'Base de serveur web TypeScript avec frontend et backend séparés',
 				title: 'Base de serveur web TypeScript',
 				description:
-					'Une base de serveur web avec frontend et backend séparés, tous deux en TypeScript. Le socle de mes prochains projets.',
+					'Une base de serveur web avec frontend et backend séparés, tous deux en TypeScript. Je repars de là pour chaque nouveau projet.',
 				tech: ['TypeScript', 'Node.js', 'Express', 'React'],
 			},
 			gaulia: {
@@ -247,8 +247,8 @@ const fr: Translations = {
 		metaDescription:
 			"Contactez Noam Roger pour une alternance, un projet backend ou DevOps, ou une question technique.",
 		eyebrow: 'Contact',
-		heading: 'Parlons-en.',
-		subtitle: "Une offre d'alternance, un projet ou une question technique : écrivez-moi, je réponds personnellement.",
+		heading: 'Écrivez-moi.',
+		subtitle: "Pour une offre d'alternance, un projet ou une question technique.",
 		infoTitle: 'Autres moyens de me joindre',
 		infoText:
 			"Je recherche une alternance pour un Master spécialisé en ingénierie DevOps / Cloud, à partir de la rentrée 2027.",
@@ -267,7 +267,7 @@ const fr: Translations = {
 			messagePlaceholder: 'Votre message',
 			submit: 'Envoyer le message',
 			sending: 'Envoi en cours…',
-			success: 'Message envoyé. Je vous réponds rapidement.',
+			success: 'Message envoyé, merci. Je vous réponds dès que je l’ai lu.',
 			error: 'Erreur : ',
 			failure: "L'envoi a échoué. Réessayez ou écrivez-moi directement par e-mail.",
 		},

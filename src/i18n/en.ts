@@ -59,7 +59,7 @@ const en = {
 		metaDescription:
 			'Noam Roger, third-year computer science student in Le Mans, self-taught developer since 2019, coming from backend and moving into DevOps. Looking for a work-study Master’s in DevOps / Cloud from September 2027.',
 		eyebrow: 'Backend developer · DevOps-minded',
-		title: 'From backend code to deployment, end to end.',
+		title: 'I write Node.js APIs, then deploy them myself.',
 		description:
 			'Third-year computer science student in Le Mans, self-taught developer since 2019. I come from backend development (Node.js, TypeScript, C) and I am now moving into DevOps: I containerise my projects with Docker, automate their deployments and I am learning Kubernetes.',
 		ctaProjects: 'See my projects',
@@ -77,7 +77,7 @@ const en = {
 			restart: 'Restart the terminal',
 		},
 		focusTitle: 'What I do',
-		focusIntro: 'Writing code is half the job. The other half is making it run reliably.',
+		focusIntro: '',
 		focus: [
 			{
 				title: 'Backend development',
@@ -95,13 +95,13 @@ const en = {
 					'Linux as a daily environment, virtual machines on Proxmox, C programming down to sockets and networking. Next step: orchestration with Kubernetes.',
 			},
 		],
-		featuredTitle: 'Selected projects',
-		featuredIntro: 'Three representative projects, from infrastructure to code.',
+		featuredTitle: 'A few projects',
+		featuredIntro: 'My homelab, a hackathon and this site. The rest are on the Projects page.',
 		featuredCta: 'All projects',
 		stackTitle: 'Technical stack',
-		stackIntro: 'What I use day to day, grouped by role.',
-		ctaTitle: 'Looking for a work-study student from September 2027?',
-		ctaText: 'I am aiming for a Master’s specialised in DevOps / Cloud engineering and looking for a company to join as a work-study student.',
+		stackIntro: '',
+		ctaTitle: 'Work-study, September 2027',
+		ctaText: 'I am applying to DevOps / Cloud Master’s programmes and still need the company. If your team runs its own infrastructure, write to me.',
 		ctaButton: 'Contact me',
 	},
 	about: {
@@ -109,8 +109,8 @@ const en = {
 		metaDescription:
 			'Background of Noam Roger: computer science student in Le Mans, self-taught developer since 2019, coming from backend and moving towards DevOps / Cloud.',
 		eyebrow: 'About',
-		heading: 'Coming from backend, heading for DevOps.',
-		subtitle: 'Computer science student in Le Mans, writing code since 2019.',
+		heading: 'Self-taught, writing code since 2019.',
+		subtitle: 'Now a third-year computer science student in Le Mans, moving from backend to DevOps.',
 		journeyTitle: 'Background',
 		journey: [
 			'I started programming on my own in 2019 with Discord bots in Node.js. One of them, Gaulia Musique, was added to more than 800 servers. Then came more structured projects, built around APIs and databases.',
@@ -120,14 +120,14 @@ const en = {
 		approachTitle: 'How I work',
 		approach: [
 			'A service should be redeployable from scratch, with no forgotten manual step.',
-			'Readable over clever: the next person to read the code is often me.',
-			'Automate what repeats, document what cannot be automated.',
+			'I write code to be reread, and the next person rereading it is usually me.',
+			'A task I keep redoing by hand ends up as a script. The ones that resist get written down.',
 			'Understand a tool before stacking another on top: Docker before Kubernetes.',
 		],
 		timelineTitle: 'Milestones',
 		timeline: [
 			{ date: 'Now', title: 'Learning Kubernetes', text: 'Deployments, services, ingress: moving from Docker to orchestration.' },
-			{ date: '2025', title: '24 Heures du Code, CCI Le Mans', text: 'Californyan, an AI-powered hotel receptionist.' },
+			{ date: '2025', title: '24 Heures du Code, CCI Le Mans', text: 'Californyan, a LangChain agent playing a hotel receptionist.' },
 			{ date: '2024', title: '24 Heures du Code, Laval', text: 'A Node.js web server base, reused in my projects for a year.' },
 			{ date: '2019', title: 'First lines of code', text: 'Self-taught, through Discord bots in Node.js.' },
 		],
@@ -184,8 +184,8 @@ const en = {
 		metaDescription:
 			"A selection of Noam Roger's projects: Proxmox homelab, AI agent, this portfolio, Discord bot, TypeScript server base, multiplayer game in C.",
 		eyebrow: 'Projects',
-		heading: 'What I have built, and in what context.',
-		subtitle: 'From my homelab to 24-hour hackathons, by way of bots that ran in production.',
+		heading: 'Discord bots, two hackathons and a homelab.',
+		subtitle: 'Gaulia Musique ran on more than 800 Discord servers. The rest came from university, the 24 Heures du Code or my evenings.',
 		codeLink: 'Code',
 		demoLink: 'Demo',
 		selfDemoMessage: 'Was that really necessary? You are literally on it...',
@@ -195,15 +195,15 @@ const en = {
 				imageAlt: 'Proxmox VE web interface: summary of a node with its containers and virtual machines',
 				title: 'Homelab',
 				description:
-					'My personal infrastructure running on Proxmox: services containerized with Docker and deployed automatically, exposed behind a reverse proxy, and machines linked together by a mesh VPN network. My DevOps training ground.',
+					'My personal infrastructure running on Proxmox: services containerized with Docker and deployed automatically, exposed behind a reverse proxy, and machines linked together by a mesh VPN network. It is where I run my DevOps experiments.',
 				tech: ['Proxmox', 'Docker', 'Reverse proxy', 'Mesh VPN', 'Linux'],
 			},
 			californyan: {
 				context: 'Hackathon · 2025',
-				imageAlt: 'Californyan interface: an AI-powered hotel receptionist answering a guest',
+				imageAlt: 'Californyan interface: the receptionist agent answering a hotel guest',
 				title: 'Californyan',
 				description:
-					'An AI-powered hotel receptionist, built in 24 hours at the 24 Heures du Code 2025 (CCI Le Mans). My first agent built with LangChain.',
+					'A hotel receptionist played by an LLM, built in 24 hours at the 24 Heures du Code 2025 (CCI Le Mans). It was my first LangChain agent.',
 				tech: ['Node.js', 'LangChain', 'LLM', 'API'],
 			},
 			portfolio: {
@@ -227,7 +227,7 @@ const en = {
 				imageAlt: 'TypeScript web server base with separate frontend and backend',
 				title: 'TypeScript web server base',
 				description:
-					'A web server base with separate frontend and backend, both in TypeScript. The foundation of my upcoming projects.',
+					'A web server base with separate frontend and backend, both in TypeScript. I start every new project from it.',
 				tech: ['TypeScript', 'Node.js', 'Express', 'React'],
 			},
 			gaulia: {
@@ -245,8 +245,8 @@ const en = {
 		metaDescription:
 			'Contact Noam Roger about a work-study position, a backend or DevOps project, or a technical question.',
 		eyebrow: 'Contact',
-		heading: 'Let’s talk.',
-		subtitle: 'A work-study offer, a project or a technical question: write to me, I reply personally.',
+		heading: 'Write to me.',
+		subtitle: 'For a work-study offer, a project or a technical question.',
 		infoTitle: 'Other ways to reach me',
 		infoText:
 			'I am looking for a work-study position for a Master’s specialised in DevOps / Cloud engineering, starting September 2027.',
@@ -265,7 +265,7 @@ const en = {
 			messagePlaceholder: 'Your message',
 			submit: 'Send message',
 			sending: 'Sending…',
-			success: 'Message sent. I will get back to you soon.',
+			success: 'Message sent, thanks. I will reply once I have read it.',
 			error: 'Error: ',
 			failure: 'Something went wrong. Please try again or email me directly.',
 		},
