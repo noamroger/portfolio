@@ -52,7 +52,7 @@ const en = {
 		languagesTitle: 'Languages on GitHub',
 		languagesNote: 'Share of code across all repositories.',
 		footer: 'Last push on GitHub {when}',
-		source: 'GitHub data, refreshed every 5 minutes.',
+		source: 'GitHub data, refreshed every minute.',
 	},
 	home: {
 		metaTitle: 'Noam Roger | DevOps-minded backend developer, Le Mans',

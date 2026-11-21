@@ -13,14 +13,23 @@ interface Stats {
 	recent: { name: string | null; url: string | null; private: boolean; language: string | null; pushedAt: string }[];
 }
 
+// The answer is shared by the pages of one visit, but only for a minute: the
+// site navigates without reloading (ClientRouter), and a phone can keep a tab
+// alive for weeks, so a copy kept for the whole life of the page would show a
+// "last push" frozen on the day the tab was opened.
+const MAX_AGE_MS = 60_000;
 let request: Promise<Stats | null> | null = null;
+let requestedAt = 0;
 
 function load(): Promise<Stats | null> {
-	request ??= fetch('/api/github')
-		.then((response) => (response.ok ? (response.json() as Promise<Stats | { error: string }>) : null))
-		// A failure comes back as a 200 carrying { error } (see worker/github.js).
-		.then((data) => (data && !('error' in data) ? data : null))
-		.catch(() => null);
+	if (!request || Date.now() - requestedAt > MAX_AGE_MS) {
+		requestedAt = Date.now();
+		request = fetch('/api/github', { cache: 'no-store' })
+			.then((response) => (response.ok ? (response.json() as Promise<Stats | { error: string }>) : null))
+			// A failure comes back as a 200 carrying { error } (see worker/github.js).
+			.then((data) => (data && !('error' in data) ? data : null))
+			.catch(() => null);
+	}
 	return request;
 }
 
@@ -115,8 +124,18 @@ function render(stats: Stats) {
 	});
 }
 
-document.addEventListener('astro:page-load', async () => {
+async function refresh() {
 	if (!document.querySelector('[data-gh-block]')) return;
 	const stats = await load();
 	if (stats) render(stats);
+}
+
+document.addEventListener('astro:page-load', refresh);
+// A page restored from the back/forward cache, or a tab brought back to the
+// front, still shows what it had when it was left: ask again.
+window.addEventListener('pageshow', (event) => {
+	if (event.persisted) refresh();
+});
+document.addEventListener('visibilitychange', () => {
+	if (document.visibilityState === 'visible') refresh();
 });

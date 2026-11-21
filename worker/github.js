@@ -2,14 +2,12 @@
 //
 // The GitHub token (GITHUB_TOKEN, a Worker secret) never leaves the server and
 // private repositories are only ever counted: their name, URL and description
-// are dropped before anything is returned. The answer is cached at the edge
-// for five minutes, so GitHub sees at most twelve requests per hour per data
-// centre and per host, far below the quota of the token. Browsers keep it one
-// minute only: with a longer life there, the two delays would add up and a
-// push could take twice the edge delay to show.
+// are dropped before anything is returned. The answer is kept one minute at
+// the edge, so GitHub sees at most sixty requests per hour per data centre
+// and per host, far below the quota of the token. Browsers never keep it
+// (no-store): a phone tab reopened days later must not show an old date.
 
-const CACHE_SECONDS = 300;
-const BROWSER_SECONDS = 60;
+const CACHE_SECONDS = 60;
 // A failure is cached too, briefly: otherwise every visit during a GitHub
 // outage (or a bad token) would call GitHub again and burn the token's quota.
 const ERROR_CACHE_SECONDS = 60;
@@ -108,10 +106,10 @@ export async function handleGitHubStats(request, env, ctx) {
 	const cacheKey = new Request(new URL('/api/github', request.url).toString());
 
 	// What the edge stores says how long the edge keeps it (s-maxage); what
-	// leaves for the browser only carries the short browser life.
+	// leaves for the browser is never stored there.
 	const forBrowser = (stored) => {
 		const response = new Response(stored.body, stored);
-		response.headers.set('Cache-Control', `public, max-age=${BROWSER_SECONDS}`);
+		response.headers.set('Cache-Control', 'no-store');
 		return response;
 	};
 
