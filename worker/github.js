@@ -129,15 +129,17 @@ async function fetchStats(token) {
 	}
 	for (const { repository: repo, contributions } of contributionsCollection?.commitContributionsByRepository ?? []) {
 		if (!repo) continue;
-		const committedAt = latest(
-			repo.defaultBranchRef?.target?.history?.nodes?.[0]?.committedDate,
-			contributions?.nodes?.[0]?.occurredAt,
-		);
+		// occurredAt only gives the day (GitHub sets it to midnight, Pacific
+		// time, so 08:00 UTC): a made-up hour that can land after the real
+		// commit. It is only used when the exact commit date is out of reach.
+		const exact = repo.defaultBranchRef?.target?.history?.nodes?.[0]?.committedDate ?? null;
 		const known = activity.get(repo.nameWithOwner);
 		if (known) {
-			known.pushedAt = latest(known.pushedAt, committedAt);
+			// His own repository: its push date is exact already.
+			known.pushedAt = latest(known.pushedAt, exact);
 			continue;
 		}
+		const committedAt = exact ?? contributions?.nodes?.[0]?.occurredAt ?? null;
 		activity.set(repo.nameWithOwner, {
 			name: repo.owner?.login === login ? repo.nameWithOwner.split('/')[1] : repo.nameWithOwner,
 			url: repo.url,
