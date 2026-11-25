@@ -14,19 +14,43 @@ const ERROR_CACHE_SECONDS = 60;
 const RECENT_COUNT = 5;
 const TOP_LANGUAGES = 5;
 
+// Repositories Noam owns: counts, languages and the date of their last push.
+// Plus every repository he committed to over the last year, owned or not
+// (a contribution to someone else's project, a fork): without them, a week
+// of work on another person's repository leaves "last push" days behind.
+// The date of his own latest commit there needs his node id, hence $id.
 const QUERY = `
-query {
+query($id: ID!) {
 	viewer {
 		contributionsCollection {
 			contributionCalendar { totalContributions }
+			commitContributionsByRepository(maxRepositories: 25) {
+				repository {
+					nameWithOwner
+					url
+					isPrivate
+					owner { login }
+					primaryLanguage { name }
+					defaultBranchRef {
+						target {
+							... on Commit {
+								history(first: 1, author: { id: $id }) { nodes { committedDate } }
+							}
+						}
+					}
+				}
+				contributions(first: 1, orderBy: { field: OCCURRED_AT, direction: DESC }) { nodes { occurredAt } }
+			}
 		}
-		repositories(first: 100, ownerAffiliations: OWNER, isFork: false, orderBy: { field: PUSHED_AT, direction: DESC }) {
+		repositories(first: 100, ownerAffiliations: OWNER, orderBy: { field: PUSHED_AT, direction: DESC }) {
 			totalCount
 			nodes {
 				name
+				nameWithOwner
 				url
 				isPrivate
-				isArchived
+				isFork
+				parent { nameWithOwner }
 				pushedAt
 				primaryLanguage { name }
 				languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
@@ -37,7 +61,7 @@ query {
 	}
 }`;
 
-async function fetchStats(token) {
+async function graphql(token, query, variables) {
 	const response = await fetch('https://api.github.com/graphql', {
 		method: 'POST',
 		headers: {
@@ -45,24 +69,38 @@ async function fetchStats(token) {
 			'Content-Type': 'application/json',
 			'User-Agent': 'noamroger.fr portfolio',
 		},
-		body: JSON.stringify({ query: QUERY }),
+		body: JSON.stringify({ query, variables }),
 	});
 	if (!response.ok) {
 		// 401: wrong or expired token. 403: token without access, or rate limit.
 		throw new Error(`GitHub answered HTTP ${response.status}`);
 	}
-	const { data, errors } = await response.json();
+	return response.json();
+}
+
+const latest = (...dates) => dates.filter(Boolean).sort().at(-1) ?? null;
+
+async function fetchStats(token) {
+	const me = await graphql(token, 'query { viewer { id login } }');
+	const id = me.data?.viewer?.id;
+	if (!id) throw new Error(me.errors?.[0]?.message ?? 'Empty GitHub answer');
+	const login = me.data.viewer.login;
+
+	const { data, errors } = await graphql(token, QUERY, { id });
 	// GraphQL can answer with partial data and a list of errors (for example a
 	// field the token may not read): use what came back as long as it is usable.
 	if (!data?.viewer?.repositories) throw new Error(errors?.[0]?.message ?? 'Empty GitHub answer');
 	if (errors?.length) console.warn('GitHub partial answer:', errors.map((error) => error.message).join('; '));
 
 	const { repositories, contributionsCollection } = data.viewer;
-	const repos = repositories.nodes;
+	const owned = repositories.nodes;
+	// Forks carry the code of their upstream: they count as activity, never
+	// in the repository totals or the languages.
+	const sources = owned.filter((repo) => !repo.isFork);
 
 	// Bytes of code per language, across every repository.
 	const bytes = new Map();
-	for (const repo of repos) {
+	for (const repo of sources) {
 		for (const { size, node } of repo.languages?.edges ?? []) {
 			bytes.set(node.name, (bytes.get(node.name) ?? 0) + size);
 		}
@@ -73,25 +111,71 @@ async function fetchStats(token) {
 		.slice(0, TOP_LANGUAGES)
 		.map(([name, size]) => ({ name, percent: Math.round((size / totalBytes) * 1000) / 10 }));
 
-	const privateCount = repos.filter((repo) => repo.isPrivate).length;
+	const privateCount = sources.filter((repo) => repo.isPrivate).length;
+
+	// Last activity per repository: the last push for his own, his own last
+	// commit for the others (the push date of someone else's repository says
+	// nothing about him). Without read access to the commits, the day of the
+	// contribution is the fallback.
+	const activity = new Map();
+	for (const repo of owned) {
+		activity.set(repo.nameWithOwner, {
+			name: repo.name,
+			url: repo.url,
+			private: repo.isPrivate,
+			language: repo.primaryLanguage?.name ?? null,
+			pushedAt: repo.pushedAt,
+		});
+	}
+	for (const { repository: repo, contributions } of contributionsCollection?.commitContributionsByRepository ?? []) {
+		if (!repo) continue;
+		const committedAt = latest(
+			repo.defaultBranchRef?.target?.history?.nodes?.[0]?.committedDate,
+			contributions?.nodes?.[0]?.occurredAt,
+		);
+		const known = activity.get(repo.nameWithOwner);
+		if (known) {
+			known.pushedAt = latest(known.pushedAt, committedAt);
+			continue;
+		}
+		activity.set(repo.nameWithOwner, {
+			name: repo.owner?.login === login ? repo.nameWithOwner.split('/')[1] : repo.nameWithOwner,
+			url: repo.url,
+			private: repo.isPrivate,
+			language: repo.primaryLanguage?.name ?? null,
+			pushedAt: committedAt,
+		});
+	}
+	// A fork and the project it was made for are one piece of work: keep the
+	// project, with the latest of the two dates.
+	for (const repo of owned) {
+		const parent = repo.isFork && activity.get(repo.parent?.nameWithOwner);
+		const fork = activity.get(repo.nameWithOwner);
+		if (!parent || !fork) continue;
+		parent.pushedAt = latest(parent.pushedAt, fork.pushedAt);
+		activity.delete(repo.nameWithOwner);
+	}
+	const recent = [...activity.values()]
+		.filter((repo) => repo.pushedAt)
+		.sort((a, b) => b.pushedAt.localeCompare(a.pushedAt));
 
 	return {
 		updatedAt: new Date().toISOString(),
 		repos: {
-			total: repositories.totalCount,
-			public: repositories.totalCount - privateCount,
+			total: sources.length,
+			public: sources.length - privateCount,
 			private: privateCount,
 		},
 		languageCount: bytes.size,
 		languages,
-		lastPushAt: repos[0]?.pushedAt ?? null,
+		lastPushAt: recent[0]?.pushedAt ?? null,
 		contributionsYear: contributionsCollection?.contributionCalendar?.totalContributions ?? 0,
-		recent: repos.slice(0, RECENT_COUNT).map((repo) => ({
+		recent: recent.slice(0, RECENT_COUNT).map((repo) => ({
 			// Private repositories stay anonymous.
-			name: repo.isPrivate ? null : repo.name,
-			url: repo.isPrivate ? null : repo.url,
-			private: repo.isPrivate,
-			language: repo.primaryLanguage?.name ?? null,
+			name: repo.private ? null : repo.name,
+			url: repo.private ? null : repo.url,
+			private: repo.private,
+			language: repo.language,
 			pushedAt: repo.pushedAt,
 		})),
 	};

@@ -159,7 +159,10 @@ choisit selon le nom d'hôte (`worker/hosts.js`).
 ## Statistiques GitHub
 
 `worker/github.js` sert `/api/github` : des totaux neutres (dépôts, langages,
-contributions sur 12 mois, dernier push, 5 derniers dépôts poussés). Il
+contributions sur 12 mois, dernier push, 5 derniers dépôts poussés). Le dernier
+push tient compte des dépôts de Noam et de tous ceux où il a commité sur
+l'année, y compris chez d'autres (un fork compte pour le projet d'origine) :
+pour ceux-là, c'est la date de son propre dernier commit. Il
 interroge l'API GraphQL de GitHub avec le secret `GITHUB_TOKEN` du Worker
 (token fine-grained, tous les dépôts, permission Metadata en lecture seule) et
 met la réponse en cache 1 minute au bord, jamais dans le navigateur (no-store) ; la page la redemande à chaque navigation (au plus une fois par minute) et quand l'onglet revient au premier plan. Les dépôts privés ne sont que comptés : ni
